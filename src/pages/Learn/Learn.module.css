@@ -1,0 +1,197 @@
+/* ─── Страница ────────────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding-bottom: var(--space-20);
+}
+
+/* ─── Hero ────────────────────────────────────────────── */
+.hero {
+  padding: var(--space-16) var(--page-padding) var(--space-8);
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.heroTitle {
+  font-size: clamp(var(--text-3xl), 5vw, var(--text-4xl));
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.heroAccent {
+  color: var(--color-accent);
+}
+
+.heroSubtitle {
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* ─── Секции ──────────────────────────────────────────── */
+.section {
+  width: 100%;
+}
+
+.sectionInner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--page-padding);
+}
+
+.sectionTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+
+.sectionSubtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 720px;
+  margin-bottom: var(--space-8);
+}
+
+/* ─── Big O Grid ──────────────────────────────────────── */
+.bigOGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.bigOCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+  border-left: 3px solid var(--item-color, var(--color-accent));
+}
+
+.bigOCard:hover {
+  border-color: var(--item-color, var(--color-accent));
+  box-shadow:
+    var(--shadow-md),
+    0 0 24px color-mix(in srgb, var(--item-color, var(--color-accent)) 10%, transparent);
+}
+
+.bigOHeader {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+}
+
+.bigONotation {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--item-color, var(--color-accent));
+}
+
+.bigOLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.bigODescription {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.bigOExample {
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+  line-height: 1.5;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.bigOExampleLabel {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* ─── Фильтры ─────────────────────────────────────────── */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.filterBtn:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-hover);
+}
+
+.filterBtnActive {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+
+.filterCount {
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-faint);
+  background: var(--color-surface-2);
+  padding: 1px 6px;
+  border-radius: 99px;
+}
+
+.filterBtnActive .filterCount {
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+/* ─── Сетка карточек ──────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* ─── Пустое состояние ────────────────────────────────── */
+.empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  padding: var(--space-16) 0;
+}

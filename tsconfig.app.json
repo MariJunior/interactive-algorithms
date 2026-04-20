@@ -15,6 +15,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Подсказки и проверка имён классов из *.module.css в IDE (tsserver); на `tsc --build` не влияет. */
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+
     /* Алиас @ → src (должен совпадать с resolve.alias в vite.config.ts). В TS 6+ baseUrl для paths помечен deprecated — маппинг относительно каталога tsconfig. */
     "paths": {
       "@/*": ["./src/*"]
