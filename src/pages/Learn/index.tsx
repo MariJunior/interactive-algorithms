@@ -1,6 +1,6 @@
 import AlgorithmCard from "@/components/AlgorithmCard";
 import { ALGORITHMS, CATEGORIES } from "@/data/algorithms";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, motion, type BezierDefinition, type Variants } from "framer-motion";
 import { useState } from "react";
 import styles from "./Learn.module.css";
 
@@ -53,7 +53,9 @@ const BIG_O_ITEMS = [
 
 // ─── Анимации ────────────────────────────────────────────
 
-const containerVariants = {
+const cardEnterEase: BezierDefinition = [0.16, 1, 0.3, 1];
+
+const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.06 },
@@ -62,7 +64,11 @@ const containerVariants = {
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: cardEnterEase },
+  },
   exit: { opacity: 0, y: -12, transition: { duration: 0.2 } },
 };
 
@@ -72,7 +78,9 @@ export default function Learn() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
   const filteredAlgorithms =
-    activeCategory === "all" ? ALGORITHMS : ALGORITHMS.filter((algorithm) => algorithm.category === activeCategory);
+    activeCategory === "all"
+      ? ALGORITHMS
+      : ALGORITHMS.filter((algorithm) => algorithm.category === activeCategory);
 
   return (
     <div className={styles.page}>
@@ -106,7 +114,8 @@ export default function Learn() {
           <p className={styles.sectionSubtitle}>
             Прежде чем смотреть на алгоритмы — разберёмся, как измерять их скорость.
             <br />
-            <strong>Big O</strong> нотация описывает, как растёт время выполнения при увеличении объёма данных.
+            <strong>Big O</strong> нотация описывает, как растёт время выполнения при увеличении
+            объёма данных.
           </p>
 
           <div className={styles.bigOGrid}>
@@ -150,7 +159,9 @@ export default function Learn() {
             </button>
 
             {CATEGORIES.map((category) => {
-              const count = ALGORITHMS.filter((algorithm) => algorithm.category === category.id).length;
+              const count = ALGORITHMS.filter(
+                (algorithm) => algorithm.category === category.id,
+              ).length;
               if (count === 0) return null;
               return (
                 <button
