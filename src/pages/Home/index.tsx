@@ -13,15 +13,15 @@ const mockBars = [
 function SortingBackground() {
   return (
     <div className={styles.bgBars} aria-hidden="true">
-      {mockBars.map((height, i) => (
+      {mockBars.map((height, index) => (
         <div
-          key={i}
+          key={index}
           className={styles.bgBar}
           style={
             {
               "--bar-height": `${height * 1.8}px`,
-              "--bar-delay": `${i * 0.15}s`,
-              "--bar-dur": `${2.5 + (i % 5) * 0.4}s`,
+              "--bar-delay": `${index * 0.15}s`,
+              "--bar-dur": `${2.5 + (index % 5) * 0.4}s`,
             } as React.CSSProperties
           }
         />
@@ -57,8 +57,8 @@ const FEATURES = [
 
 // ─── Статистика ──────────────────────────────────────────
 
-const categoriesWithAlgos = CATEGORIES.filter((cat) =>
-  ALGORITHMS.some((a) => a.category === cat.id),
+const categoriesWithAlgos = CATEGORIES.filter((category) =>
+  ALGORITHMS.some((algorithm) => algorithm.category === category.id),
 );
 
 const STATS = [
@@ -212,14 +212,14 @@ export default function Home() {
           >
             {/* Декоративные столбики */}
             <div className={styles.ctaBars} aria-hidden="true">
-              {[30, 60, 45, 80, 55, 70, 40, 90, 35, 65].map((h, i) => (
+              {[30, 60, 45, 80, 55, 70, 40, 90, 35, 65].map((height, index) => (
                 <div
-                  key={i}
+                  key={index}
                   className={styles.ctaBar}
                   style={
                     {
-                      "--bar-height": `${h}%`,
-                      "--bar-delay": `${i * 0.08}s`,
+                      "--bar-height": `${height}%`,
+                      "--bar-delay": `${index * 0.08}s`,
                     } as React.CSSProperties
                   }
                 />
