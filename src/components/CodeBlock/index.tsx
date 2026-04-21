@@ -12,13 +12,13 @@ interface CodeBlockProps {
 }
 
 const TABS: Array<{ id: string; label: string }> = [
-  { id: "js-basic", label: "JS базовый" },
-  { id: "js-modern", label: "JS современный" },
+  { id: "jsBasic", label: "JS базовый" },
+  { id: "jsModern", label: "JS современный" },
   { id: "typescript", label: "TypeScript" },
 ];
 
 export default function CodeBlock({ tabs }: CodeBlockProps) {
-  const [activeId, setActiveId] = useState(tabs[0]?.id ?? "js-basic");
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? "jsBasic");
 
   const activeTab = tabs.find((t) => t.id === activeId);
 
