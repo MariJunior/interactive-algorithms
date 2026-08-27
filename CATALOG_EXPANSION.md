@@ -99,9 +99,9 @@ pages Algorithm + Sandbox
 - [x] Явный UX-баннер про NP-полноту / экспоненту
 
 ### Шаг 8j — k-NN
-- [ ] Domain 2D + tests
-- [ ] Visualizer + категория `ml`
-- [ ] Meta/code; sandbox optional
+- [x] Domain 2D + tests
+- [x] Visualizer + категория `ml`
+- [x] Meta/code; sandbox (общий k)
 
 ### После каталога
 - [ ] Step 9 — CSS-арт + квиз

@@ -24,6 +24,9 @@ const COUNTABLE_ACTIONS = {
     "found",
     "miss",
     "relax",
+    "measure",
+    "rank",
+    "vote",
   ]),
   moves: new Set([
     "swap",

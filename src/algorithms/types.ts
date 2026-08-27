@@ -322,6 +322,39 @@ export interface TspStep {
   formula?: string;
 }
 
+/** Точка обучающей выборки для k-NN */
+export interface KnnPoint {
+  id: string;
+  x: number;
+  y: number;
+  /** Класс (метка) */
+  label: string;
+}
+
+export type KnnStepAction =
+  | "measure" // считаем расстояние до точки
+  | "rank" // упорядочили по близости
+  | "vote" // голосование k соседей
+  | "done";
+
+export interface KnnStep {
+  kind: "knn";
+  action: KnnStepAction;
+  points: KnnPoint[];
+  query: { x: number; y: number };
+  k: number;
+  /** Расстояния query→точка (накапливаются) */
+  distances: Array<{ id: string; distance: number }>;
+  /** id соседей в топ-k (после rank) */
+  neighborIds: string[];
+  focusId?: string;
+  /** Голоса по классам */
+  votes?: Record<string, number>;
+  prediction?: string;
+  message?: string;
+  formula?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;
@@ -340,7 +373,8 @@ export type AlgorithmCategory =
   | "greedy"
   | "string"
   | "data-structures"
-  | "np-complete";
+  | "np-complete"
+  | "ml";
 
 // Метаданные алгоритма (для карточек и страниц)
 export interface AlgorithmMeta {

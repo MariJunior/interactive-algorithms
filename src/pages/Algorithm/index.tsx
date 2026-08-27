@@ -9,6 +9,7 @@ import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
 import { hasTspVisualization } from "@/algorithms/tsp";
+import { hasKnnVisualization } from "@/algorithms/knn";
 import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
@@ -18,6 +19,7 @@ import DpPlaybackPanel from "@/components/visualizers/DpPlaybackPanel";
 import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
 import GreedyPlaybackPanel from "@/components/visualizers/GreedyPlaybackPanel";
 import HashTablePlaybackPanel from "@/components/visualizers/HashTablePlaybackPanel";
+import KnnPlaybackPanel from "@/components/visualizers/KnnPlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import StringMatchPlaybackPanel from "@/components/visualizers/StringMatchPlaybackPanel";
@@ -79,6 +81,7 @@ function ComplexityTable({
     category === "greedy" && !showSetCoverHint;
   const showHashHint = category === "data-structures";
   const showNpHint = category === "np-complete";
+  const showMlHint = category === "ml";
 
   return (
     <div className={styles.complexityTable}>
@@ -159,6 +162,13 @@ function ComplexityTable({
           фиксированном старте) — число туров растёт факториально. Уже при n≈20 полный
           перебор невыполним; эвристики вроде nearest-neighbor — O(n²), но без гарантии
           оптимума.
+        </p>
+      )}
+      {showMlHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n</span> — число обучающих точек.{" "}
+          <span className={styles.complexityHintStrong}>k</span> — сколько соседей участвует
+          в голосовании. Наивно: посчитать все расстояния и отсортировать — O(n log n).
         </p>
       )}
     </div>
@@ -387,6 +397,8 @@ export default function Algorithm() {
               <HashTablePlaybackPanel key={slug} slug={slug} />
             ) : slug && hasTspVisualization(slug) ? (
               <TspPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasKnnVisualization(slug) ? (
+              <KnnPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

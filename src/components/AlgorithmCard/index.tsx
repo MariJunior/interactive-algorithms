@@ -16,6 +16,7 @@ const categoryConfig: Record<string, { label: string; colorVar: string }> = {
   string: { label: "Строки", colorVar: "--color-string" },
   "data-structures": { label: "Структуры", colorVar: "--color-ds" },
   "np-complete": { label: "NP", colorVar: "--color-np" },
+  ml: { label: "ML", colorVar: "--color-ml" },
 };
 
 const complexityColor: Record<string, string> = {
@@ -422,6 +423,38 @@ function PreviewPlaceholder({ category }: { category: string }) {
               opacity={index === 0 ? 1 : 0.7}
             />
           ))}
+        </svg>
+      );
+
+    case "ml":
+      // Два класса + query
+      return (
+        <svg viewBox="0 0 80 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {[
+            [18, 16],
+            [28, 22],
+            [22, 30],
+          ].map(([cx, cy], index) => (
+            <circle key={`a-${index}`} cx={cx} cy={cy} r={4} fill="currentColor" opacity={0.45} />
+          ))}
+          {[
+            [58, 14],
+            [66, 24],
+            [54, 28],
+          ].map(([cx, cy], index) => (
+            <circle key={`b-${index}`} cx={cx} cy={cy} r={4} fill="currentColor" opacity={0.75} />
+          ))}
+          <circle cx={40} cy={24} r={5} stroke="currentColor" strokeWidth="1.5" fill="none" />
+          <circle
+            cx={40}
+            cy={24}
+            r={14}
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeDasharray="2 2"
+            fill="none"
+            opacity={0.4}
+          />
         </svg>
       );
 

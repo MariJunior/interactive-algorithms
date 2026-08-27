@@ -9,6 +9,7 @@ import type {
   StringStep,
   TreeStep,
   TspStep,
+  KnnStep,
 } from "@/algorithms/types";
 import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
@@ -19,11 +20,13 @@ import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
 import { hasTspVisualization } from "@/algorithms/tsp";
+import { hasKnnVisualization } from "@/algorithms/knn";
 import ActivitySelectionVisualizer from "@/components/visualizers/ActivitySelectionVisualizer";
 import DpTableVisualizer from "@/components/visualizers/DpTableVisualizer";
 import FractionalKnapsackVisualizer from "@/components/visualizers/FractionalKnapsackVisualizer";
 import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import HashTableVisualizer from "@/components/visualizers/HashTableVisualizer";
+import KnnVisualizer from "@/components/visualizers/KnnVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
 import SetCoverVisualizer from "@/components/visualizers/SetCoverVisualizer";
@@ -42,6 +45,7 @@ import styles from "./Sandbox.module.css";
 import {
   DEMO_DP_N,
   DEMO_GRAPH_START,
+  DEMO_KNN_K,
   DEMO_PATTERN,
   DEMO_TEXT,
   DEMO_TSP_START,
@@ -65,7 +69,8 @@ const COMPARABLE = ALGORITHMS.filter(
     hasStringVisualization(algo.slug) ||
     hasGreedyVisualization(algo.slug) ||
     hasHashTableVisualization(algo.slug) ||
-    hasTspVisualization(algo.slug),
+    hasTspVisualization(algo.slug) ||
+    hasKnnVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -140,6 +145,7 @@ export default function Sandbox() {
   const [pattern, setPattern] = useState(DEMO_PATTERN);
   const [tspCities] = useState(() => createDemoTspCities());
   const [tspStartId, setTspStartId] = useState(DEMO_TSP_START);
+  const [knnK, setKnnK] = useState(DEMO_KNN_K);
 
   const metaA = getAlgorithmBySlug(slugA);
   const metaB = getAlgorithmBySlug(slugB);
@@ -159,6 +165,7 @@ export default function Sandbox() {
   const isGreedyCategory = activeCategory === "greedy";
   const isHashCategory = activeCategory === "data-structures";
   const isTspCategory = activeCategory === "np-complete";
+  const isKnnCategory = activeCategory === "ml";
 
   const laneA = useSandboxLane(
     slugA,
@@ -171,6 +178,7 @@ export default function Sandbox() {
     text,
     pattern,
     tspStartId,
+    knnK,
   );
   const laneB = useSandboxLane(
     slugB,
@@ -183,6 +191,7 @@ export default function Sandbox() {
     text,
     pattern,
     tspStartId,
+    knnK,
   );
 
   // Запись выровненных slug в URL (конфликт категорий / пустой query)
@@ -402,7 +411,9 @@ export default function Sandbox() {
                         ? "Хеш-таблица"
                         : isTspCategory
                           ? "Города TSP"
-                          : "Общий input"}
+                          : isKnnCategory
+                            ? "Параметр k"
+                            : "Общий input"}
           </h2>
 
           {isGraphCategory ? (
@@ -505,6 +516,28 @@ export default function Sandbox() {
               <p className={styles.hint}>
                 Полный перебор vs nearest-neighbor на одних и тех же 5 городах. Сравни длину
                 тура и число шагов — NP-баннер напоминает про (n−1)!.
+              </p>
+            </div>
+          ) : isKnnCategory ? (
+            <div className={styles.targetRow}>
+              <label className={styles.targetLabel} htmlFor="sandbox-knn-k">
+                k
+              </label>
+              <select
+                id="sandbox-knn-k"
+                className={styles.select}
+                value={knnK}
+                onChange={(event) => setKnnK(Number(event.target.value))}
+              >
+                {[1, 3, 5, 7].map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <p className={styles.hint}>
+                Пока один алгоритм в категории — обе полосы с одним k. Меняй k и смотри
+                голосование соседей вокруг query.
               </p>
             </div>
           ) : (
@@ -631,6 +664,7 @@ interface SandboxLaneProps {
     | GreedyStep
     | HashTableStep
     | TspStep
+    | KnnStep
     | null;
   currentIndex: number;
   totalSteps: number;
@@ -672,7 +706,9 @@ function SandboxLane({
                 ? slug === "tsp-brute"
                   ? "Улучшений"
                   : "Добавлений города"
-                : "Перемещений";
+                : kind === "knn"
+                  ? "Рангов / голосов"
+                  : "Перемещений";
   const compareLabel =
     kind === "graph"
       ? slug === "dijkstra"
@@ -692,7 +728,9 @@ function SandboxLane({
                   ? slug === "tsp-brute"
                     ? "Просмотров туров"
                     : "Шагов выбора"
-                  : "Сравнений";
+                  : kind === "knn"
+                    ? "Измерений"
+                    : "Сравнений";
 
   const treeCopy =
     slug === "preorder-traversal"
@@ -866,6 +904,10 @@ function SandboxLane({
               ? "Из текущей точки всегда идём в ближайший ещё не посещённый город"
               : "Фиксируем старт и перебираем все порядки остальных городов — (n−1)!"
           }
+        />
+      ) : kind === "knn" ? (
+        <KnnVisualizer
+          step={step && "kind" in step && step.kind === "knn" ? step : null}
         />
       ) : (
         <SortVisualizer step={step as SortStep | null} />

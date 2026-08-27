@@ -1591,4 +1591,71 @@ function tspBrute(
   return path
 }`,
   },
+
+  knn: {
+    jsBasic: `function knnClassify(points, query, k) {
+  var ranked = points.slice().map(function (p) {
+    var dx = p.x - query.x
+    var dy = p.y - query.y
+    return { label: p.label, distance: Math.sqrt(dx * dx + dy * dy) }
+  })
+  ranked.sort(function (a, b) { return a.distance - b.distance })
+  var votes = {}
+  for (var i = 0; i < k && i < ranked.length; i++) {
+    var label = ranked[i].label
+    votes[label] = (votes[label] || 0) + 1
+  }
+  var best = null
+  var bestCount = -1
+  for (var key in votes) {
+    if (votes[key] > bestCount) {
+      bestCount = votes[key]
+      best = key
+    }
+  }
+  return best
+}`,
+
+    jsModern: `function knnClassify(points, query, k) {
+  const ranked = points
+    .map((p) => ({
+      label: p.label,
+      distance: Math.hypot(p.x - query.x, p.y - query.y),
+    }))
+    .sort((a, b) => a.distance - b.distance)
+
+  const votes = {}
+  for (const neighbor of ranked.slice(0, k)) {
+    votes[neighbor.label] = (votes[neighbor.label] ?? 0) + 1
+  }
+
+  return Object.entries(votes).sort((a, b) => b[1] - a[1])[0]?.[0]
+}`,
+
+    typescript: `interface Point {
+  x: number
+  y: number
+  label: string
+}
+
+function knnClassify(
+  points: readonly Point[],
+  query: { x: number; y: number },
+  k: number
+): string {
+  const ranked = points
+    .map((p) => ({
+      label: p.label,
+      distance: Math.hypot(p.x - query.x, p.y - query.y),
+    }))
+    .sort((a, b) => a.distance - b.distance)
+
+  const votes: Record<string, number> = {}
+  for (const neighbor of ranked.slice(0, k)) {
+    votes[neighbor.label] = (votes[neighbor.label] ?? 0) + 1
+  }
+
+  return Object.entries(votes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "?"
+}`,
+  },
 };

@@ -1,28 +1,28 @@
 # Project status
 
-> Updated: 2026-08-28 01:50 (local)
+> Updated: 2026-08-28 02:05 (local)
 > Branch: `main`
-> Working tree: **dirty** — 8e–8i к ревью
+> Working tree: **dirty** — 8e–8j к ревью (расширение каталога завершено)
 
 ## Current goals
 
-- Ревью / commit **8e–8i**.
-- Дальше: **8j k-NN** → Step 9.
+- Ревью / commit **8e–8j** (можно пачкой или по шагам).
+- Дальше: **Step 9** — CSS-арт на карточках + мини-квиз.
 
 ## In progress / uncommitted
 
 | Step | Что |
 |------|-----|
-| 8e–8h | greedy + hash + Dijkstra + set cover |
-| **8i** | **TSP** — brute + nearest-neighbor, категория NP |
+| 8e–8i | greedy, hash, Dijkstra, set cover, TSP |
+| **8j** | **k-NN** — 2D классификация, категория ML |
 
-**Примеры:** `/algorithm/tsp-brute`, `/sandbox?a=tsp-brute&b=tsp-nearest-neighbor`
+**Примеры:** `/algorithm/knn`, `/sandbox?a=knn`
 
 ## Next steps
 
-1. Commit 8e–8i
-2. **8j** k ближайших соседей
-3. Step 9 — CSS-арт + квиз
+1. Commit расширения каталога
+2. **Step 9** — CSS-арт + квиз «Угадай сложность»
+3. Step 10 — 3D
 
 ## References
 

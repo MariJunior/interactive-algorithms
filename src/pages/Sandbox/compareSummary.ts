@@ -68,7 +68,10 @@ export function finalStatsFromActions(
         step.action === "lookup" ||
         step.action === "found" ||
         step.action === "miss" ||
-        step.action === "relax",
+        step.action === "relax" ||
+        step.action === "measure" ||
+        step.action === "rank" ||
+        step.action === "vote",
     ).length,
     moves: actions.filter(
       (step) =>

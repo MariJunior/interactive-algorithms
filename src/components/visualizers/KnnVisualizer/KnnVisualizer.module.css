@@ -1,0 +1,160 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.task,
+.rule,
+.formula {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-ml) 12%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-ml) 35%, var(--color-border));
+  border-radius: var(--radius-md);
+}
+
+.rule,
+.formula {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+}
+
+.taskLabel {
+  font-weight: 600;
+  color: var(--color-ml);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.metaStrong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-ml);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  border: 1.5px solid var(--color-border);
+}
+
+.swatchA {
+  background: color-mix(in srgb, var(--color-ologn) 55%, var(--color-surface-2));
+  border-color: var(--color-ologn);
+}
+
+.swatchB {
+  background: color-mix(in srgb, var(--color-on2) 45%, var(--color-surface-2));
+  border-color: var(--color-on2);
+}
+
+.swatchQuery {
+  background: var(--color-ml);
+  border-color: var(--color-accent-hover);
+}
+
+.swatchNeighbor {
+  box-shadow: 0 0 0 2px var(--color-o1);
+  background: transparent;
+}
+
+.canvas {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.kCircle {
+  fill: color-mix(in srgb, var(--color-ml) 10%, transparent);
+  stroke: var(--color-ml);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.point {
+  stroke-width: 2;
+}
+
+.pointA {
+  fill: color-mix(in srgb, var(--color-ologn) 40%, var(--color-surface-2));
+  stroke: var(--color-ologn);
+}
+
+.pointB {
+  fill: color-mix(in srgb, var(--color-on2) 35%, var(--color-surface-2));
+  stroke: var(--color-on2);
+}
+
+.pointNeighbor {
+  stroke: var(--color-o1);
+  stroke-width: 3;
+}
+
+.pointFocus {
+  stroke: var(--color-accent-hover);
+  stroke-width: 3;
+}
+
+.pointLabel {
+  fill: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.query {
+  fill: var(--color-ml);
+  stroke: var(--color-accent-hover);
+  stroke-width: 2;
+}
+
+.queryLabel {
+  fill: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  pointer-events: none;
+}

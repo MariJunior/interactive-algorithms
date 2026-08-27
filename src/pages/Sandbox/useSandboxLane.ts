@@ -10,6 +10,7 @@ import type {
   StringStep,
   TreeStep,
   TspStep,
+  KnnStep,
 } from "@/algorithms/types";
 import {
   DEMO_DP_N,
@@ -57,6 +58,13 @@ import {
   createDemoTspCities,
   hasTspVisualization,
 } from "@/algorithms/tsp";
+import {
+  DEMO_KNN_K,
+  DEMO_KNN_QUERY,
+  collectKnnSteps,
+  createDemoKnnPoints,
+  hasKnnVisualization,
+} from "@/algorithms/knn";
 import { useAlgorithmPlayer } from "@/hooks/useAlgorithmPlayer";
 import { useAlgorithmRunner } from "@/hooks/useAlgorithmRunner";
 import { useMemo } from "react";
@@ -70,7 +78,8 @@ type AnyStep =
   | StringStep
   | GreedyStep
   | HashTableStep
-  | TspStep;
+  | TspStep
+  | KnnStep;
 
 export type SandboxLaneKind =
   | "sorting"
@@ -82,6 +91,7 @@ export type SandboxLaneKind =
   | "greedy"
   | "hashtable"
   | "tsp"
+  | "knn"
   | "none";
 
 function* emptySteps(_input: number[]): Generator<AnyStep> {
@@ -99,6 +109,7 @@ export function useSandboxLane(
   text: string,
   pattern: string,
   tspStartId: string = DEMO_TSP_START,
+  knnK: number = DEMO_KNN_K,
 ) {
   const kind: SandboxLaneKind = hasSortingVisualization(slug)
     ? "sorting"
@@ -118,7 +129,9 @@ export function useSandboxLane(
                   ? "hashtable"
                   : hasTspVisualization(slug)
                     ? "tsp"
-                    : "none";
+                    : hasKnnVisualization(slug)
+                      ? "knn"
+                      : "none";
 
   const laneInput = useMemo(() => {
     if (slug === "binary-search") {
@@ -198,6 +211,13 @@ export function useSandboxLane(
     return collectTspSteps(slug, createDemoTspCities(), tspStartId) ?? [];
   }, [kind, slug, tspStartId]);
 
+  const knnSteps = useMemo((): KnnStep[] => {
+    if (kind !== "knn") return [];
+    return (
+      collectKnnSteps(slug, createDemoKnnPoints(), DEMO_KNN_QUERY, knnK) ?? []
+    );
+  }, [kind, slug, knnK]);
+
   const steps =
     kind === "graph"
       ? graphSteps
@@ -213,7 +233,9 @@ export function useSandboxLane(
                 ? hashSteps
                 : kind === "tsp"
                   ? tspSteps
-                  : arraySteps.steps;
+                  : kind === "knn"
+                    ? knnSteps
+                    : arraySteps.steps;
 
   const stepsId =
     kind === "graph"
@@ -230,7 +252,9 @@ export function useSandboxLane(
                 ? `${slug}:ht`
                 : kind === "tsp"
                   ? `${slug}:tsp:${tspStartId}`
-                  : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
+                  : kind === "knn"
+                    ? `${slug}:knn:k${knnK}`
+                    : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
 
   const player = useAlgorithmPlayer(steps, stepsId);
 
@@ -243,6 +267,7 @@ export {
   DEMO_PATTERN,
   DEMO_TEXT,
   DEMO_TSP_START,
+  DEMO_KNN_K,
   createDemoGraph,
   createDemoTree,
   createDemoTspCities,
