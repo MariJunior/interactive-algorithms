@@ -17,6 +17,8 @@ export default function InfoBadge({ children, tooltip, color }: InfoBadgeProps) 
         className={styles.badge}
         style={{ "--badge-color": color } as CSSProperties}
         tabIndex={0}
+        // Клавиатурный доступ к тултипу (Tooltip показывает tip на :focus-within)
+        aria-label={typeof children === "string" ? `${children}. ${tooltip}` : tooltip}
       >
         {children}
       </span>

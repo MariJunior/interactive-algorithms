@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { langFromTabId, highlightCode } from "@/lib/shikiHighlighter";
+import { useEffect, useId, useState } from "react";
 import styles from "./CodeBlock.module.css";
 
 interface CodeTab {
@@ -18,33 +19,72 @@ const TABS: Array<{ id: string; label: string }> = [
 ];
 
 export default function CodeBlock({ tabs }: CodeBlockProps) {
+  const baseId = useId();
   const [activeId, setActiveId] = useState(tabs[0]?.id ?? "jsBasic");
+  const [copied, setCopied] = useState(false);
+  // HTML от Shiki; null — ещё грузим / fallback на plain text
+  const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null);
 
   const activeTab = tabs.find((t) => t.id === activeId);
+  const panelId = `${baseId}-panel`;
+  const tablistId = `${baseId}-tablist`;
+
+  useEffect(() => {
+    if (!activeTab?.code) {
+      setHighlightedHtml(null);
+      return;
+    }
+
+    let cancelled = false;
+    const lang = langFromTabId(activeTab.id);
+
+    // Пока грузится highlighter — показываем предыдущий HTML или plain
+    highlightCode(activeTab.code, lang)
+      .then((html) => {
+        if (!cancelled) setHighlightedHtml(html);
+      })
+      .catch(() => {
+        // Shiki недоступен — оставляем plain <pre>
+        if (!cancelled) setHighlightedHtml(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab?.code, activeTab?.id]);
 
   function handleCopy() {
     if (!activeTab) return;
     navigator.clipboard.writeText(activeTab.code).then(() => {
-      // Небольшой визуальный фидбек — через state
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   }
 
-  const [copied, setCopied] = useState(false);
-
   return (
     <div className={styles.wrapper}>
-      {/* Шапка с вкладками */}
       <div className={styles.header}>
-        <div className={styles.tabs}>
+        <div
+          className={styles.tabs}
+          role="tablist"
+          id={tablistId}
+          aria-label="Вариант реализации"
+        >
           {TABS.map((tab) => {
             const exists = tabs.some((t) => t.id === tab.id);
             if (!exists) return null;
+            const selected = activeId === tab.id;
+            const tabId = `${baseId}-tab-${tab.id}`;
             return (
               <button
                 key={tab.id}
-                className={`${styles.tab} ${activeId === tab.id ? styles.tabActive : ""}`}
+                id={tabId}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={panelId}
+                tabIndex={selected ? 0 : -1}
+                className={`${styles.tab} ${selected ? styles.tabActive : ""}`}
                 onClick={() => setActiveId(tab.id)}
               >
                 {tab.label}
@@ -54,13 +94,14 @@ export default function CodeBlock({ tabs }: CodeBlockProps) {
         </div>
 
         <button
+          type="button"
           className={`${styles.copyBtn} ${copied ? styles.copyBtnDone : ""}`}
           onClick={handleCopy}
-          title="Скопировать код"
+          aria-label={copied ? "Код скопирован" : "Скопировать код"}
         >
           {copied ? (
             <>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path
                   d="M3 8l4 4 6-7"
                   stroke="currentColor"
@@ -73,7 +114,7 @@ export default function CodeBlock({ tabs }: CodeBlockProps) {
             </>
           ) : (
             <>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <rect
                   x="5"
                   y="5"
@@ -96,11 +137,24 @@ export default function CodeBlock({ tabs }: CodeBlockProps) {
         </button>
       </div>
 
-      {/* Код */}
-      <div className={styles.codeArea}>
-        <pre className={styles.pre}>
-          <code>{activeTab?.code ?? ""}</code>
-        </pre>
+      {/* tabpanel: Shiki HTML или plain fallback */}
+      <div
+        className={styles.codeArea}
+        role="tabpanel"
+        id={panelId}
+        aria-labelledby={`${baseId}-tab-${activeId}`}
+      >
+        {highlightedHtml ? (
+          <div
+            className={styles.shikiHost}
+            // Shiki отдаёт безопасный HTML только из нашего исходника кода
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          />
+        ) : (
+          <pre className={styles.pre}>
+            <code>{activeTab?.code ?? ""}</code>
+          </pre>
+        )}
       </div>
     </div>
   );

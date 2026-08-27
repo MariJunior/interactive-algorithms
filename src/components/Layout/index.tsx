@@ -11,18 +11,25 @@ const navItems = [
 export default function Layout() {
   return (
     <div className={styles.root}>
+      {/* Skip-link: первый фокусируемый элемент для клавиатуры */}
+      <a href="#main-content" className={styles.skipLink}>
+        Перейти к содержимому
+      </a>
+
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          {/* Логотип */}
-          <NavLink to="/" className={styles.logo}>
-            <span className={styles.logoBracket}>&lt;</span>
+          <NavLink to="/" className={styles.logo} aria-label="AlgoVisual — на главную">
+            <span className={styles.logoBracket} aria-hidden="true">
+              &lt;
+            </span>
             algo
             <span className={styles.logoAccent}>visual</span>
-            <span className={styles.logoBracket}>/&gt;</span>
+            <span className={styles.logoBracket} aria-hidden="true">
+              /&gt;
+            </span>
           </NavLink>
 
-          {/* Навигация */}
-          <nav className={styles.nav}>
+          <nav className={styles.nav} aria-label="Основная навигация">
             {navItems.map(({ to, label, end }) => (
               <NavLink
                 key={to}
@@ -40,6 +47,7 @@ export default function Layout() {
                         className={styles.navIndicator}
                         layoutId="nav-indicator"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        aria-hidden="true"
                       />
                     )}
                   </>
@@ -50,8 +58,7 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* Контент страниц */}
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main} tabIndex={-1}>
         <Outlet />
       </main>
     </div>

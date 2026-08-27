@@ -1,57 +1,58 @@
 # Project status
 
-> Updated: 2026-08-27 20:22 (local)
-> Branch: `main` · HEAD: `6e05a20` · ahead of `origin/main` by 1 (timer commit)
+> Updated: 2026-08-27 21:02 (local)
+> Branch: `main` · HEAD: `f1a1553` · ahead of `origin/main` by 2
+> Working tree: **dirty** — Step 7 (Shiki / a11y / README / vercel) готов к ревью
 
 ## Current goals
 
-- Закрыть мелкие UX-фиксы песочницы (в working tree) → commit.
-- Дальше **Step 7:** Shiki, a11y, финальный адаптив, README, деплой Vercel.
-- Режим: staged delivery. Scope — «роскошный максимум».
+- Ревью / commit **Step 7**, затем push по желанию.
+- Дальше Steps 8–10 по staged delivery.
+- Scope — «роскошный максимум».
 
 ## Completed (committed)
 
 | Step | Commit | Что |
 |------|--------|-----|
-| 1–4 | … → `6a5b8e9` | 8 сортировок, viz, howItWorks, UX каталога |
+| 1–4 | … → `6a5b8e9` | 8 сортировок, viz, howItWorks, UX |
 | 5 | `672e32e` | Linear/Binary Search + SearchVisualizer |
 | 6 | `5fc3b70` | Sandbox `/sandbox?a=&b=` |
-| 6b | `6e05a20` | Real-time elapsed timer (ms) + итог по времени |
-
-Тесты на момент таймера: 73 passed.
+| 6b | `6e05a20` | Real-time elapsed timer (ms) |
+| 6c | `f1a1553` | Sandbox: same category, moves, binary hint |
 
 ## In progress / uncommitted
 
-Sandbox UX fixes (эта сессия):
+**Step 7** — полировка:
 
-- Hint про Binary Search — только если binary выбран
-- Метрика **Перемещений** (`swap|insert|merge`) вместо ложных «Перестановок: 0» у Merge/Counting
-- Сравнение **только внутри одной категории** + табы группы
+- Shiki fine-grained в `CodeBlock` (`src/lib/shikiHighlighter.ts`)
+- a11y: skip-link, tablist/tabpanel, accordion region, focus-visible, reduced-motion
+- README актуализирован; `vercel.json` SPA rewrites; `index.html` lang=ru
+
+Тесты: 73 passed. Build OK.
 
 ## Next steps (ordered)
 
-1. Commit sandbox UX fixes (после ревью).
-2. **Step 7:** Shiki, a11y, адаптив, README, Vercel.
-3. **Steps 8–10:** полный каталог → CSS-арт + квиз → 3D.
+1. Commit Step 7 после ревью / отмашки
+2. Steps 8–10: каталог → CSS-арт/квиз → 3D
+3. Фактический `npx vercel --prod` — вручную (MCP Vercel не авторизован)
 
 ## Key decisions
 
 | Decision | Rationale |
 |----------|-----------|
 | Domain без React | Clean Architecture |
-| Отдельный `SearchStep` | Не смешивать с SortStep |
-| Sandbox: same category only | Иначе apples-to-oranges (input/target/метрики) |
+| Sandbox: same category only | Честное сравнение |
 | `moves` = swap\|insert\|merge | Merge/Counting не эмитят swap |
+| Shiki core + JS engine | Меньше бандл для Vite SPA |
 | 3D в конце | Staged delivery |
 
 ## Known issues
 
-- Timer commit ещё не на `origin` (ahead by 1) — push по желанию.
-- Shiki в CodeBlock не подключён (Step 7).
+- Push: `main` ahead of origin by 2 (+ Step 7 после commit).
+- Chunk size warning на main bundle (~616 kB) — допустимо на этом этапе.
 - Trees/graphs/3d — заготовки.
 
 ## References
 
 - План: `algovisual_status_summary_c8adb029.plan.md`
-- ТЗ: `Перезапуск изучения алгоритмов.md`
 - Remote: `git@github.com:MariJunior/interactive-algorithms.git`

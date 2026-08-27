@@ -2,7 +2,7 @@
 
 **Интерактивный учебник по алгоритмам и структурам данных** — теория, код и пошаговая визуализация в одном месте.
 
-Разбирай алгоритмы не по сухим формулам, а через анимацию, короткую теорию и код на JavaScript / TypeScript — от Big O до сортировок, поиска и дальше по каталогу.
+Разбирай алгоритмы не по сухим формулам, а через анимацию, короткую теорию и код на JavaScript / TypeScript — от Big O до сортировок, поиска и сравнения в песочнице.
 
 ---
 
@@ -12,8 +12,9 @@
 
 - смотришь, как алгоритм «думает» шаг за шагом;
 - рядом — Big O, когда использовать / когда нет;
-- три варианта кода: JS базовый, JS современный, TypeScript;
-- чистые реализации отдельно от UI — удобно читать и тестировать.
+- три варианта кода: JS базовый, JS современный, TypeScript (подсветка Shiki);
+- чистые реализации отдельно от UI — удобно читать и тестировать;
+- песочница `/sandbox` — сравнение двух алгоритмов одной категории side-by-side.
 
 ---
 
@@ -22,16 +23,16 @@
 | Область | Статус |
 |--------|--------|
 | Лендинг `/`, учебник `/learn`, страницы алгоритмов | Готово |
-| Big O + реестр 10 алгоритмов (8 сортировок, 2 поиска) | Готово |
-| Bubble / Selection / Insertion — код, TS, генераторы, визуализатор | Готово |
-| Merge / Quick / Heap / Radix / Counting — полный цикл | Готово |
-| Секция «Как работает» в аккордеоне (все 8 сортировок) | Готово |
-| Поиск с визуализатором | В планах |
-| Песочница `/sandbox`, Shiki, деплой | В планах |
+| Big O + реестр: 8 сортировок + Linear/Binary Search | Готово |
+| Сортировки: код, TS, генераторы, `SortVisualizer` | Готово |
+| Секция «Как работает» в аккордеоне | Готово |
+| Поиск + `SearchVisualizer` | Готово |
+| Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
+| Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
 | Полный каталог (деревья, графы, DP…), CSS-арт, квиз | В планах |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Сейчас можно открыть** `/algorithm/bubble-sort`, `/algorithm/selection-sort` или `/algorithm/insertion-sort` и запустить анимацию.
+**Примеры:** `/algorithm/bubble-sort`, `/algorithm/merge-sort`, `/algorithm/binary-search`, `/sandbox?a=bubble-sort&b=insertion-sort`.
 
 ---
 
@@ -41,9 +42,9 @@
 2. ~~Первые 3 сортировки + живой визуализатор~~
 3. ~~Секция «Как работает» в аккордеоне~~
 4. ~~Остальные сортировки (Merge → Quick → Heap → Radix → Counting)~~
-5. Linear / Binary Search + отдельный визуализатор
-6. Песочница сравнения (`/sandbox?a=&b=`)
-7. Полировка: Shiki, a11y, адаптив, деплой на Vercel
+5. ~~Linear / Binary Search + отдельный визуализатор~~
+6. ~~Песочница сравнения (`/sandbox?a=&b=`)~~
+7. ~~Полировка: Shiki, a11y, адаптив, конфиг Vercel~~
 8. Расширенный каталог: структуры данных, деревья, графы, DP, жадные, строки
 9. CSS-арт на карточках + мини-квиз «Угадай сложность»
 10. **3D-режим** для избранных алгоритмов
@@ -58,10 +59,10 @@
 | UI | React 19, React Router 7 |
 | Анимации | Framer Motion 12 |
 | Стили | CSS Modules + design tokens |
-| Подсветка кода | Shiki 4 *(зависимость есть, интеграция в планах)* |
+| Подсветка кода | Shiki 4 (fine-grained core + JS engine) |
 | Тесты | Vitest 4, Testing Library, jsdom |
 | Качество | ESLint 9, Prettier 3 |
-| Деплой (план) | Vercel |
+| Деплой | Vercel (`vercel.json` SPA rewrites) |
 | 3D (план) | Three.js + React Three Fiber + Drei |
 
 ---
@@ -73,11 +74,13 @@ Clean Architecture в упрощённом виде для фронта:
 ```
 src/
 ├── algorithms/          # Domain: чистый TS, генераторы шагов, без React
-│   └── sorting/
+│   ├── sorting/
+│   └── searching/
 ├── hooks/               # Application: runner + player
 ├── data/                # Метаданные и код для отображения
+├── lib/                 # Инфра (Shiki highlighter singleton)
 ├── components/
-│   ├── visualizers/     # Presentation: рендер SortStep
+│   ├── visualizers/     # Presentation: SortStep / SearchStep
 │   └── ui/              # Глупые UI-контролы
 └── pages/               # Composition / маршруты
 ```
@@ -87,7 +90,7 @@ src/
 1. **чистая функция** — для тестов и проверки корректности;
 2. **генератор шагов** (`*Steps`) — для визуализации.
 
-Визуализатор **только рисует** текущий `SortStep`, без алгоритмической логики внутри.
+Визуализатор **только рисует** текущий шаг, без алгоритмической логики внутри.
 
 ---
 
@@ -96,15 +99,25 @@ src/
 Требования: **Node.js 20+** (рекомендуется LTS).
 
 ```bash
-# клонировать и перейти в каталог
 cd interactive-algorithms
-
-# установить зависимости
 npm install
-
-# режим разработки → http://localhost:5173
 npm run dev
 ```
+
+Откроется http://localhost:5173.
+
+---
+
+## Деплой на Vercel
+
+Проект — Vite SPA. В корне лежит `vercel.json` с rewrite всех путей на `/index.html` (deep links вроде `/algorithm/merge-sort` работают после деплоя).
+
+Варианты:
+
+1. **CLI:** `npx vercel` (preview) / `npx vercel --prod` (production).
+2. **Dashboard:** Import Git-репозитория → Framework Preset: Vite → Deploy.
+
+Framework detection у Vercel для Vite обычно сам выставляет `npm run build` и output `dist`.
 
 ---
 
@@ -135,9 +148,9 @@ npm run dev
 | `/` | Лендинг |
 | `/learn` | Big O + каталог алгоритмов с фильтрами |
 | `/algorithm/:slug` | Теория, визуализация, код |
-| `/sandbox` | Сравнение алгоритмов *(пока заглушка)* |
+| `/sandbox` | Сравнение двух алгоритмов одной категории |
 
-Примеры slug: `bubble-sort`, `selection-sort`, `insertion-sort`, `merge-sort`, `binary-search`.
+Примеры slug: `bubble-sort`, `merge-sort`, `counting-sort`, `linear-search`, `binary-search`.
 
 ---
 

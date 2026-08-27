@@ -59,6 +59,12 @@
   color: var(--color-text);
 }
 
+.tab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+  color: var(--color-text);
+}
+
 .tabActive {
   color: var(--color-accent);
   border-bottom-color: var(--color-accent);
@@ -88,6 +94,11 @@
   border-color: var(--color-border-hover);
 }
 
+.copyBtn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .copyBtnDone {
   color: var(--color-o1);
   border-color: var(--color-o1);
@@ -109,4 +120,22 @@
   color: var(--color-text);
   white-space: pre;
   tab-size: 2;
+}
+
+/* Shiki: вписываем pre в нашу поверхность, сохраняем токены */
+.shikiHost :global(pre) {
+  margin: 0;
+  padding: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  overflow-x: auto;
+  background: transparent !important;
+  tab-size: 2;
+}
+
+.shikiHost :global(code) {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
 }
