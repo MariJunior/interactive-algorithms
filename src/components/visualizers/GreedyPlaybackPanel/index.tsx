@@ -3,13 +3,17 @@ import {
   activitySelectionSteps,
   createDemoActivities,
   createDemoKnapsackItems,
+  createDemoSetCoverCandidates,
+  createDemoSetCoverUniverse,
   fractionalKnapsackSteps,
   hasGreedyVisualization,
+  setCoverSteps,
 } from "@/algorithms/greedy";
 import type { GreedyStep } from "@/algorithms/types";
 import PlaybackControls from "@/components/ui/PlaybackControls";
 import ActivitySelectionVisualizer from "@/components/visualizers/ActivitySelectionVisualizer";
 import FractionalKnapsackVisualizer from "@/components/visualizers/FractionalKnapsackVisualizer";
+import SetCoverVisualizer from "@/components/visualizers/SetCoverVisualizer";
 import { useAlgorithmPlayer } from "@/hooks/useAlgorithmPlayer";
 import { useMemo, useState } from "react";
 import styles from "./GreedyPlaybackPanel.module.css";
@@ -22,6 +26,8 @@ export default function GreedyPlaybackPanel({ slug }: GreedyPlaybackPanelProps) 
   const [activities] = useState(() => createDemoActivities());
   const [items] = useState(() => createDemoKnapsackItems());
   const [capacity] = useState(DEMO_KNAPSACK_CAPACITY);
+  const [universe] = useState(() => createDemoSetCoverUniverse());
+  const [coverCandidates] = useState(() => createDemoSetCoverCandidates());
 
   const steps = useMemo((): GreedyStep[] => {
     if (slug === "activity-selection") {
@@ -30,8 +36,11 @@ export default function GreedyPlaybackPanel({ slug }: GreedyPlaybackPanelProps) 
     if (slug === "fractional-knapsack") {
       return Array.from(fractionalKnapsackSteps(items, capacity));
     }
+    if (slug === "set-cover") {
+      return Array.from(setCoverSteps(universe, coverCandidates));
+    }
     return [];
-  }, [slug, activities, items, capacity]);
+  }, [slug, activities, items, capacity, universe, coverCandidates]);
 
   const player = useAlgorithmPlayer(steps, `${slug}:greedy`);
 
@@ -47,6 +56,8 @@ export default function GreedyPlaybackPanel({ slug }: GreedyPlaybackPanelProps) 
         <ActivitySelectionVisualizer step={step} />
       ) : slug === "fractional-knapsack" && step?.kind === "knapsack" ? (
         <FractionalKnapsackVisualizer step={step} />
+      ) : slug === "set-cover" && step?.kind === "set-cover" ? (
+        <SetCoverVisualizer step={step} />
       ) : (
         <ActivitySelectionVisualizer step={null} />
       )}

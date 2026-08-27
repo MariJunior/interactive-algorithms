@@ -26,8 +26,11 @@ import {
   activitySelectionSteps,
   createDemoActivities,
   createDemoKnapsackItems,
+  createDemoSetCoverCandidates,
+  createDemoSetCoverUniverse,
   fractionalKnapsackSteps,
   hasGreedyVisualization,
+  setCoverSteps,
 } from "@/algorithms/greedy";
 import {
   DEMO_HASH_CAPACITY,
@@ -163,6 +166,11 @@ export function useSandboxLane(
     if (slug === "fractional-knapsack") {
       return Array.from(
         fractionalKnapsackSteps(createDemoKnapsackItems(), DEMO_KNAPSACK_CAPACITY),
+      );
+    }
+    if (slug === "set-cover") {
+      return Array.from(
+        setCoverSteps(createDemoSetCoverUniverse(), createDemoSetCoverCandidates()),
       );
     }
     return [];

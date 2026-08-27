@@ -67,10 +67,13 @@ function ComplexityTable({
     !showGraphHint &&
     rows.every((r) => r.value === "O(n)") &&
     rows.length > 0;
-  const showStringNMHint = rows.some(
-    (r) => r.value.includes("n · m") || r.value.includes("n + m"),
-  );
-  const showGreedyNHint = category === "greedy";
+  const showStringNMHint =
+    category === "string" &&
+    rows.some((r) => r.value.includes("n · m") || r.value.includes("n + m"));
+  const showSetCoverHint =
+    category === "greedy" && rows.some((r) => r.value.includes("n · m"));
+  const showGreedyNHint =
+    category === "greedy" && !showSetCoverHint;
   const showHashHint = category === "data-structures";
 
   return (
@@ -122,6 +125,13 @@ function ComplexityTable({
           <span className={styles.complexityHintStrong}>n</span> — длина текста,{" "}
           <span className={styles.complexityHintStrong}>m</span> — длина паттерна.
           O(n·m) — наивный перебор окон; O(n+m) — KMP с предобработкой LPS.
+        </p>
+      )}
+      {showSetCoverHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n</span> — размер универсума,{" "}
+          <span className={styles.complexityHintStrong}>m</span> — число кандидатных
+          множеств. На каждом раунде смотрим все оставшиеся кандидаты.
         </p>
       )}
       {showGreedyNHint && (

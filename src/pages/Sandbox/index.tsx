@@ -24,6 +24,7 @@ import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import HashTableVisualizer from "@/components/visualizers/HashTableVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
+import SetCoverVisualizer from "@/components/visualizers/SetCoverVisualizer";
 import StringMatchVisualizer from "@/components/visualizers/StringMatchVisualizer";
 import TreeVisualizer from "@/components/visualizers/TreeVisualizer";
 import Slider from "@/components/ui/Slider";
@@ -463,8 +464,8 @@ export default function Sandbox() {
             </div>
           ) : isGreedyCategory ? (
             <p className={styles.hint}>
-              Расписание и рюкзак — разные задачи; у каждой своё учебное демо. Сравнивай
-              число шагов и «взятий» жадного правила.
+              Расписание, рюкзак и покрытие множества — разные задачи; у каждой своё
+              учебное демо. Сравнивай число шагов и «взятий» жадного правила.
             </p>
           ) : isHashCategory ? (
             <p className={styles.hint}>
@@ -695,10 +696,16 @@ function SandboxLane({
           task: "Задача о рюкзаке: максимум ценности при ограниченной вместимости",
           strategy: "Брать по убыванию ценности/веса; долю — если не влезает целиком",
         }
-      : {
-          task: "Задача составления расписания: максимум непересекающихся интервалов",
-          strategy: "Сортировка по концу; брать, если старт ≥ конца последней взятой",
-        };
+      : slug === "set-cover"
+        ? {
+            task: "Задача о покрытии множества: покрыть универсум минимумом подмножеств",
+            strategy:
+              "Каждый раз брать множество с наибольшим числом ещё непокрытых элементов",
+          }
+        : {
+            task: "Задача составления расписания: максимум непересекающихся интервалов",
+            strategy: "Сортировка по концу; брать, если старт ≥ конца последней взятой",
+          };
 
   return (
     <article className={styles.lane}>
@@ -778,6 +785,16 @@ function SandboxLane({
         <FractionalKnapsackVisualizer
           step={
             step && "kind" in step && step.kind === "knapsack"
+              ? step
+              : null
+          }
+          task={greedyCopy.task}
+          ruleHint={greedyCopy.strategy}
+        />
+      ) : kind === "greedy" && slug === "set-cover" ? (
+        <SetCoverVisualizer
+          step={
+            step && "kind" in step && step.kind === "set-cover"
               ? step
               : null
           }

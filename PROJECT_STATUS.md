@@ -1,13 +1,13 @@
 # Project status
 
-> Updated: 2026-08-28 01:30 (local)
+> Updated: 2026-08-28 01:40 (local)
 > Branch: `main`
-> Working tree: **dirty** — 8e–8g к ревью
+> Working tree: **dirty** — 8e–8h к ревью
 
 ## Current goals
 
-- Ревью / commit **8e** (greedy), **8f** (hash-table), **8g** (Dijkstra).
-- Дальше: **8h Set Cover** → 8i TSP → 8j k-NN → Step 9.
+- Ревью / commit **8e–8h**.
+- Дальше: **8i TSP** → 8j k-NN → Step 9.
 
 ## In progress / uncommitted
 
@@ -15,15 +15,16 @@
 |------|-----|
 | 8e | Жадные: расписание / рюкзак |
 | 8f | Хеш-таблица |
-| **8g** | **Dijkstra** — веса на демо-графе, extract-min + relax, dist[] |
+| 8g | Dijkstra |
+| **8h** | **Set Cover** — радиостанции / штаты |
 
-**Примеры:** `/algorithm/dijkstra`, `/sandbox?a=bfs&b=dijkstra`
+**Примеры:** `/algorithm/set-cover`, `/sandbox?a=set-cover&b=activity-selection`
 
 ## Next steps
 
-1. Commit 8e–8g (по шагам или пачкой)
-2. **8h** Покрытие множества
-3. 8i TSP → 8j k-NN
+1. Commit 8e–8h
+2. **8i** Задача о коммивояжёре
+3. 8j k-NN
 4. Step 9
 
 ## References

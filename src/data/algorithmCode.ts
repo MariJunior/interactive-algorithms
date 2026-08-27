@@ -1264,6 +1264,94 @@ function fractionalKnapsack(
 }`,
   },
 
+  "set-cover": {
+    jsBasic: `function setCover(universe, candidates) {
+  var uncovered = {}
+  for (var i = 0; i < universe.length; i++) uncovered[universe[i]] = true
+  var remaining = candidates.slice()
+  var selected = []
+
+  while (Object.keys(uncovered).length > 0 && remaining.length > 0) {
+    var best = null
+    var bestGain = -1
+    for (var j = 0; j < remaining.length; j++) {
+      var cand = remaining[j]
+      var gain = 0
+      for (var k = 0; k < cand.elements.length; k++) {
+        if (uncovered[cand.elements[k]]) gain++
+      }
+      if (gain > bestGain) {
+        bestGain = gain
+        best = cand
+      }
+    }
+    if (!best || bestGain <= 0) break
+    selected.push(best.id)
+    for (var t = 0; t < best.elements.length; t++) {
+      delete uncovered[best.elements[t]]
+    }
+    remaining = remaining.filter(function (c) { return c.id !== best.id })
+  }
+  return selected
+}`,
+
+    jsModern: `function setCover(universe, candidates) {
+  const uncovered = new Set(universe)
+  const remaining = [...candidates]
+  const selected = []
+
+  while (uncovered.size > 0 && remaining.length > 0) {
+    let best = null
+    let bestGain = -1
+    for (const cand of remaining) {
+      const gain = cand.elements.filter((el) => uncovered.has(el)).length
+      if (gain > bestGain) {
+        bestGain = gain
+        best = cand
+      }
+    }
+    if (!best || bestGain <= 0) break
+    selected.push(best.id)
+    for (const el of best.elements) uncovered.delete(el)
+    const idx = remaining.findIndex((c) => c.id === best.id)
+    if (idx >= 0) remaining.splice(idx, 1)
+  }
+  return selected
+}`,
+
+    typescript: `interface CoverSet {
+  id: string
+  elements: readonly string[]
+}
+
+function setCover(
+  universe: readonly string[],
+  candidates: readonly CoverSet[]
+): string[] {
+  const uncovered = new Set(universe)
+  const remaining = [...candidates]
+  const selected: string[] = []
+
+  while (uncovered.size > 0 && remaining.length > 0) {
+    let best: CoverSet | null = null
+    let bestGain = -1
+    for (const cand of remaining) {
+      const gain = cand.elements.filter((el) => uncovered.has(el)).length
+      if (gain > bestGain) {
+        bestGain = gain
+        best = cand
+      }
+    }
+    if (!best || bestGain <= 0) break
+    selected.push(best.id)
+    for (const el of best.elements) uncovered.delete(el)
+    const idx = remaining.findIndex((c) => c.id === best.id)
+    if (idx >= 0) remaining.splice(idx, 1)
+  }
+  return selected
+}`,
+  },
+
   "hash-table": {
     jsBasic: `function hashKey(key, capacity) {
   var sum = 0

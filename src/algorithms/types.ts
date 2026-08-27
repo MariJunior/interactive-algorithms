@@ -225,7 +225,36 @@ export interface KnapsackGreedyStep {
   formula?: string;
 }
 
-export type GreedyStep = ActivityGreedyStep | KnapsackGreedyStep;
+export type GreedyStep = ActivityGreedyStep | KnapsackGreedyStep | SetCoverGreedyStep;
+
+/** Элемент универсума (штат / станция покрытия) */
+export interface SetCoverElement {
+  id: string;
+  label: string;
+}
+
+/** Кандидатное подмножество */
+export interface SetCoverCandidate {
+  id: string;
+  label: string;
+  /** id элементов, которые покрывает */
+  elementIds: string[];
+}
+
+export interface SetCoverGreedyStep {
+  kind: "set-cover";
+  action: GreedyStepAction;
+  universe: SetCoverElement[];
+  candidates: SetCoverCandidate[];
+  /** Ещё не покрытые элементы */
+  uncoveredIds: string[];
+  selectedIds: string[];
+  consideringId?: string;
+  /** Сколько новых элементов даёт текущий кандидат */
+  gain?: number;
+  message?: string;
+  formula?: string;
+}
 
 /** Хеш-таблица (chaining): учебные шаги вставки и поиска */
 export type HashStepAction =

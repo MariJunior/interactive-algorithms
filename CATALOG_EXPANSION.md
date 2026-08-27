@@ -90,8 +90,8 @@ pages Algorithm + Sandbox
 - [x] Meta/code, sandbox category `graph`
 
 ### Шаг 8h — Покрытие множества
-- [ ] Domain + visualizer + meta/code
-- [ ] Sandbox вкладка greedy (peers: расписание / рюкзак / покрытие)
+- [x] Domain + visualizer + meta/code
+- [x] Sandbox вкладка greedy (peers: расписание / рюкзак / покрытие)
 
 ### Шаг 8i — Коммивояжёр
 - [ ] Brute-force steps (малый n) + nearest-neighbor heuristic

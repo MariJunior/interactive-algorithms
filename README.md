@@ -31,15 +31,15 @@
 | Деревья: Preorder / Inorder / Postorder + `TreeVisualizer` | Готово |
 | DP: Fibonacci / Climbing Stairs + `DpTableVisualizer` | Готово |
 | Строки: Naive / KMP + `StringMatchVisualizer` | Готово |
-| Жадные: расписание / рюкзак | Готово (в working tree с 8e) |
-| Хеш-таблица (chaining) | Готово (Step 8f) |
-| Покрытие множества, TSP, k-NN | В плане (`CATALOG_EXPANSION.md`) |
+| Жадные: расписание / рюкзак / покрытие множества | Готово |
+| Хеш-таблица (chaining) | Готово |
+| TSP, k-NN | В плане (`CATALOG_EXPANSION.md`) |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
 | CSS-арт, квиз | В планах (после расширения каталога) |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Примеры:** `/algorithm/dijkstra`, `/sandbox?a=bfs&b=dijkstra`.
+**Примеры:** `/algorithm/set-cover`, `/sandbox?a=set-cover&b=activity-selection`.
 
 ---
 

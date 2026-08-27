@@ -27,12 +27,12 @@ const complexityColor: Record<string, string> = {
   "O(2ⁿ)": "var(--color-o2n)",
   "O(nk)": "var(--color-on)",
   "O(n + k)": "var(--color-onlogn)",
+  "O(n · m)": "var(--color-on2)",
+  "O(n + m)": "var(--color-on)",
   "O(V + E)": "var(--color-on)",
   "O(V)": "var(--color-ologn)",
   "O(V²)": "var(--color-on2)",
   "O(h)": "var(--color-ologn)",
-  "O(n · m)": "var(--color-on2)",
-  "O(n + m)": "var(--color-on)",
 };
 
 function getComplexityColor(value: string): string {

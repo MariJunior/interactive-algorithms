@@ -1,4 +1,9 @@
-import type { ActivityItem, KnapsackItem } from "@/algorithms/types";
+import type {
+  ActivityItem,
+  KnapsackItem,
+  SetCoverCandidate,
+  SetCoverElement,
+} from "@/algorithms/types";
 
 /** Учебный набор активностей на временной шкале 0…12 */
 export function createDemoActivities(): ActivityItem[] {
@@ -24,5 +29,32 @@ export function createDemoKnapsackItems(): KnapsackItem[] {
     { id: "k1", label: "Золото", weight: 10, value: 60 },
     { id: "k2", label: "Серебро", weight: 20, value: 100 },
     { id: "k3", label: "Бронза", weight: 30, value: 120 },
+  ];
+}
+
+/**
+ * Демо «радиостанции» в духе «Грокаем алгоритмы»:
+ * покрыть штаты минимумом станций (жадное приближение).
+ */
+export function createDemoSetCoverUniverse(): SetCoverElement[] {
+  return [
+    { id: "mt", label: "MT" },
+    { id: "wa", label: "WA" },
+    { id: "or", label: "OR" },
+    { id: "id", label: "ID" },
+    { id: "nv", label: "NV" },
+    { id: "ut", label: "UT" },
+    { id: "ca", label: "CA" },
+    { id: "az", label: "AZ" },
+  ];
+}
+
+export function createDemoSetCoverCandidates(): SetCoverCandidate[] {
+  return [
+    { id: "s1", label: "Станция 1", elementIds: ["id", "nv", "ut"] },
+    { id: "s2", label: "Станция 2", elementIds: ["wa", "id", "mt"] },
+    { id: "s3", label: "Станция 3", elementIds: ["or", "nv", "ca"] },
+    { id: "s4", label: "Станция 4", elementIds: ["nv", "ut"] },
+    { id: "s5", label: "Станция 5", elementIds: ["ca", "az"] },
   ];
 }
