@@ -5,6 +5,7 @@ import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
 import Slider from "@/components/ui/Slider";
 import { ALGORITHMS, getAlgorithmBySlug } from "@/data/algorithms";
+import { formatElapsedMs } from "@/hooks/useAlgorithmPlayer";
 import { createRandomArray } from "@/utils/createRandomArray";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -157,15 +158,27 @@ export default function Sandbox() {
         totalSteps: laneA.player.totalSteps,
         comparisons: statsA.comparisons,
         swaps: statsA.swaps,
+        elapsedMs: laneA.player.elapsedMs,
       },
       {
         name: metaB.name,
         totalSteps: laneB.player.totalSteps,
         comparisons: statsB.comparisons,
         swaps: statsB.swaps,
+        elapsedMs: laneB.player.elapsedMs,
       },
     );
-  }, [bothAtEnd, metaA, metaB, laneA.steps, laneB.steps, laneA.player.totalSteps, laneB.player.totalSteps]);
+  }, [
+    bothAtEnd,
+    metaA,
+    metaB,
+    laneA.steps,
+    laneB.steps,
+    laneA.player.totalSteps,
+    laneB.player.totalSteps,
+    laneA.player.elapsedMs,
+    laneB.player.elapsedMs,
+  ]);
 
   return (
     <div className={styles.page}>
@@ -178,7 +191,7 @@ export default function Sandbox() {
         >
           <h1 className={styles.title}>Песочница сравнения</h1>
           <p className={styles.subtitle}>
-            Один и тот же вход — два алгоритма. Запусти оба и сравни шаги, сравнения и
+            Один и тот же вход — два алгоритма. Запусти оба и сравни шаги, время, сравнения и
             перестановки вживую.
           </p>
         </motion.header>
@@ -198,6 +211,7 @@ export default function Sandbox() {
             currentIndex={laneA.player.currentIndex}
             totalSteps={laneA.player.totalSteps}
             stats={laneA.player.stats}
+            elapsedMs={laneA.player.elapsedMs}
             message={laneA.player.currentStep?.message}
           />
           <SandboxLane
@@ -209,6 +223,7 @@ export default function Sandbox() {
             currentIndex={laneB.player.currentIndex}
             totalSteps={laneB.player.totalSteps}
             stats={laneB.player.stats}
+            elapsedMs={laneB.player.elapsedMs}
             message={laneB.player.currentStep?.message}
           />
         </motion.div>
@@ -328,6 +343,7 @@ interface SandboxLaneProps {
   currentIndex: number;
   totalSteps: number;
   stats: { comparisons: number; swaps: number };
+  elapsedMs: number;
   message?: string;
 }
 
@@ -340,6 +356,7 @@ function SandboxLane({
   currentIndex,
   totalSteps,
   stats,
+  elapsedMs,
   message,
 }: SandboxLaneProps) {
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
@@ -373,6 +390,12 @@ function SandboxLane({
       <div className={styles.laneMeta}>
         <span>
           Шаг: <span className={styles.laneMetaStrong}>{stepLabel}</span>
+        </span>
+        <span>
+          Время:{" "}
+          <span className={styles.laneMetaStrong} aria-live="polite">
+            {formatElapsedMs(elapsedMs)}
+          </span>
         </span>
         <span>
           Сравнений: <span className={styles.laneMetaStrong}>{stats.comparisons}</span>

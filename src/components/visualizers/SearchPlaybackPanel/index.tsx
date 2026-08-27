@@ -84,6 +84,7 @@ export default function SearchPlaybackPanel({ slug }: SearchPlaybackPanelProps) 
         totalSteps={player.totalSteps}
         speed={player.speed}
         stats={player.stats}
+        elapsedMs={player.elapsedMs}
         message={player.currentStep?.message}
         onToggle={player.toggle}
         onStepBack={player.stepBack}

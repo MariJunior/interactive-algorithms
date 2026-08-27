@@ -1,10 +1,12 @@
-import type { PlayerStats } from "@/hooks/useAlgorithmPlayer";
+import { formatElapsedMs, type PlayerStats } from "@/hooks/useAlgorithmPlayer";
 
 export interface CompareSideStats {
   name: string;
   totalSteps: number;
   comparisons: number;
   swaps: number;
+  /** Wall-clock время воспроизведения до финиша, ms */
+  elapsedMs: number;
 }
 
 /** Чистый хелпер итога сравнения — без React */
@@ -14,21 +16,37 @@ export function buildCompareSummary(
 ): string {
   const leftLine = formatSide(left);
   const rightLine = formatSide(right);
+  const lines = [leftLine, rightLine];
 
-  if (left.totalSteps === right.totalSteps) {
-    return `${leftLine}\n${rightLine}\nНичья по числу шагов.`;
-  }
+  lines.push(verdictByMetric("шагам", left, right, (side) => side.totalSteps));
+  lines.push(verdictByMetric("времени", left, right, (side) => side.elapsedMs));
 
-  const faster = left.totalSteps < right.totalSteps ? left : right;
-  const slower = left.totalSteps < right.totalSteps ? right : left;
-  const diffRatio = (slower.totalSteps - faster.totalSteps) / slower.totalSteps;
-  const percent = Math.round(diffRatio * 100);
-
-  return `${leftLine}\n${rightLine}\n${faster.name} быстрее на ${percent}% по числу шагов.`;
+  return lines.join("\n");
 }
 
 function formatSide(side: CompareSideStats): string {
-  return `${side.name}: ${side.totalSteps} шагов, ${side.comparisons} сравн., ${side.swaps} перест.`;
+  return `${side.name}: ${side.totalSteps} шагов, ${side.comparisons} сравн., ${side.swaps} перест., ${formatElapsedMs(side.elapsedMs)}`;
+}
+
+function verdictByMetric(
+  label: string,
+  left: CompareSideStats,
+  right: CompareSideStats,
+  metric: (side: CompareSideStats) => number,
+): string {
+  const leftValue = metric(left);
+  const rightValue = metric(right);
+
+  if (leftValue === rightValue) {
+    return `Ничья по ${label}.`;
+  }
+
+  const faster = leftValue < rightValue ? left : right;
+  const slowerValue = Math.max(leftValue, rightValue);
+  const fasterValue = Math.min(leftValue, rightValue);
+  const percent = slowerValue === 0 ? 0 : Math.round(((slowerValue - fasterValue) / slowerValue) * 100);
+
+  return `${faster.name} быстрее на ${percent}% по ${label}.`;
 }
 
 /** Финальная статистика по всем шагам (не по текущему индексу плеера) */

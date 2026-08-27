@@ -50,6 +50,7 @@ export default function SortPlaybackPanel({ slug }: SortPlaybackPanelProps) {
         totalSteps={player.totalSteps}
         speed={player.speed}
         stats={player.stats}
+        elapsedMs={player.elapsedMs}
         message={player.currentStep?.message}
         onToggle={player.toggle}
         onStepBack={player.stepBack}

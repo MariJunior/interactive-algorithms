@@ -1,5 +1,5 @@
 import Slider from "@/components/ui/Slider";
-import type { PlayerStats } from "@/hooks/useAlgorithmPlayer";
+import { formatElapsedMs, type PlayerStats } from "@/hooks/useAlgorithmPlayer";
 import styles from "./PlaybackControls.module.css";
 
 export interface PlaybackControlsProps {
@@ -11,6 +11,8 @@ export interface PlaybackControlsProps {
   /** Интервал автоплея в миллисекундах */
   speed: number;
   stats: PlayerStats;
+  /** Real-time время воспроизведения (wall-clock), ms */
+  elapsedMs?: number;
   message?: string;
   onToggle: () => void;
   onStepBack: () => void;
@@ -32,6 +34,7 @@ export default function PlaybackControls({
   totalSteps,
   speed,
   stats,
+  elapsedMs = 0,
   message,
   onToggle,
   onStepBack,
@@ -84,7 +87,7 @@ export default function PlaybackControls({
           type="button"
           className={styles.btn}
           onClick={onReset}
-          disabled={isAtStart && !isPlaying}
+          disabled={isAtStart && !isPlaying && elapsedMs === 0}
           aria-label="Сброс"
           title="Сброс"
         >
@@ -111,6 +114,12 @@ export default function PlaybackControls({
       <div className={styles.meta}>
         <span>
           Шаг: <span className={styles.metaStrong}>{stepLabel}</span>
+        </span>
+        <span>
+          Время:{" "}
+          <span className={styles.metaStrong} aria-live="polite">
+            {formatElapsedMs(elapsedMs)}
+          </span>
         </span>
         <span>
           Сравнений: <span className={styles.metaStrong}>{stats.comparisons}</span>

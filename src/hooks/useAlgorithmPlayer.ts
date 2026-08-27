@@ -24,21 +24,35 @@ function computeStats(steps: StepWithAction[], upToIndex: number): PlayerStats {
   };
 }
 
+/** Формат для UI: целые миллисекунды */
+export function formatElapsedMs(ms: number): string {
+  return `${Math.max(0, Math.round(ms))} ms`;
+}
+
 /**
- * Управляет воспроизведением шагов: play/pause, навигация, скорость, статистика.
+ * Управляет воспроизведением шагов: play/pause, навигация, скорость, статистика,
+ * real-time таймер (wall-clock только пока идёт play).
  */
 export function useAlgorithmPlayer<T extends StepWithAction>(steps: T[], stepsId: string) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(400);
+  const [elapsedMs, setElapsedMs] = useState(0);
   const [prevStepsId, setPrevStepsId] = useState(stepsId);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Накопленное время завершённых сегментов play (без текущего)
+  const accumulatedRef = useRef(0);
+  // Инкремент при reset/смене input — чтобы cleanup play-эффекта не дописал время после обнуления
+  const timerGenerationRef = useRef(0);
 
   // Сброс при смене input/алгоритма — паттерн «adjust state when prop changes»
   if (stepsId !== prevStepsId) {
     setPrevStepsId(stepsId);
     setCurrentIndex(0);
     setIsPlaying(false);
+    setElapsedMs(0);
+    accumulatedRef.current = 0;
+    timerGenerationRef.current += 1;
   }
 
   const totalSteps = steps.length;
@@ -84,6 +98,10 @@ export function useAlgorithmPlayer<T extends StepWithAction>(steps: T[], stepsId
   }, []);
 
   const reset = useCallback(() => {
+    // Сначала гасим generation — cleanup play-эффекта не восстановит elapsed
+    timerGenerationRef.current += 1;
+    accumulatedRef.current = 0;
+    setElapsedMs(0);
     pause();
     setCurrentIndex(0);
   }, [pause]);
@@ -95,6 +113,29 @@ export function useAlgorithmPlayer<T extends StepWithAction>(steps: T[], stepsId
     },
     [totalSteps],
   );
+
+  // Real-time таймер: тикает только во время isPlaying
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const generation = timerGenerationRef.current;
+    const segmentStart = performance.now();
+    let rafId = 0;
+
+    const tick = () => {
+      setElapsedMs(Math.round(accumulatedRef.current + performance.now() - segmentStart));
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      // После reset/смены input generation другой — не дописываем в накопитель
+      if (timerGenerationRef.current !== generation) return;
+      accumulatedRef.current += performance.now() - segmentStart;
+      setElapsedMs(Math.round(accumulatedRef.current));
+    };
+  }, [isPlaying]);
 
   // Автовоспроизведение с заданной скоростью
   useEffect(() => {
@@ -133,5 +174,7 @@ export function useAlgorithmPlayer<T extends StepWithAction>(steps: T[], stepsId
     speed,
     setSpeed,
     stats,
+    /** Прошедшее wall-clock время воспроизведения, ms */
+    elapsedMs,
   };
 }
