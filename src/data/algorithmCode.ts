@@ -157,11 +157,99 @@ export const algorithmCode: Record<string, AlgorithmCode> = {
 }`,
   },
 
-  // Для остальных алгоритмов пока заглушка
   "merge-sort": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function mergeSort(arr) {
+  if (arr.length <= 1) return arr.slice()
+
+  const mid = Math.floor(arr.length / 2)
+  const left = mergeSort(arr.slice(0, mid))
+  const right = mergeSort(arr.slice(mid))
+
+  return merge(left, right)
+}
+
+function merge(left, right) {
+  const result = []
+  let i = 0
+  let j = 0
+
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) {
+      result.push(left[i])
+      i++
+    } else {
+      result.push(right[j])
+      j++
+    }
+  }
+
+  while (i < left.length) {
+    result.push(left[i])
+    i++
+  }
+
+  while (j < right.length) {
+    result.push(right[j])
+    j++
+  }
+
+  return result
+}`,
+
+    jsModern: `function mergeSort(arr) {
+  if (arr.length <= 1) return [...arr]
+
+  const mid = Math.floor(arr.length / 2)
+  const left = mergeSort(arr.slice(0, mid))
+  const right = mergeSort(arr.slice(mid))
+
+  return merge(left, right)
+}
+
+function merge(left, right) {
+  const result = []
+  let i = 0
+  let j = 0
+
+  while (i < left.length && j < right.length) {
+    result.push(left[i] <= right[j] ? left[i++] : right[j++])
+  }
+
+  return [...result, ...left.slice(i), ...right.slice(j)]
+}`,
+
+    typescript: `function mergeSort<T>(
+  arr: T[],
+  compareFn = (a: T, b: T) => (a <= b ? -1 : 1)
+): T[] {
+  if (arr.length <= 1) return [...arr]
+
+  const mid = Math.floor(arr.length / 2)
+  const left = mergeSort(arr.slice(0, mid), compareFn)
+  const right = mergeSort(arr.slice(mid), compareFn)
+
+  return merge(left, right, compareFn)
+}
+
+function merge<T>(
+  left: T[],
+  right: T[],
+  compareFn: (a: T, b: T) => number
+): T[] {
+  const result: T[] = []
+  let i = 0
+  let j = 0
+
+  while (i < left.length && j < right.length) {
+    if (compareFn(left[i], right[j]) <= 0) {
+      result.push(left[i++])
+    } else {
+      result.push(right[j++])
+    }
+  }
+
+  return result.concat(left.slice(i), right.slice(j))
+}`,
   },
 
   "quick-sort": {

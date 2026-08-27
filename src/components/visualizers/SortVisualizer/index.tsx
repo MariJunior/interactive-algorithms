@@ -10,8 +10,9 @@ interface SortVisualizerProps {
 }
 
 function resolveBarState(index: number, step: SortStep): BarState {
-  // Приоритет: sorted < swapping/comparing — активные действия виднее на фоне «уже готовых»
+  // Приоритет: активные действия виднее фона уже отсортированных
   if (step.swapping?.includes(index)) return "swapping";
+  if (step.action === "merge" && step.comparing?.includes(index)) return "selected";
   if (step.comparing?.includes(index)) return "comparing";
   if (step.pivot === index) return "selected";
   if (step.sorted?.includes(index)) return "sorted";
