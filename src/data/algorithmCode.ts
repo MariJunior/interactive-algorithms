@@ -545,14 +545,76 @@ function countingSortByDigit(a, exp) {
   },
 
   "linear-search": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function linearSearch(arr, target) {
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] === target) {
+      return i
+    }
+  }
+  return -1
+}`,
+
+    jsModern: `function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) return i
+  }
+  return -1
+}`,
+
+    typescript: `function linearSearch<T>(
+  arr: readonly T[],
+  target: T
+): number {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) return i
+  }
+  return -1
+}`,
   },
 
   "binary-search": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function binarySearch(arr, target) {
+  var low = 0
+  var high = arr.length - 1
+
+  while (low <= high) {
+    var mid = Math.floor((low + high) / 2)
+    if (arr[mid] === target) return mid
+    if (arr[mid] < target) {
+      low = mid + 1
+    } else {
+      high = mid - 1
+    }
+  }
+  return -1
+}`,
+
+    jsModern: `function binarySearch(arr, target) {
+  let low = 0
+  let high = arr.length - 1
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+    if (arr[mid] === target) return mid
+    arr[mid] < target ? (low = mid + 1) : (high = mid - 1)
+  }
+  return -1
+}`,
+
+    typescript: `function binarySearch(
+  arr: readonly number[],
+  target: number
+): number {
+  let low = 0
+  let high = arr.length - 1
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+    if (arr[mid] === target) return mid
+    if (arr[mid] < target) low = mid + 1
+    else high = mid - 1
+  }
+  return -1
+}`,
   },
 };

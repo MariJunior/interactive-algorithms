@@ -1,0 +1,100 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.target {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.targetValue {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-searching);
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(2px, 0.6vw, 8px);
+  height: 240px;
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.barWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  gap: 2px;
+}
+
+.bar {
+  width: 100%;
+  max-width: 36px;
+  margin-inline: auto;
+  border-radius: var(--radius-sm) var(--radius-sm) 2px 2px;
+  transform-origin: bottom center;
+}
+
+.value {
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-faint);
+  line-height: 1;
+  user-select: none;
+}
+
+.index {
+  font-size: 0.55rem;
+  font-family: var(--font-mono);
+  color: color-mix(in srgb, var(--color-text-faint) 70%, transparent);
+  line-height: 1;
+  user-select: none;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* Состояния ячеек — акцент категории searching */
+.default {
+  background: color-mix(in srgb, var(--color-searching) 35%, var(--color-surface-2));
+}
+
+.inRange {
+  background: color-mix(in srgb, var(--color-searching) 55%, var(--color-surface-2));
+}
+
+.checking {
+  background: var(--color-on);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-on) 40%, transparent);
+}
+
+.found {
+  background: var(--color-o1);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-o1) 45%, transparent);
+}
+
+.eliminated {
+  background: color-mix(in srgb, var(--color-surface-2) 80%, var(--color-border));
+  opacity: 0.45;
+}

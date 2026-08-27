@@ -1,11 +1,13 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
 import CodeBlock from "@/components/CodeBlock";
 import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
+import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import styles from "./Algorithm.module.css";
 
@@ -257,7 +259,9 @@ export default function Algorithm() {
           {/* Левая колонка — визуализация (только для алгоритмов с генератором шагов) */}
           <div className={`${styles.visualizerCol} ${styles.stickyPanel}`}>
             {slug && hasSortingVisualization(slug) ? (
-              <SortPlaybackPanel slug={slug} />
+              <SortPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasSearchingVisualization(slug) ? (
+              <SearchPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

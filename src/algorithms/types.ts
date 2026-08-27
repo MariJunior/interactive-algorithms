@@ -19,6 +19,30 @@ export interface SortStep<T = number> {
   message?: string; // человекочитаемое описание шага
 }
 
+/** Действия шага поиска (отдельно от сортировки — другая семантика) */
+export type SearchStepAction =
+  | "compare" // проверяем элемент / mid
+  | "found" // цель найдена
+  | "done"; // поиск завершён (в т.ч. «не найдено»)
+
+/** Один шаг линейного / бинарного поиска */
+export interface SearchStep<T = number> {
+  array: T[];
+  target: T;
+  action: SearchStepAction;
+  /** Индекс, который сейчас сравниваем с target */
+  checking?: number;
+  /** Бинарный поиск: левая граница включительно */
+  low?: number;
+  /** Бинарный поиск: правая граница включительно */
+  high?: number;
+  /** Индекс найденного элемента (если есть) */
+  foundIndex?: number;
+  /** Индексы вне текущего окна поиска (для затемнения) */
+  eliminated?: number[];
+  message?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;
