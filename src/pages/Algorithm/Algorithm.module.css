@@ -157,6 +157,45 @@
   color: var(--color-text-faint);
 }
 
+/* ─── Как работает ────────────────────────────────────── */
+.howList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.howItem {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.howIndex {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.howText {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  padding-top: 2px;
+}
+
 /* ─── Таблица сложности ───────────────────────────────── */
 .complexityTable {
   display: flex;

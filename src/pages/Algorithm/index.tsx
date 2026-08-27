@@ -121,6 +121,23 @@ function AlgorithmBadges({ stable, inPlace }: { stable?: boolean; inPlace?: bool
   );
 }
 
+// ─── Секция "Как работает" ───────────────────────────────
+
+function HowItWorks({ steps }: { steps: string[] }) {
+  return (
+    <ol className={styles.howList}>
+      {steps.map((step, index) => (
+        <li key={index} className={styles.howItem}>
+          <span className={styles.howIndex} aria-hidden="true">
+            {index + 1}
+          </span>
+          <span className={styles.howText}>{step}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 // ─── Главный компонент ───────────────────────────────────
 
 export default function Algorithm() {
@@ -132,7 +149,7 @@ export default function Algorithm() {
   // Если алгоритм не найден — редирект на /learn
   if (!algorithm) return <Navigate to="/learn" replace />;
 
-  const { name, complexity, shortDescription, when, stable, inPlace } = algorithm;
+  const { name, complexity, shortDescription, howItWorks, when, stable, inPlace } = algorithm;
 
   // Собираем вкладки кода — только те что есть
   const codeTabs = code
@@ -143,8 +160,17 @@ export default function Algorithm() {
       ]
     : [];
 
-  // Аккордеон-секции
+  // Порядок как в wireframe: Как работает → Big O → Когда использовать
   const accordionItems = [
+    ...(howItWorks?.length
+      ? [
+          {
+            id: "how",
+            title: "📖 Как работает",
+            content: <HowItWorks steps={howItWorks} />,
+          },
+        ]
+      : []),
     {
       id: "complexity",
       title: "⏱ Big O — сложность",
@@ -156,6 +182,10 @@ export default function Algorithm() {
       content: <WhenToUse use={when.use} avoid={when.avoid} />,
     },
   ];
+
+  const defaultOpen = howItWorks?.length
+    ? ["how", "complexity", "when"]
+    : ["complexity", "when"];
 
   return (
     <div className={styles.page}>
@@ -223,7 +253,7 @@ export default function Algorithm() {
 
           {/* Правая колонка — описание */}
           <div className={styles.infoCol}>
-            <Accordion items={accordionItems} defaultOpen={["complexity", "when"]} />
+            <Accordion items={accordionItems} defaultOpen={defaultOpen} />
           </div>
         </motion.div>
 

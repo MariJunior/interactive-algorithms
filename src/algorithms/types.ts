@@ -44,6 +44,8 @@ export interface AlgorithmMeta {
   category: AlgorithmCategory;
   complexity: Complexity;
   shortDescription: string; // для карточки на /learn
+  /** Пошаговое объяснение «Как работает» — опционально, пока не у всех алгоритмов */
+  howItWorks?: string[];
   when: {
     use: string[]; // когда применять
     avoid: string[]; // когда не применять
