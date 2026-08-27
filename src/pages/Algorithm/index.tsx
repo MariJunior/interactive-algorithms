@@ -1,9 +1,11 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { hasSortingVisualization } from "@/algorithms/sorting";
 import { getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
 import CodeBlock from "@/components/CodeBlock";
+import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import styles from "./Algorithm.module.css";
 
 // ─── Таблица сложности ───────────────────────────────────
@@ -206,13 +208,17 @@ export default function Algorithm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          {/* Левая колонка — визуализация (заглушка пока) */}
+          {/* Левая колонка — визуализация (только для алгоритмов с генератором шагов) */}
           <div className={styles.visualizerCol}>
-            <div className={styles.visualizerPlaceholder}>
-              <span className={styles.visualizerPlaceholderIcon}>🎬</span>
-              <p className={styles.visualizerPlaceholderText}>Визуализация появится здесь</p>
-              <p className={styles.visualizerPlaceholderSub}>— в следующем этапе</p>
-            </div>
+            {slug && hasSortingVisualization(slug) ? (
+              <SortPlaybackPanel slug={slug} />
+            ) : (
+              <div className={styles.visualizerPlaceholder}>
+                <span className={styles.visualizerPlaceholderIcon}>🎬</span>
+                <p className={styles.visualizerPlaceholderText}>Визуализация появится здесь</p>
+                <p className={styles.visualizerPlaceholderSub}>— алгоритм ещё в разработке</p>
+              </div>
+            )}
           </div>
 
           {/* Правая колонка — описание */}

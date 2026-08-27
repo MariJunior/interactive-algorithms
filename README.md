@@ -1,73 +1,145 @@
-# React + TypeScript + Vite
+# AlgoVisual
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Интерактивный учебник по алгоритмам и структурам данных** — теория, код и пошаговая визуализация в одном месте.
 
-Currently, two official plugins are available:
+Разбирай алгоритмы не по сухим формулам, а через анимацию, короткую теорию и код на JavaScript / TypeScript — от Big O до сортировок, поиска и дальше по каталогу.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Зачем это
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Не справочник «прочитать и забыть», а **живая рабочая тетрадь**:
 
-## Expanding the ESLint configuration
+- смотришь, как алгоритм «думает» шаг за шагом;
+- рядом — Big O, когда использовать / когда нет;
+- три варианта кода: JS базовый, JS современный, TypeScript;
+- чистые реализации отдельно от UI — удобно читать и тестировать.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Текущее состояние
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Область | Статус |
+|--------|--------|
+| Лендинг `/`, учебник `/learn`, страницы алгоритмов | Готово |
+| Big O + реестр 10 алгоритмов (8 сортировок, 2 поиска) | Готово |
+| Bubble / Selection / Insertion — код, TS, генераторы шагов, тесты | Готово |
+| 2D bar-chart + play / pause / step / speed / random | Готово |
+| Остальные сортировки, поиск с визуализатором | В планах |
+| Песочница `/sandbox`, Shiki, деплой | В планах |
+| Полный каталог (деревья, графы, DP…), CSS-арт, квиз | В планах |
+| 3D (React Three Fiber) | Финальный этап |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+**Сейчас можно открыть** `/algorithm/bubble-sort`, `/algorithm/selection-sort` или `/algorithm/insertion-sort` и запустить анимацию.
+
+---
+
+## Roadmap
+
+1. ~~Оболочка, Big O, реестр, дизайн-система~~
+2. ~~Первые 3 сортировки + живой визуализатор~~
+3. Секция «Как работает» в аккордеоне
+4. Остальные сортировки (Merge → Quick → Heap → Radix → Counting)
+5. Linear / Binary Search + отдельный визуализатор
+6. Песочница сравнения (`/sandbox?a=&b=`)
+7. Полировка: Shiki, a11y, адаптив, деплой на Vercel
+8. Расширенный каталог: структуры данных, деревья, графы, DP, жадные, строки
+9. CSS-арт на карточках + мини-квиз «Угадай сложность»
+10. **3D-режим** для избранных алгоритмов
+
+---
+
+## Стек
+
+| Слой | Технологии |
+|------|------------|
+| Сборка | Vite 8, TypeScript 6 |
+| UI | React 19, React Router 7 |
+| Анимации | Framer Motion 12 |
+| Стили | CSS Modules + design tokens |
+| Подсветка кода | Shiki 4 *(зависимость есть, интеграция в планах)* |
+| Тесты | Vitest 4, Testing Library, jsdom |
+| Качество | ESLint 9, Prettier 3 |
+| Деплой (план) | Vercel |
+| 3D (план) | Three.js + React Three Fiber + Drei |
+
+---
+
+## Архитектура
+
+Clean Architecture в упрощённом виде для фронта:
+
+```
+src/
+├── algorithms/          # Domain: чистый TS, генераторы шагов, без React
+│   └── sorting/
+├── hooks/               # Application: runner + player
+├── data/                # Метаданные и код для отображения
+├── components/
+│   ├── visualizers/     # Presentation: рендер SortStep
+│   └── ui/              # Глупые UI-контролы
+└── pages/               # Composition / маршруты
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Каждый алгоритм — в двух видах:
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+1. **чистая функция** — для тестов и проверки корректности;
+2. **генератор шагов** (`*Steps`) — для визуализации.
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+Визуализатор **только рисует** текущий `SortStep`, без алгоритмической логики внутри.
+
+---
+
+## Быстрый старт
+
+Требования: **Node.js 20+** (рекомендуется LTS).
+
+```bash
+# клонировать и перейти в каталог
+cd interactive-algorithms
+
+# установить зависимости
+npm install
+
+# режим разработки → http://localhost:5173
+npm run dev
 ```
+
+---
+
+## Команды
+
+| Команда | Что делает |
+|---------|------------|
+| `npm run dev` | Dev-сервер Vite с HMR |
+| `npm run build` | Проверка типов (`tsc`) + production-сборка |
+| `npm run preview` | Локальный просмотр production-сборки |
+| `npm test` | Юнит-тесты один раз (Vitest) |
+| `npm run test:watch` | Тесты в watch-режиме |
+| `npm run test:ui` | Vitest UI |
+| `npm run lint` | ESLint |
+| `npm run lint:fix` | ESLint с автофиксом |
+| `npm run format:check` | Проверка Prettier |
+| `npm run format:fix` | Форматирование Prettier |
+| `npm run check` | lint + format:check |
+| `npm run check:fix` | автофикс lint + format |
+| `npm run clean` | Удалить `dist` и `node_modules` |
+
+---
+
+## Страницы
+
+| Путь | Назначение |
+|------|------------|
+| `/` | Лендинг |
+| `/learn` | Big O + каталог алгоритмов с фильтрами |
+| `/algorithm/:slug` | Теория, визуализация, код |
+| `/sandbox` | Сравнение алгоритмов *(пока заглушка)* |
+
+Примеры slug: `bubble-sort`, `selection-sort`, `insertion-sort`, `merge-sort`, `binary-search`.
+
+---
+
+## Лицензия
+
+Private / учебный портфолио-проект. При публикации на GitHub лицензию можно добавить отдельно.
