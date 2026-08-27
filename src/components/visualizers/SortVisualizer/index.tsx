@@ -13,6 +13,7 @@ function resolveBarState(index: number, step: SortStep): BarState {
   // Приоритет: активные действия виднее фона уже отсортированных
   if (step.swapping?.includes(index)) return "swapping";
   if (step.action === "merge" && step.comparing?.includes(index)) return "selected";
+  if (step.action === "insert" && step.comparing?.includes(index)) return "selected";
   if (step.comparing?.includes(index)) return "comparing";
   if (step.pivot === index) return "selected";
   if (step.sorted?.includes(index)) return "sorted";

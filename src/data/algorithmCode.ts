@@ -253,27 +253,295 @@ function merge<T>(
   },
 
   "quick-sort": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function quickSort(arr) {
+  const a = arr.slice()
+  sortRange(a, 0, a.length - 1)
+  return a
+}
+
+function sortRange(a, lo, hi) {
+  if (lo >= hi) return
+  const pivotIndex = partition(a, lo, hi)
+  sortRange(a, lo, pivotIndex - 1)
+  sortRange(a, pivotIndex + 1, hi)
+}
+
+function partition(a, lo, hi) {
+  const pivot = a[hi]
+  let store = lo
+  for (let i = lo; i < hi; i++) {
+    if (a[i] < pivot) {
+      const temp = a[i]
+      a[i] = a[store]
+      a[store] = temp
+      store++
+    }
+  }
+  const temp = a[store]
+  a[store] = a[hi]
+  a[hi] = temp
+  return store
+}`,
+
+    jsModern: `function quickSort(arr) {
+  const a = [...arr]
+  const sortRange = (lo, hi) => {
+    if (lo >= hi) return
+    const pivot = a[hi]
+    let store = lo
+    for (let i = lo; i < hi; i++) {
+      if (a[i] < pivot) {
+        ;[a[i], a[store]] = [a[store], a[i]]
+        store++
+      }
+    }
+    ;[a[store], a[hi]] = [a[hi], a[store]]
+    sortRange(lo, store - 1)
+    sortRange(store + 1, hi)
+  }
+  sortRange(0, a.length - 1)
+  return a
+}`,
+
+    typescript: `function quickSort<T>(
+  arr: T[],
+  compareFn = (a: T, b: T) => (a < b ? -1 : a > b ? 1 : 0)
+): T[] {
+  const a = [...arr]
+
+  const partition = (lo: number, hi: number): number => {
+    const pivot = a[hi]
+    let store = lo
+    for (let i = lo; i < hi; i++) {
+      if (compareFn(a[i], pivot) < 0) {
+        ;[a[i], a[store]] = [a[store], a[i]]
+        store++
+      }
+    }
+    ;[a[store], a[hi]] = [a[hi], a[store]]
+    return store
+  }
+
+  const sortRange = (lo: number, hi: number) => {
+    if (lo >= hi) return
+    const pivotIndex = partition(lo, hi)
+    sortRange(lo, pivotIndex - 1)
+    sortRange(pivotIndex + 1, hi)
+  }
+
+  sortRange(0, a.length - 1)
+  return a
+}`,
   },
 
   "heap-sort": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function heapSort(arr) {
+  const a = arr.slice()
+  const n = a.length
+
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+    heapify(a, n, i)
+  }
+
+  for (let end = n - 1; end > 0; end--) {
+    const temp = a[0]
+    a[0] = a[end]
+    a[end] = temp
+    heapify(a, end, 0)
+  }
+
+  return a
+}
+
+function heapify(a, heapSize, root) {
+  let largest = root
+  const left = 2 * root + 1
+  const right = 2 * root + 2
+
+  if (left < heapSize && a[left] > a[largest]) largest = left
+  if (right < heapSize && a[right] > a[largest]) largest = right
+
+  if (largest !== root) {
+    const temp = a[root]
+    a[root] = a[largest]
+    a[largest] = temp
+    heapify(a, heapSize, largest)
+  }
+}`,
+
+    jsModern: `function heapSort(arr) {
+  const a = [...arr]
+  const heapify = (heapSize, root) => {
+    let largest = root
+    const left = 2 * root + 1
+    const right = 2 * root + 2
+    if (left < heapSize && a[left] > a[largest]) largest = left
+    if (right < heapSize && a[right] > a[largest]) largest = right
+    if (largest !== root) {
+      ;[a[root], a[largest]] = [a[largest], a[root]]
+      heapify(heapSize, largest)
+    }
+  }
+
+  for (let i = Math.floor(a.length / 2) - 1; i >= 0; i--) heapify(a.length, i)
+  for (let end = a.length - 1; end > 0; end--) {
+    ;[a[0], a[end]] = [a[end], a[0]]
+    heapify(end, 0)
+  }
+  return a
+}`,
+
+    typescript: `function heapSort<T>(
+  arr: T[],
+  compareFn = (a: T, b: T) => (a < b ? -1 : a > b ? 1 : 0)
+): T[] {
+  const a = [...arr]
+
+  const heapify = (heapSize: number, root: number) => {
+    let largest = root
+    const left = 2 * root + 1
+    const right = 2 * root + 2
+    if (left < heapSize && compareFn(a[left], a[largest]) > 0) largest = left
+    if (right < heapSize && compareFn(a[right], a[largest]) > 0) largest = right
+    if (largest !== root) {
+      ;[a[root], a[largest]] = [a[largest], a[root]]
+      heapify(heapSize, largest)
+    }
+  }
+
+  for (let i = Math.floor(a.length / 2) - 1; i >= 0; i--) heapify(a.length, i)
+  for (let end = a.length - 1; end > 0; end--) {
+    ;[a[0], a[end]] = [a[end], a[0]]
+    heapify(end, 0)
+  }
+  return a
+}`,
   },
 
   "radix-sort": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function radixSort(arr) {
+  if (arr.length <= 1) return arr.slice()
+  const a = arr.slice()
+  const max = Math.max.apply(null, a)
+
+  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    countingSortByDigit(a, exp)
+  }
+  return a
+}
+
+function countingSortByDigit(a, exp) {
+  const n = a.length
+  const output = new Array(n)
+  const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+  for (let i = 0; i < n; i++) {
+    const digit = Math.floor(a[i] / exp) % 10
+    counts[digit]++
+  }
+  for (let i = 1; i < 10; i++) counts[i] += counts[i - 1]
+  for (let i = n - 1; i >= 0; i--) {
+    const digit = Math.floor(a[i] / exp) % 10
+    counts[digit]--
+    output[counts[digit]] = a[i]
+  }
+  for (let i = 0; i < n; i++) a[i] = output[i]
+}`,
+
+    jsModern: `function radixSort(arr) {
+  if (arr.length <= 1) return [...arr]
+  const a = [...arr]
+  const max = Math.max(...a)
+
+  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    const counts = Array(10).fill(0)
+    for (const value of a) counts[Math.floor(value / exp) % 10]++
+    for (let i = 1; i < 10; i++) counts[i] += counts[i - 1]
+    const output = Array(a.length)
+    for (let i = a.length - 1; i >= 0; i--) {
+      const digit = Math.floor(a[i] / exp) % 10
+      output[--counts[digit]] = a[i]
+    }
+    output.forEach((value, index) => { a[index] = value })
+  }
+  return a
+}`,
+
+    typescript: `function radixSort(arr: number[]): number[] {
+  if (arr.length <= 1) return [...arr]
+  if (arr.some((v) => v < 0 || !Number.isInteger(v))) {
+    throw new Error("Only non-negative integers")
+  }
+
+  const a = [...arr]
+  const max = Math.max(...a)
+
+  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    const counts = new Array<number>(10).fill(0)
+    for (const value of a) counts[Math.floor(value / exp) % 10]++
+    for (let i = 1; i < 10; i++) counts[i] += counts[i - 1]
+    const output = new Array<number>(a.length)
+    for (let i = a.length - 1; i >= 0; i--) {
+      const digit = Math.floor(a[i] / exp) % 10
+      output[--counts[digit]] = a[i]
+    }
+    a.splice(0, a.length, ...output)
+  }
+  return a
+}`,
   },
 
   "counting-sort": {
-    jsBasic: "// Скоро будет",
-    jsModern: "// Скоро будет",
-    typescript: "// Скоро будет",
+    jsBasic: `function countingSort(arr) {
+  if (arr.length <= 1) return arr.slice()
+  let min = arr[0]
+  let max = arr[0]
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < min) min = arr[i]
+    if (arr[i] > max) max = arr[i]
+  }
+
+  const counts = []
+  for (let i = 0; i < max - min + 1; i++) counts[i] = 0
+  for (let i = 0; i < arr.length; i++) counts[arr[i] - min]++
+  for (let i = 1; i < counts.length; i++) counts[i] += counts[i - 1]
+
+  const result = new Array(arr.length)
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const value = arr[i]
+    counts[value - min]--
+    result[counts[value - min]] = value
+  }
+  return result
+}`,
+
+    jsModern: `function countingSort(arr) {
+  if (arr.length <= 1) return [...arr]
+  const min = Math.min(...arr)
+  const max = Math.max(...arr)
+  const counts = Array(max - min + 1).fill(0)
+  for (const value of arr) counts[value - min]++
+  for (let i = 1; i < counts.length; i++) counts[i] += counts[i - 1]
+  const result = Array(arr.length)
+  for (let i = arr.length - 1; i >= 0; i--) {
+    result[--counts[arr[i] - min]] = arr[i]
+  }
+  return result
+}`,
+
+    typescript: `function countingSort(arr: number[]): number[] {
+  if (arr.length <= 1) return [...arr]
+  const min = Math.min(...arr)
+  const max = Math.max(...arr)
+  const counts = new Array<number>(max - min + 1).fill(0)
+  for (const value of arr) counts[value - min]++
+  for (let i = 1; i < counts.length; i++) counts[i] += counts[i - 1]
+  const result = new Array<number>(arr.length)
+  for (let i = arr.length - 1; i >= 0; i--) {
+    result[--counts[arr[i] - min]] = arr[i]
+  }
+  return result
+}`,
   },
 
   "linear-search": {
