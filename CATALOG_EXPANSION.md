@@ -94,9 +94,9 @@ pages Algorithm + Sandbox
 - [x] Sandbox вкладка greedy (peers: расписание / рюкзак / покрытие)
 
 ### Шаг 8i — Коммивояжёр
-- [ ] Brute-force steps (малый n) + nearest-neighbor heuristic
-- [ ] Visualizer + категория `np-complete`
-- [ ] Явный UX-баннер про NP-полноту / экспоненту
+- [x] Brute-force steps (малый n) + nearest-neighbor heuristic
+- [x] Visualizer + категория `np-complete`
+- [x] Явный UX-баннер про NP-полноту / экспоненту
 
 ### Шаг 8j — k-NN
 - [ ] Domain 2D + tests

@@ -8,6 +8,7 @@ import type {
   SortStep,
   StringStep,
   TreeStep,
+  TspStep,
 } from "@/algorithms/types";
 import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
@@ -17,6 +18,7 @@ import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
+import { hasTspVisualization } from "@/algorithms/tsp";
 import ActivitySelectionVisualizer from "@/components/visualizers/ActivitySelectionVisualizer";
 import DpTableVisualizer from "@/components/visualizers/DpTableVisualizer";
 import FractionalKnapsackVisualizer from "@/components/visualizers/FractionalKnapsackVisualizer";
@@ -27,6 +29,7 @@ import SortVisualizer from "@/components/visualizers/SortVisualizer";
 import SetCoverVisualizer from "@/components/visualizers/SetCoverVisualizer";
 import StringMatchVisualizer from "@/components/visualizers/StringMatchVisualizer";
 import TreeVisualizer from "@/components/visualizers/TreeVisualizer";
+import TspVisualizer from "@/components/visualizers/TspVisualizer";
 import Slider from "@/components/ui/Slider";
 import { ALGORITHMS, CATEGORIES, getAlgorithmBySlug } from "@/data/algorithms";
 import { formatElapsedMs, type PlayerStats } from "@/hooks/useAlgorithmPlayer";
@@ -41,8 +44,10 @@ import {
   DEMO_GRAPH_START,
   DEMO_PATTERN,
   DEMO_TEXT,
+  DEMO_TSP_START,
   createDemoGraph,
   createDemoTree,
+  createDemoTspCities,
   useSandboxLane,
   type SandboxLaneKind,
 } from "./useSandboxLane";
@@ -59,7 +64,8 @@ const COMPARABLE = ALGORITHMS.filter(
     hasDpVisualization(algo.slug) ||
     hasStringVisualization(algo.slug) ||
     hasGreedyVisualization(algo.slug) ||
-    hasHashTableVisualization(algo.slug),
+    hasHashTableVisualization(algo.slug) ||
+    hasTspVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -132,6 +138,8 @@ export default function Sandbox() {
   const [dpN, setDpN] = useState(DEMO_DP_N);
   const [text, setText] = useState(DEMO_TEXT);
   const [pattern, setPattern] = useState(DEMO_PATTERN);
+  const [tspCities] = useState(() => createDemoTspCities());
+  const [tspStartId, setTspStartId] = useState(DEMO_TSP_START);
 
   const metaA = getAlgorithmBySlug(slugA);
   const metaB = getAlgorithmBySlug(slugB);
@@ -150,6 +158,7 @@ export default function Sandbox() {
   const isStringCategory = activeCategory === "string";
   const isGreedyCategory = activeCategory === "greedy";
   const isHashCategory = activeCategory === "data-structures";
+  const isTspCategory = activeCategory === "np-complete";
 
   const laneA = useSandboxLane(
     slugA,
@@ -161,6 +170,7 @@ export default function Sandbox() {
     dpN,
     text,
     pattern,
+    tspStartId,
   );
   const laneB = useSandboxLane(
     slugB,
@@ -172,6 +182,7 @@ export default function Sandbox() {
     dpN,
     text,
     pattern,
+    tspStartId,
   );
 
   // Запись выровненных slug в URL (конфликт категорий / пустой query)
@@ -389,7 +400,9 @@ export default function Sandbox() {
                       ? "Жадные демо"
                       : isHashCategory
                         ? "Хеш-таблица"
-                        : "Общий input"}
+                        : isTspCategory
+                          ? "Города TSP"
+                          : "Общий input"}
           </h2>
 
           {isGraphCategory ? (
@@ -472,6 +485,28 @@ export default function Sandbox() {
               Учебный сценарий: вставки (в т.ч. коллизия apple/mango) и поиск. Пока один
               алгоритм в категории — обе полосы показывают одно и то же демо.
             </p>
+          ) : isTspCategory ? (
+            <div className={styles.targetRow}>
+              <label className={styles.targetLabel} htmlFor="sandbox-tsp-start">
+                Стартовый город
+              </label>
+              <select
+                id="sandbox-tsp-start"
+                className={styles.select}
+                value={tspStartId}
+                onChange={(event) => setTspStartId(event.target.value)}
+              >
+                {tspCities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.label}
+                  </option>
+                ))}
+              </select>
+              <p className={styles.hint}>
+                Полный перебор vs nearest-neighbor на одних и тех же 5 городах. Сравни длину
+                тура и число шагов — NP-баннер напоминает про (n−1)!.
+              </p>
+            </div>
           ) : (
             <>
               <div className={styles.inputRow}>
@@ -595,6 +630,7 @@ interface SandboxLaneProps {
     | StringStep
     | GreedyStep
     | HashTableStep
+    | TspStep
     | null;
   currentIndex: number;
   totalSteps: number;
@@ -632,7 +668,11 @@ function SandboxLane({
             ? "Взятий"
             : kind === "hashtable"
               ? "Записей / коллизий"
-              : "Перемещений";
+              : kind === "tsp"
+                ? slug === "tsp-brute"
+                  ? "Улучшений"
+                  : "Добавлений города"
+                : "Перемещений";
   const compareLabel =
     kind === "graph"
       ? slug === "dijkstra"
@@ -648,7 +688,11 @@ function SandboxLane({
               ? "Рассмотрений"
               : kind === "hashtable"
                 ? "Хешей / поисков"
-                : "Сравнений";
+                : kind === "tsp"
+                  ? slug === "tsp-brute"
+                    ? "Просмотров туров"
+                    : "Шагов выбора"
+                  : "Сравнений";
 
   const treeCopy =
     slug === "preorder-traversal"
@@ -807,6 +851,20 @@ function SandboxLane({
             step && "kind" in step && step.kind === "hashtable"
               ? step
               : null
+          }
+        />
+      ) : kind === "tsp" ? (
+        <TspVisualizer
+          step={step && "kind" in step && step.kind === "tsp" ? step : null}
+          task={
+            slug === "tsp-nearest-neighbor"
+              ? "Задача о коммивояжёре: построить тур жадной эвристикой"
+              : "Задача о коммивояжёре: найти кратчайший цикл полным перебором"
+          }
+          ruleHint={
+            slug === "tsp-nearest-neighbor"
+              ? "Из текущей точки всегда идём в ближайший ещё не посещённый город"
+              : "Фиксируем старт и перебираем все порядки остальных городов — (n−1)!"
           }
         />
       ) : (

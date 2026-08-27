@@ -81,7 +81,8 @@ export function finalStatsFromActions(
         step.action === "shift" ||
         step.action === "take" ||
         step.action === "place" ||
-        step.action === "collide",
+        step.action === "collide" ||
+        step.action === "improve",
     ).length,
   };
 }

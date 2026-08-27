@@ -289,6 +289,39 @@ export interface HashTableStep {
   formula?: string;
 }
 
+/** Город для TSP (координаты для 2D-демо) */
+export interface TspCity {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+}
+
+export type TspStepAction =
+  | "explore" // смотрим тур / кандидата
+  | "improve" // нашли более короткий тур (brute)
+  | "take" // жадно добавили город (NN)
+  | "done";
+
+export interface TspStep {
+  kind: "tsp";
+  action: TspStepAction;
+  method: "brute" | "nearest-neighbor";
+  cities: TspCity[];
+  /** Текущий путь (для NN — строящийся; для brute — полный тур без замыкания в path или с return) */
+  path: string[];
+  /** Лучший полный тур (замкнутый: первый = последний опционально; храним без повтора старта в конце) */
+  bestPath: string[];
+  bestLength: number;
+  currentLength?: number;
+  /** Сколько полных туров уже просмотрели (brute) */
+  toursChecked: number;
+  /** Всего туров при фиксированном старте: (n-1)! */
+  totalTours: number;
+  message?: string;
+  formula?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;
@@ -306,7 +339,8 @@ export type AlgorithmCategory =
   | "dynamic-programming"
   | "greedy"
   | "string"
-  | "data-structures";
+  | "data-structures"
+  | "np-complete";
 
 // Метаданные алгоритма (для карточек и страниц)
 export interface AlgorithmMeta {

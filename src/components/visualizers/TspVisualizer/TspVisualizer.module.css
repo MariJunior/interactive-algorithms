@@ -1,0 +1,150 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.npBanner {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-o2n) 16%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-o2n) 45%, var(--color-border));
+  border-radius: var(--radius-md);
+}
+
+.npStrong {
+  font-weight: 700;
+  color: var(--color-o2n);
+}
+
+.task,
+.rule,
+.formula {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-np) 12%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-np) 35%, var(--color-border));
+  border-radius: var(--radius-md);
+}
+
+.rule,
+.formula {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+}
+
+.taskLabel {
+  font-weight: 600;
+  color: var(--color-np);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.metaStrong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-np);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swatch {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.swatchBest {
+  background: var(--color-o1);
+}
+
+.swatchCurrent {
+  background: var(--color-np);
+}
+
+.swatchCity {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  background: var(--color-surface-2);
+  border: 1.5px solid var(--color-border-hover);
+}
+
+.canvas {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.tourBest {
+  fill: none;
+  stroke: var(--color-o1);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.tourCurrent {
+  fill: none;
+  stroke: var(--color-np);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.city {
+  fill: var(--color-surface-2);
+  stroke: var(--color-border-hover);
+  stroke-width: 2;
+}
+
+.cityLabel {
+  fill: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+}

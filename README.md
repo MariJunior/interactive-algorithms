@@ -33,13 +33,14 @@
 | Строки: Naive / KMP + `StringMatchVisualizer` | Готово |
 | Жадные: расписание / рюкзак / покрытие множества | Готово |
 | Хеш-таблица (chaining) | Готово |
-| TSP, k-NN | В плане (`CATALOG_EXPANSION.md`) |
+| TSP: перебор + nearest-neighbor (NP) | Готово |
+| k-NN | В плане (`CATALOG_EXPANSION.md`) |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
 | CSS-арт, квиз | В планах (после расширения каталога) |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Примеры:** `/algorithm/set-cover`, `/sandbox?a=set-cover&b=activity-selection`.
+**Примеры:** `/algorithm/tsp-brute`, `/sandbox?a=tsp-brute&b=tsp-nearest-neighbor`.
 
 ---
 

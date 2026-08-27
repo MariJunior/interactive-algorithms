@@ -36,6 +36,7 @@ const COUNTABLE_ACTIONS = {
     "take",
     "place",
     "collide",
+    "improve",
   ]),
 };
 

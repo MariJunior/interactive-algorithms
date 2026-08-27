@@ -1447,4 +1447,148 @@ function get(buckets: Buckets, key: string): string | undefined {
   return buckets[index].find((entry) => entry.key === key)?.value
 }`,
   },
+
+  "tsp-brute": {
+    jsBasic: `function tourLength(dist, path) {
+  var total = 0
+  for (var i = 0; i < path.length - 1; i++) {
+    total += dist[path[i]][path[i + 1]]
+  }
+  total += dist[path[path.length - 1]][path[0]]
+  return total
+}
+
+function tspBrute(dist, start) {
+  var cities = Object.keys(dist).filter(function (id) { return id !== start })
+  var best = null
+  var bestLen = Infinity
+  // перестановки cities — опущено; идея: все (n-1)! туров
+  return { path: best, length: bestLen }
+}`,
+
+    jsModern: `function tourLength(dist, path) {
+  let total = 0
+  for (let i = 0; i < path.length - 1; i++) {
+    total += dist[path[i]][path[i + 1]]
+  }
+  return total + dist[path.at(-1)][path[0]]
+}
+
+function* perms(arr) {
+  if (arr.length <= 1) {
+    yield arr
+    return
+  }
+  for (let i = 0; i < arr.length; i++) {
+    const rest = [...arr.slice(0, i), ...arr.slice(i + 1)]
+    for (const p of perms(rest)) yield [arr[i], ...p]
+  }
+}
+
+function tspBrute(dist, start) {
+  const others = Object.keys(dist).filter((id) => id !== start)
+  let bestPath = [start, ...others]
+  let bestLen = tourLength(dist, bestPath)
+  for (const mid of perms(others)) {
+    const path = [start, ...mid]
+    const len = tourLength(dist, path)
+    if (len < bestLen) {
+      bestLen = len
+      bestPath = path
+    }
+  }
+  return { path: bestPath, length: bestLen }
+}`,
+
+    typescript: `function tourLength(
+  dist: Readonly<Record<string, Readonly<Record<string, number>>>>,
+  path: readonly string[]
+): number {
+  let total = 0
+  for (let i = 0; i < path.length - 1; i++) {
+    total += dist[path[i]][path[i + 1]]
+  }
+  return total + dist[path[path.length - 1]][path[0]]
+}
+
+function tspBrute(
+  dist: Readonly<Record<string, Readonly<Record<string, number>>>>,
+  start: string
+): { path: string[]; length: number } {
+  const others = Object.keys(dist).filter((id) => id !== start)
+  // Полный перебор перестановок others — (n-1)! туров
+  let bestPath = [start, ...others]
+  let bestLen = tourLength(dist, bestPath)
+  return { path: bestPath, length: bestLen }
+}`,
+  },
+
+  "tsp-nearest-neighbor": {
+    jsBasic: `function tspNN(dist, start) {
+  var remaining = Object.keys(dist).filter(function (id) { return id !== start })
+  var path = [start]
+  var current = start
+  while (remaining.length > 0) {
+    var best = remaining[0]
+    var bestDist = dist[current][best]
+    for (var i = 1; i < remaining.length; i++) {
+      var id = remaining[i]
+      if (dist[current][id] < bestDist) {
+        bestDist = dist[current][id]
+        best = id
+      }
+    }
+    path.push(best)
+    remaining = remaining.filter(function (id) { return id !== best })
+    current = best
+  }
+  return path
+}`,
+
+    jsModern: `function tspNN(dist, start) {
+  const remaining = new Set(Object.keys(dist).filter((id) => id !== start))
+  const path = [start]
+  let current = start
+  while (remaining.size > 0) {
+    let best = null
+    let bestDist = Infinity
+    for (const id of remaining) {
+      if (dist[current][id] < bestDist) {
+        bestDist = dist[current][id]
+        best = id
+      }
+    }
+    path.push(best)
+    remaining.delete(best)
+    current = best
+  }
+  return path
+}`,
+
+    typescript: `function tspNN(
+  dist: Readonly<Record<string, Readonly<Record<string, number>>>>,
+  start: string
+): string[] {
+  const remaining = new Set(
+    Object.keys(dist).filter((id) => id !== start)
+  )
+  const path = [start]
+  let current = start
+  while (remaining.size > 0) {
+    let best: string | null = null
+    let bestDist = Infinity
+    for (const id of remaining) {
+      if (dist[current][id] < bestDist) {
+        bestDist = dist[current][id]
+        best = id
+      }
+    }
+    if (!best) break
+    path.push(best)
+    remaining.delete(best)
+    current = best
+  }
+  return path
+}`,
+  },
 };

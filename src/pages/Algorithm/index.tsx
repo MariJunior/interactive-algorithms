@@ -8,6 +8,7 @@ import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
+import { hasTspVisualization } from "@/algorithms/tsp";
 import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
@@ -21,6 +22,7 @@ import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import StringMatchPlaybackPanel from "@/components/visualizers/StringMatchPlaybackPanel";
 import TreePlaybackPanel from "@/components/visualizers/TreePlaybackPanel";
+import TspPlaybackPanel from "@/components/visualizers/TspPlaybackPanel";
 import styles from "./Algorithm.module.css";
 
 // ─── Таблица сложности ───────────────────────────────────
@@ -48,6 +50,7 @@ function ComplexityTable({
     "O(h)": "var(--color-ologn)",
     "O(n · m)": "var(--color-on2)",
     "O(n + m)": "var(--color-on)",
+    "O(n!)": "var(--color-o2n)",
   };
 
   const rows = [
@@ -75,6 +78,7 @@ function ComplexityTable({
   const showGreedyNHint =
     category === "greedy" && !showSetCoverHint;
   const showHashHint = category === "data-structures";
+  const showNpHint = category === "np-complete";
 
   return (
     <div className={styles.complexityTable}>
@@ -147,6 +151,14 @@ function ComplexityTable({
           расчёт индекса и короткая цепочка.{" "}
           <span className={styles.complexityHintStrong}>O(n)</span> в худшем — все ключи
           попали в один бакет (длинная цепочка).
+        </p>
+      )}
+      {showNpHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n!</span> (точнее (n−1)! при
+          фиксированном старте) — число туров растёт факториально. Уже при n≈20 полный
+          перебор невыполним; эвристики вроде nearest-neighbor — O(n²), но без гарантии
+          оптимума.
         </p>
       )}
     </div>
@@ -373,6 +385,8 @@ export default function Algorithm() {
               <GreedyPlaybackPanel key={slug} slug={slug} />
             ) : slug && hasHashTableVisualization(slug) ? (
               <HashTablePlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasTspVisualization(slug) ? (
+              <TspPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

@@ -15,6 +15,7 @@ const categoryConfig: Record<string, { label: string; colorVar: string }> = {
   greedy: { label: "Жадные", colorVar: "--color-greedy" },
   string: { label: "Строки", colorVar: "--color-string" },
   "data-structures": { label: "Структуры", colorVar: "--color-ds" },
+  "np-complete": { label: "NP", colorVar: "--color-np" },
 };
 
 const complexityColor: Record<string, string> = {
@@ -33,6 +34,7 @@ const complexityColor: Record<string, string> = {
   "O(V)": "var(--color-ologn)",
   "O(V²)": "var(--color-on2)",
   "O(h)": "var(--color-ologn)",
+  "O(n!)": "var(--color-o2n)",
 };
 
 function getComplexityColor(value: string): string {
@@ -390,6 +392,36 @@ function PreviewPlaceholder({ category }: { category: string }) {
             strokeWidth="1.5"
             opacity={0.5}
           />
+        </svg>
+      );
+
+    case "np-complete":
+      // Тур по точкам
+      return (
+        <svg viewBox="0 0 80 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline
+            points="16,36 28,12 52,18 64,34 40,40 16,36"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            fill="none"
+            opacity={0.55}
+          />
+          {[
+            [16, 36],
+            [28, 12],
+            [52, 18],
+            [64, 34],
+            [40, 40],
+          ].map(([cx, cy], index) => (
+            <circle
+              key={index}
+              cx={cx}
+              cy={cy}
+              r={3.5}
+              fill="currentColor"
+              opacity={index === 0 ? 1 : 0.7}
+            />
+          ))}
         </svg>
       );
 
