@@ -1,36 +1,29 @@
 # Project status
 
-> Updated: 2026-08-28 01:20 (local)
+> Updated: 2026-08-28 01:30 (local)
 > Branch: `main`
-> Working tree: **dirty** — 8e (greedy) + 8f (hash-table) к ревью
+> Working tree: **dirty** — 8e–8g к ревью
 
 ## Current goals
 
-- Ревью / commit **8e** и **8f** (можно одним или двумя коммитами).
-- Дальше: **8g Дейкстра** → 8h–8j → Step 9.
-
-## Completed (committed)
-
-| Step | Commit | Что |
-|------|--------|-----|
-| 8d | `49c9e21` | Strings Naive/KMP |
+- Ревью / commit **8e** (greedy), **8f** (hash-table), **8g** (Dijkstra).
+- Дальше: **8h Set Cover** → 8i TSP → 8j k-NN → Step 9.
 
 ## In progress / uncommitted
 
-**Step 8e** — жадные (расписание / рюкзак) + RU-нейминг  
-**Step 8f** — хеш-таблица:
+| Step | Что |
+|------|-----|
+| 8e | Жадные: расписание / рюкзак |
+| 8f | Хеш-таблица |
+| **8g** | **Dijkstra** — веса на демо-графе, extract-min + relax, dist[] |
 
-- Domain: `hashKey`, chaining insert/lookup, demo apple+mango коллизия
-- UI: бакеты + цепочки, задача / правило / Big O O(1)/O(n)
-- Категория `data-structures`, sandbox
-
-**Примеры:** `/algorithm/hash-table`, `/sandbox?a=hash-table`
+**Примеры:** `/algorithm/dijkstra`, `/sandbox?a=bfs&b=dijkstra`
 
 ## Next steps
 
-1. Commit 8e (+ optionally 8f)
-2. **8g** Dijkstra
-3. 8h Set Cover → 8i TSP → 8j k-NN
+1. Commit 8e–8g (по шагам или пачкой)
+2. **8h** Покрытие множества
+3. 8i TSP → 8j k-NN
 4. Step 9
 
 ## References

@@ -737,6 +737,105 @@ function countingSortByDigit(a, exp) {
 }`,
   },
 
+  dijkstra: {
+    jsBasic: `function dijkstra(adj, start) {
+  var nodes = Object.keys(adj)
+  var dist = {}
+  var settled = {}
+  for (var i = 0; i < nodes.length; i++) dist[nodes[i]] = Infinity
+  dist[start] = 0
+
+  while (true) {
+    var u = null
+    var best = Infinity
+    for (var j = 0; j < nodes.length; j++) {
+      var id = nodes[j]
+      if (!settled[id] && dist[id] < best) {
+        best = dist[id]
+        u = id
+      }
+    }
+    if (u === null || best === Infinity) break
+    settled[u] = true
+    var neighbors = adj[u] || []
+    for (var k = 0; k < neighbors.length; k++) {
+      var edge = neighbors[k]
+      if (settled[edge.to]) continue
+      var alt = dist[u] + edge.weight
+      if (alt < dist[edge.to]) dist[edge.to] = alt
+    }
+  }
+  return dist
+}`,
+
+    jsModern: `function dijkstra(adj, start) {
+  const nodes = [...adj.keys()]
+  const dist = new Map(nodes.map((id) => [id, Infinity]))
+  const settled = new Set()
+  dist.set(start, 0)
+
+  while (true) {
+    let u = null
+    let best = Infinity
+    for (const id of nodes) {
+      if (settled.has(id)) continue
+      const d = dist.get(id)
+      if (d < best) {
+        best = d
+        u = id
+      }
+    }
+    if (u === null || !Number.isFinite(best)) break
+    settled.add(u)
+    for (const { to, weight } of adj.get(u) ?? []) {
+      if (settled.has(to)) continue
+      const alt = dist.get(u) + weight
+      if (alt < dist.get(to)) dist.set(to, alt)
+    }
+  }
+  return Object.fromEntries(dist)
+}`,
+
+    typescript: `interface WEdge {
+  to: string
+  weight: number
+}
+
+function dijkstra(
+  adj: ReadonlyMap<string, readonly WEdge[]>,
+  start: string
+): Record<string, number> {
+  const nodes = [...adj.keys()]
+  const dist = new Map(nodes.map((id) => [id, Infinity]))
+  const settled = new Set<string>()
+  dist.set(start, 0)
+
+  while (true) {
+    let u: string | null = null
+    let best = Infinity
+    for (const id of nodes) {
+      if (settled.has(id)) continue
+      const d = dist.get(id) ?? Infinity
+      if (d < best) {
+        best = d
+        u = id
+      }
+    }
+    if (u === null || !Number.isFinite(best)) break
+    settled.add(u)
+    for (const { to, weight } of adj.get(u) ?? []) {
+      if (settled.has(to)) continue
+      const alt = (dist.get(u) ?? Infinity) + weight
+      if (alt < (dist.get(to) ?? Infinity)) dist.set(to, alt)
+    }
+  }
+
+  return Object.fromEntries(
+    [...dist].map(([id, value]) => [id, Number.isFinite(value) ? value : -1])
+  )
+}`,
+  },
+
   "preorder-traversal": {
     jsBasic: `function preorder(node, order) {
   if (!node) return order

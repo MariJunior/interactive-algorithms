@@ -54,12 +54,20 @@ export default function GraphPlaybackPanel({ slug }: GraphPlaybackPanelProps) {
   const player = useAlgorithmPlayer(steps, stepsId);
 
   const isDfs = slug === "dfs";
-  const frontierLabel = isDfs
-    ? "Стек (ожидают, последний сверху)"
-    : "Очередь (ожидают, первые слева)";
-  const task = isDfs
-    ? "Обойти граф вглубь от старта и показать порядок первого посещения вершин"
-    : "Обойти граф слоями от старта и показать порядок первого посещения вершин";
+  const isDijkstra = slug === "dijkstra";
+  const frontierLabel = isDijkstra
+    ? "Кандидаты PQ (по возрастанию dist)"
+    : isDfs
+      ? "Стек (ожидают, последний сверху)"
+      : "Очередь (ожидают, первые слева)";
+  const task = isDijkstra
+    ? "Найти кратчайшие пути от старта во взвешенном графе (без отрицательных рёбер)"
+    : isDfs
+      ? "Обойти граф вглубь от старта и показать порядок первого посещения вершин"
+      : "Обойти граф слоями от старта и показать порядок первого посещения вершин";
+  const visitOrderHint = isDijkstra
+    ? "порядок фиксации вершин (extract-min)"
+    : "результат обхода — последовательность вершин";
 
   if (!hasGraphVisualization(slug)) {
     return null;
@@ -91,7 +99,8 @@ export default function GraphPlaybackPanel({ slug }: GraphPlaybackPanelProps) {
         startId={startId}
         frontierLabel={frontierLabel}
         task={task}
-        visitOrderHint="результат обхода — последовательность вершин"
+        visitOrderHint={visitOrderHint}
+        showDistances={isDijkstra}
       />
 
       <PlaybackControls
@@ -109,8 +118,8 @@ export default function GraphPlaybackPanel({ slug }: GraphPlaybackPanelProps) {
         onStepForward={player.stepForward}
         onReset={player.reset}
         onSpeedChange={player.setSpeed}
-        comparisonsLabel="Просмотров рёбер"
-        movesLabel="Посещений"
+        comparisonsLabel={isDijkstra ? "Релаксаций / рёбер" : "Просмотров рёбер"}
+        movesLabel={isDijkstra ? "Фиксаций" : "Посещений"}
         onRandom={() => {
           // «Случайный» сценарий = другая стартовая вершина на том же графе
           const pick =

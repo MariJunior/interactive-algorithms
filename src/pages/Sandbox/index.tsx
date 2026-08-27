@@ -409,8 +409,8 @@ export default function Sandbox() {
                 ))}
               </select>
               <p className={styles.hint}>
-                BFS и DFS бегут по одному и тому же учебному графу — меняется только порядок
-                обхода.
+                BFS, DFS и Dijkstra бегут по одному учебному графу (у рёбер есть веса).
+                BFS/DFS веса игнорируют; Dijkstra считает кратчайшие пути по сумме весов.
               </p>
             </div>
           ) : isTreeCategory ? (
@@ -620,7 +620,9 @@ function SandboxLane({
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
   const movesLabel =
     kind === "graph" || kind === "tree"
-      ? "Посещений"
+      ? slug === "dijkstra"
+        ? "Фиксаций"
+        : "Посещений"
       : kind === "dp"
         ? "Заполнений"
         : kind === "string"
@@ -632,7 +634,9 @@ function SandboxLane({
               : "Перемещений";
   const compareLabel =
     kind === "graph"
-      ? "Просмотров рёбер"
+      ? slug === "dijkstra"
+        ? "Релаксаций / рёбер"
+        : "Просмотров рёбер"
       : kind === "tree"
         ? "Спусков"
         : kind === "dp"
@@ -721,16 +725,25 @@ function SandboxLane({
           step={step as GraphStep | null}
           startId={graphStartId}
           frontierLabel={
-            slug === "dfs"
-              ? "Стек (ожидают, последний сверху)"
-              : "Очередь (ожидают, первые слева)"
+            slug === "dijkstra"
+              ? "Кандидаты PQ (по возрастанию dist)"
+              : slug === "dfs"
+                ? "Стек (ожидают, последний сверху)"
+                : "Очередь (ожидают, первые слева)"
           }
           task={
-            slug === "dfs"
-              ? "Обойти граф вглубь от старта и показать порядок первого посещения"
-              : "Обойти граф слоями от старта и показать порядок первого посещения"
+            slug === "dijkstra"
+              ? "Кратчайшие пути от старта во взвешенном графе"
+              : slug === "dfs"
+                ? "Обойти граф вглубь от старта и показать порядок первого посещения"
+                : "Обойти граф слоями от старта и показать порядок первого посещения"
           }
-          visitOrderHint="результат обхода — последовательность вершин"
+          visitOrderHint={
+            slug === "dijkstra"
+              ? "порядок фиксации (extract-min)"
+              : "результат обхода — последовательность вершин"
+          }
+          showDistances={slug === "dijkstra"}
         />
       ) : kind === "tree" ? (
         <TreeVisualizer

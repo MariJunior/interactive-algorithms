@@ -36,6 +36,17 @@
   color: var(--color-text-faint);
 }
 
+.formula {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
 .meta {
   display: flex;
   flex-direction: column;
@@ -119,6 +130,14 @@
   filter: drop-shadow(0 0 4px rgba(96, 212, 247, 0.45));
 }
 
+.edgeWeight {
+  fill: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
 .node {
   stroke-width: 2;
   stroke: var(--color-border);
@@ -157,3 +176,49 @@
 g:has(.current) .nodeLabel {
   fill: var(--color-bg);
 }
+
+.distLabel {
+  fill: var(--color-graph);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.distTable {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.distCell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.25rem;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.distCellActive {
+  border-color: var(--color-graph);
+  background: color-mix(in srgb, var(--color-graph) 18%, var(--color-surface-2));
+}
+
+.distCellSettled {
+  border-color: var(--color-o1);
+}
+
+.distKey {
+  color: var(--color-text-muted);
+}
+
+.distVal {
+  color: var(--color-text);
+  font-weight: 700;
+}
+

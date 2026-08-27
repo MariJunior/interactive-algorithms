@@ -9,12 +9,14 @@ interface GraphVisualizerProps {
   step: GraphStep | null;
   /** Стартовая вершина текущего запуска */
   startId?: string;
-  /** Подпись структуры frontier: очередь / стек */
+  /** Подпись структуры frontier: очередь / стек / PQ */
   frontierLabel?: string;
   /** Задача демо: что алгоритм делает прямо сейчас */
   task?: string;
   /** Зачем смотреть на «порядок» */
   visitOrderHint?: string;
+  /** Показывать таблицу dist[] (Dijkstra) */
+  showDistances?: boolean;
 }
 
 function resolveNodeState(id: string, step: GraphStep): NodeState {
@@ -22,6 +24,11 @@ function resolveNodeState(id: string, step: GraphStep): NodeState {
   if (step.visited.includes(id)) return "visited";
   if (step.frontier.includes(id)) return "frontier";
   return "default";
+}
+
+function formatDist(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "∞";
+  return String(value);
 }
 
 /**
@@ -34,6 +41,7 @@ export default function GraphVisualizer({
   frontierLabel = "Очередь (ждут своей очереди)",
   task = "Обойти все достижимые вершины от старта",
   visitOrderHint = "в каком порядке вершины были посещены",
+  showDistances = false,
 }: GraphVisualizerProps) {
   if (!step || step.graph.nodes.length === 0) {
     return <div className={styles.empty}>Нет данных для визуализации</div>;
@@ -42,15 +50,22 @@ export default function GraphVisualizer({
   const { graph } = step;
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
   const startLabel = startId ?? step.visitOrder[0] ?? graph.nodes[0]?.id ?? "?";
+  const hasWeights = graph.edges.some((edge) => edge.weight !== undefined);
+  const distances = step.distances;
 
   return (
     <div className={styles.root}>
-      {/* Цель демо — чтобы было ясно, зачем крутим анимацию */}
       <p className={styles.task} aria-live="polite">
         <span className={styles.taskLabel}>Задача:</span> {task}
         <span className={styles.taskSep}>·</span>
         старт — <span className={styles.metaStrong}>{startLabel}</span>
       </p>
+
+      {step.formula && (
+        <p className={styles.formula}>
+          <span className={styles.taskLabel}>Сейчас:</span> {step.formula}
+        </p>
+      )}
 
       <div className={styles.meta}>
         <span title="Вершины, которые алгоритм уже «запланировал», но ещё не посетил">
@@ -60,7 +75,7 @@ export default function GraphVisualizer({
           </span>
         </span>
         <span title={visitOrderHint}>
-          Порядок посещения{" "}
+          {showDistances ? "Порядок фиксации" : "Порядок посещения"}{" "}
           <span className={styles.metaHint}>({visitOrderHint})</span>:{" "}
           <span className={styles.metaStrong}>
             {step.visitOrder.length > 0 ? step.visitOrder.join(" → ") : "ещё никого"}
@@ -79,7 +94,7 @@ export default function GraphVisualizer({
         </li>
         <li>
           <span className={`${styles.legendSwatch} ${styles.legendVisited}`} />
-          посещена
+          {showDistances ? "зафиксирована" : "посещена"}
         </li>
         <li>
           <span className={`${styles.legendSwatch} ${styles.legendDefault}`} />
@@ -99,20 +114,39 @@ export default function GraphVisualizer({
           if (!from || !to) return null;
 
           const active = edgeMatches(edge, step.exploringEdge, graph.directed);
+          const midX = (from.x + to.x) / 2;
+          const midY = (from.y + to.y) / 2;
+
           return (
-            <line
-              key={`${edge.from}-${edge.to}`}
-              x1={from.x}
-              y1={from.y}
-              x2={to.x}
-              y2={to.y}
-              className={active ? styles.edgeActive : styles.edge}
-            />
+            <g key={`${edge.from}-${edge.to}`}>
+              <line
+                x1={from.x}
+                y1={from.y}
+                x2={to.x}
+                y2={to.y}
+                className={active ? styles.edgeActive : styles.edge}
+              />
+              {hasWeights && (
+                <text
+                  x={midX}
+                  y={midY - 4}
+                  className={styles.edgeWeight}
+                  textAnchor="middle"
+                >
+                  {edge.weight ?? 1}
+                </text>
+              )}
+            </g>
           );
         })}
 
         {graph.nodes.map((node) => {
           const state = resolveNodeState(node.id, step);
+          const distLabel =
+            showDistances && distances
+              ? formatDist(distances[node.id])
+              : null;
+
           return (
             <g key={node.id} transform={`translate(${node.x}, ${node.y})`}>
               <motion.circle
@@ -124,10 +158,31 @@ export default function GraphVisualizer({
               <text className={styles.nodeLabel} textAnchor="middle" dy="0.35em">
                 {node.label}
               </text>
+              {distLabel !== null && (
+                <text className={styles.distLabel} textAnchor="middle" y={30}>
+                  {distLabel}
+                </text>
+              )}
             </g>
           );
         })}
       </svg>
+
+      {showDistances && distances && (
+        <div className={styles.distTable} aria-label="Таблица расстояний">
+          {graph.nodes.map((node) => (
+            <span
+              key={node.id}
+              className={`${styles.distCell} ${
+                step.current === node.id ? styles.distCellActive : ""
+              } ${step.visited.includes(node.id) ? styles.distCellSettled : ""}`}
+            >
+              <span className={styles.distKey}>{node.label}</span>
+              <span className={styles.distVal}>{formatDist(distances[node.id])}</span>
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -54,6 +54,8 @@ export interface GraphNode {
 export interface GraphEdge {
   from: string;
   to: string;
+  /** Вес ребра; для BFS/DFS можно не задавать (считаем 1) */
+  weight?: number;
 }
 
 /** Небольшой учебный граф (список смежности строится из edges) */
@@ -66,22 +68,27 @@ export interface Graph {
 
 export type GraphStepAction =
   | "explore" // смотрим ребро / кладём в frontier
-  | "visit" // посещаем вершину
+  | "visit" // посещаем вершину / извлекаем min (Dijkstra)
+  | "relax" // улучшили оценку расстояния (Dijkstra)
   | "done";
 
-/** Один шаг обхода графа (BFS / DFS) */
+/** Один шаг обхода графа (BFS / DFS / Dijkstra) */
 export interface GraphStep {
   graph: Graph;
   action: GraphStepAction;
   /** Вершина в фокусе */
   current?: string;
-  /** Очередь (BFS) или стек (DFS) */
+  /** Очередь (BFS), стек (DFS) или кандидаты PQ (Dijkstra) */
   frontier: string[];
   visited: string[];
-  /** Порядок посещения на текущий момент */
+  /** Порядок посещения / фиксации на текущий момент */
   visitOrder: string[];
   /** Ребро, которое сейчас рассматриваем */
   exploringEdge?: [string, string];
+  /** Текущие оценки расстояний (Dijkstra); Infinity → отсутствует ключ или null */
+  distances?: Record<string, number | null>;
+  /** Подпись текущего шага (формула релаксации и т.п.) */
+  formula?: string;
   message?: string;
 }
 

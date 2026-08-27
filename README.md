@@ -27,19 +27,19 @@
 | Сортировки: код, TS, генераторы, `SortVisualizer` | Готово |
 | Секция «Как работает» в аккордеоне | Готово |
 | Поиск + `SearchVisualizer` | Готово |
-| Графы: BFS / DFS + `GraphVisualizer`, sandbox | Готово |
+| Графы: BFS / DFS / Dijkstra + `GraphVisualizer`, sandbox | Готово |
 | Деревья: Preorder / Inorder / Postorder + `TreeVisualizer` | Готово |
 | DP: Fibonacci / Climbing Stairs + `DpTableVisualizer` | Готово |
 | Строки: Naive / KMP + `StringMatchVisualizer` | Готово |
 | Жадные: расписание / рюкзак | Готово (в working tree с 8e) |
 | Хеш-таблица (chaining) | Готово (Step 8f) |
-| Дейкстра, покрытие множества, TSP, k-NN | В плане (`CATALOG_EXPANSION.md`) |
+| Покрытие множества, TSP, k-NN | В плане (`CATALOG_EXPANSION.md`) |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
 | CSS-арт, квиз | В планах (после расширения каталога) |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Примеры:** `/algorithm/hash-table`, `/sandbox?a=hash-table`.
+**Примеры:** `/algorithm/dijkstra`, `/sandbox?a=bfs&b=dijkstra`.
 
 ---
 

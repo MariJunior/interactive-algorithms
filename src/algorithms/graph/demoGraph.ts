@@ -14,13 +14,13 @@ export function createDemoGraph(): Graph {
       { id: "G", label: "G", x: 360, y: 200 },
     ],
     edges: [
-      { from: "A", to: "B" },
-      { from: "A", to: "C" },
-      { from: "B", to: "D" },
-      { from: "B", to: "E" },
-      { from: "C", to: "F" },
-      { from: "C", to: "G" },
-      { from: "E", to: "F" },
+      { from: "A", to: "B", weight: 2 },
+      { from: "A", to: "C", weight: 4 },
+      { from: "B", to: "D", weight: 3 },
+      { from: "B", to: "E", weight: 1 },
+      { from: "C", to: "F", weight: 2 },
+      { from: "C", to: "G", weight: 5 },
+      { from: "E", to: "F", weight: 3 },
     ],
   };
 }
@@ -54,6 +54,44 @@ export function buildAdjacency(graph: Graph): Map<string, string[]> {
 
   for (const [, neighbors] of adj) {
     neighbors.sort((a, b) => a.localeCompare(b));
+  }
+
+  return adj;
+}
+
+export interface WeightedNeighbor {
+  to: string;
+  weight: number;
+}
+
+/** Список смежности с весами (по умолчанию weight = 1) */
+export function buildWeightedAdjacency(
+  graph: Graph,
+): Map<string, WeightedNeighbor[]> {
+  const adj = new Map<string, WeightedNeighbor[]>();
+
+  for (const node of graph.nodes) {
+    adj.set(node.id, []);
+  }
+
+  const add = (from: string, to: string, weight: number) => {
+    const list = adj.get(from);
+    if (!list) return;
+    if (!list.some((n) => n.to === to)) {
+      list.push({ to, weight });
+    }
+  };
+
+  for (const edge of graph.edges) {
+    const weight = edge.weight ?? 1;
+    add(edge.from, edge.to, weight);
+    if (!graph.directed) {
+      add(edge.to, edge.from, weight);
+    }
+  }
+
+  for (const [, neighbors] of adj) {
+    neighbors.sort((a, b) => a.to.localeCompare(b.to));
   }
 
   return adj;

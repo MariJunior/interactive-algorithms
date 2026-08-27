@@ -85,9 +85,9 @@ pages Algorithm + Sandbox
 - [x] Algorithm page (+ sandbox)
 
 ### Шаг 8g — Дейкстра
-- [ ] Domain на взвешенном демо-графе + tests
-- [ ] Расширить graph visualizer или `DijkstraVisualizer`
-- [ ] Meta/code, sandbox category `graph`
+- [x] Domain на взвешенном демо-графе + tests
+- [x] Расширить `GraphVisualizer` (веса, dist[], PQ)
+- [x] Meta/code, sandbox category `graph`
 
 ### Шаг 8h — Покрытие множества
 - [ ] Domain + visualizer + meta/code
