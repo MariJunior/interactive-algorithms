@@ -31,13 +31,14 @@
 | Деревья: Preorder / Inorder / Postorder + `TreeVisualizer` | Готово |
 | DP: Fibonacci / Climbing Stairs + `DpTableVisualizer` | Готово |
 | Строки: Naive / KMP + `StringMatchVisualizer` | Готово |
+| Жадные: Activity Selection / Fractional Knapsack | Готово |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
-| Жадные, структуры данных | В планах |
+| Структуры данных | В планах |
 | CSS-арт, квиз | В планах |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Примеры:** `/algorithm/kmp-search`, `/sandbox?a=naive-string-search&b=kmp-search`.
+**Примеры:** `/algorithm/activity-selection`, `/sandbox?a=activity-selection&b=fractional-knapsack`.
 
 ---
 
@@ -50,7 +51,7 @@
 5. ~~Linear / Binary Search + отдельный визуализатор~~
 6. ~~Песочница сравнения (`/sandbox?a=&b=`)~~
 7. ~~Полировка: Shiki, a11y, адаптив, конфиг Vercel~~
-8. Расширенный каталог: графы, деревья, DP, строки → жадные…
+8. ~~Расширенный каталог: графы, деревья, DP, строки, жадные~~
 9. CSS-арт на карточках + мини-квиз «Угадай сложность»
 10. **3D-режим** для избранных алгоритмов
 

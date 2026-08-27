@@ -61,7 +61,9 @@ export function finalStatsFromActions(
         step.action === "select" ||
         step.action === "explore" ||
         step.action === "descend" ||
-        step.action === "init",
+        step.action === "init" ||
+        step.action === "consider" ||
+        step.action === "sort",
     ).length,
     moves: actions.filter(
       (step) =>
@@ -71,7 +73,8 @@ export function finalStatsFromActions(
         step.action === "visit" ||
         step.action === "compute" ||
         step.action === "match" ||
-        step.action === "shift",
+        step.action === "shift" ||
+        step.action === "take",
     ).length,
   };
 }

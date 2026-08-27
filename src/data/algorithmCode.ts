@@ -1047,4 +1047,121 @@ function kmpSearch(text: string, pattern: string): number[] {
   return found
 }`,
   },
+
+  "activity-selection": {
+    jsBasic: `function activitySelection(activities) {
+  var sorted = activities.slice().sort(function (a, b) {
+    return a.finish - b.finish
+  })
+  var selected = []
+  var lastFinish = -Infinity
+  for (var i = 0; i < sorted.length; i++) {
+    if (sorted[i].start >= lastFinish) {
+      selected.push(sorted[i].id)
+      lastFinish = sorted[i].finish
+    }
+  }
+  return selected
+}`,
+
+    jsModern: `function activitySelection(activities) {
+  const sorted = [...activities].sort((a, b) => a.finish - b.finish)
+  const selected = []
+  let lastFinish = -Infinity
+  for (const activity of sorted) {
+    if (activity.start >= lastFinish) {
+      selected.push(activity.id)
+      lastFinish = activity.finish
+    }
+  }
+  return selected
+}`,
+
+    typescript: `interface Activity {
+  id: string
+  start: number
+  finish: number
+}
+
+function activitySelection(activities: readonly Activity[]): string[] {
+  const sorted = [...activities].sort((a, b) => a.finish - b.finish)
+  const selected: string[] = []
+  let lastFinish = -Infinity
+  for (const activity of sorted) {
+    if (activity.start >= lastFinish) {
+      selected.push(activity.id)
+      lastFinish = activity.finish
+    }
+  }
+  return selected
+}`,
+  },
+
+  "fractional-knapsack": {
+    jsBasic: `function fractionalKnapsack(items, capacity) {
+  var sorted = items.slice().sort(function (a, b) {
+    return b.value / b.weight - a.value / a.weight
+  })
+  var remaining = capacity
+  var totalValue = 0
+  for (var i = 0; i < sorted.length; i++) {
+    if (remaining <= 0) break
+    var item = sorted[i]
+    if (item.weight <= remaining) {
+      remaining -= item.weight
+      totalValue += item.value
+    } else {
+      totalValue += item.value * (remaining / item.weight)
+      remaining = 0
+    }
+  }
+  return totalValue
+}`,
+
+    jsModern: `function fractionalKnapsack(items, capacity) {
+  const sorted = [...items].sort(
+    (a, b) => b.value / b.weight - a.value / a.weight
+  )
+  let remaining = capacity
+  let totalValue = 0
+  for (const item of sorted) {
+    if (remaining <= 0) break
+    if (item.weight <= remaining) {
+      remaining -= item.weight
+      totalValue += item.value
+    } else {
+      totalValue += item.value * (remaining / item.weight)
+      remaining = 0
+    }
+  }
+  return totalValue
+}`,
+
+    typescript: `interface Item {
+  weight: number
+  value: number
+}
+
+function fractionalKnapsack(
+  items: readonly Item[],
+  capacity: number
+): number {
+  const sorted = [...items].sort(
+    (a, b) => b.value / b.weight - a.value / a.weight
+  )
+  let remaining = capacity
+  let totalValue = 0
+  for (const item of sorted) {
+    if (remaining <= 0) break
+    if (item.weight <= remaining) {
+      remaining -= item.weight
+      totalValue += item.value
+    } else {
+      totalValue += item.value * (remaining / item.weight)
+      remaining = 0
+    }
+  }
+  return totalValue
+}`,
+  },
 };

@@ -1,33 +1,37 @@
 # Project status
 
-> Updated: 2026-08-28 00:15 (local)
-> Branch: `main` · HEAD: `c0f1ab9`
-> Working tree: **dirty** — Step 8d (strings Naive/KMP) готов к ревью
+> Updated: 2026-08-28 00:45 (local)
+> Branch: `main`
+> Working tree: **dirty** — Step 8e (greedy) готов к ревью
 
 ## Current goals
 
-- Ревью / commit **Step 8d**.
-- Дальше: greedy → Step 9 (CSS-арт+квиз) → Step 10 (3D).
+- Ревью / commit **Step 8e**.
+- Дальше: Step 9 (CSS-арт + квиз) → Step 10 (3D).
 
 ## Completed (committed)
 
 | Step | Commit | Что |
 |------|--------|-----|
+| 7 | `dd256f8` | Shiki, a11y, README, vercel.json |
 | 8 | `0b09e5d` | BFS/DFS |
-| 8b | `68449a2` / `c0f1ab9` | Trees + DP (в истории) |
+| 8b–8c | `68449a2` / `c0f1ab9` | Trees + DP |
+| 8d | `49c9e21` | Strings Naive/KMP |
 
 ## In progress / uncommitted
 
-**Step 8d** — строки:
+**Step 8e** — жадные алгоритмы:
 
-- Domain: `StringStep`, naive + KMP + LPS + tests
-- UI: задача / стратегия / легенда / LPS-пояснение
-- Sandbox: общий text+pattern
+- Domain: `ActivitySelection` + `FractionalKnapsack`, `GreedyStep`, tests
+- UI: timeline активностей / рюкзак, задача + правило, Big O hint `n`
+- Sandbox: вкладка «Жадные», у каждой demo свой dataset
+
+**Примеры:** `/algorithm/activity-selection`, `/sandbox?a=activity-selection&b=fractional-knapsack`
 
 ## Next steps
 
-1. Commit Step 8d
-2. Step 8e greedy (опционально) или Step 9
+1. Commit Step 8e
+2. Step 9 — CSS-арт на карточках + мини-квиз
 
 ## References
 

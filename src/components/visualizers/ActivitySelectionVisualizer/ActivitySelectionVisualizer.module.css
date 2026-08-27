@@ -1,0 +1,160 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.task,
+.rule,
+.formula {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-greedy) 12%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-greedy) 35%, var(--color-border));
+  border-radius: var(--radius-md);
+}
+
+.rule,
+.formula {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+}
+
+.taskLabel {
+  font-weight: 600;
+  color: var(--color-greedy);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1.5px solid var(--color-border);
+}
+
+.swatchSelected {
+  background: var(--color-o1);
+  border-color: var(--color-o1);
+}
+
+.swatchConsider {
+  background: var(--color-greedy);
+  border-color: var(--color-accent-hover);
+}
+
+.swatchSkip {
+  background: color-mix(in srgb, var(--color-on2) 50%, var(--color-surface-2));
+  border-color: var(--color-on2);
+}
+
+.swatchIdle {
+  background: var(--color-surface-2);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr 3rem;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.rowLabel {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.rowTime {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-faint);
+  text-align: right;
+}
+
+.track {
+  position: relative;
+  height: 16px;
+  background: var(--color-surface-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bar {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 99px;
+  min-width: 4px;
+}
+
+.barIdle {
+  background: var(--color-border-hover);
+  opacity: 0.55;
+}
+
+.barSelected {
+  background: var(--color-o1);
+}
+
+.barConsider {
+  background: var(--color-greedy);
+}
+
+.barSkip {
+  background: var(--color-on2);
+  opacity: 0.7;
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.metaStrong {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-greedy);
+}

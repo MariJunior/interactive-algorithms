@@ -2,6 +2,7 @@ import type {
   AlgorithmCategory,
   DpStep,
   GraphStep,
+  GreedyStep,
   SearchStep,
   SortStep,
   StringStep,
@@ -9,11 +10,14 @@ import type {
 } from "@/algorithms/types";
 import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
+import { hasGreedyVisualization } from "@/algorithms/greedy";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
+import ActivitySelectionVisualizer from "@/components/visualizers/ActivitySelectionVisualizer";
 import DpTableVisualizer from "@/components/visualizers/DpTableVisualizer";
+import FractionalKnapsackVisualizer from "@/components/visualizers/FractionalKnapsackVisualizer";
 import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
@@ -49,7 +53,8 @@ const COMPARABLE = ALGORITHMS.filter(
     hasGraphVisualization(algo.slug) ||
     hasTreeVisualization(algo.slug) ||
     hasDpVisualization(algo.slug) ||
-    hasStringVisualization(algo.slug),
+    hasStringVisualization(algo.slug) ||
+    hasGreedyVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -138,6 +143,7 @@ export default function Sandbox() {
   const isTreeCategory = activeCategory === "tree";
   const isDpCategory = activeCategory === "dynamic-programming";
   const isStringCategory = activeCategory === "string";
+  const isGreedyCategory = activeCategory === "greedy";
 
   const laneA = useSandboxLane(
     slugA,
@@ -373,7 +379,9 @@ export default function Sandbox() {
                   ? "Общий размер n"
                   : isStringCategory
                     ? "Общий текст и паттерн"
-                    : "Общий input"}
+                    : isGreedyCategory
+                      ? "Жадные демо"
+                      : "Общий input"}
           </h2>
 
           {isGraphCategory ? (
@@ -446,6 +454,11 @@ export default function Sandbox() {
                 Naive и KMP ищут один и тот же паттерн — сравни число сравнений и сдвигов.
               </p>
             </div>
+          ) : isGreedyCategory ? (
+            <p className={styles.hint}>
+              Activity Selection и Fractional Knapsack — разные задачи; у каждой своё учебное
+              демо. Сравнивай число шагов и «взятий» жадного правила.
+            </p>
           ) : (
             <>
               <div className={styles.inputRow}>
@@ -560,7 +573,15 @@ interface SandboxLaneProps {
   options: typeof COMPARABLE;
   onSlugChange: (slug: string) => void;
   kind: SandboxLaneKind;
-  step: SortStep | SearchStep | GraphStep | TreeStep | DpStep | StringStep | null;
+  step:
+    | SortStep
+    | SearchStep
+    | GraphStep
+    | TreeStep
+    | DpStep
+    | StringStep
+    | GreedyStep
+    | null;
   currentIndex: number;
   totalSteps: number;
   stats: PlayerStats;
@@ -591,7 +612,9 @@ function SandboxLane({
         ? "Заполнений"
         : kind === "string"
           ? "Сдвигов / находок"
-          : "Перемещений";
+          : kind === "greedy"
+            ? "Взятий"
+            : "Перемещений";
   const compareLabel =
     kind === "graph"
       ? "Просмотров рёбер"
@@ -601,7 +624,9 @@ function SandboxLane({
           ? "Базовых шагов"
           : kind === "string"
             ? "Сравнений символов"
-            : "Сравнений";
+            : kind === "greedy"
+              ? "Рассмотрений"
+              : "Сравнений";
 
   const treeCopy =
     slug === "preorder-traversal"
@@ -641,6 +666,17 @@ function SandboxLane({
       : {
           task: "Найти все вхождения паттерна в тексте",
           strategy: "Наивно: после попытки сдвигаем окно на 1",
+        };
+
+  const greedyCopy =
+    slug === "fractional-knapsack"
+      ? {
+          task: "Набрать максимальную ценность при ограниченной вместимости",
+          strategy: "Брать по убыванию ценности/веса; долю — если не влезает целиком",
+        }
+      : {
+          task: "Выбрать максимум непересекающихся активностей",
+          strategy: "Сортировка по концу; брать, если старт ≥ конца последней взятой",
         };
 
   return (
@@ -697,6 +733,26 @@ function SandboxLane({
           step={step as StringStep | null}
           task={stringCopy.task}
           strategyHint={stringCopy.strategy}
+        />
+      ) : kind === "greedy" && slug === "activity-selection" ? (
+        <ActivitySelectionVisualizer
+          step={
+            step && "kind" in step && step.kind === "activity"
+              ? step
+              : null
+          }
+          task={greedyCopy.task}
+          ruleHint={greedyCopy.strategy}
+        />
+      ) : kind === "greedy" && slug === "fractional-knapsack" ? (
+        <FractionalKnapsackVisualizer
+          step={
+            step && "kind" in step && step.kind === "knapsack"
+              ? step
+              : null
+          }
+          task={greedyCopy.task}
+          ruleHint={greedyCopy.strategy}
         />
       ) : (
         <SortVisualizer step={step as SortStep | null} />

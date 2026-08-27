@@ -166,6 +166,60 @@ export interface StringStep {
   message?: string;
 }
 
+/** Жадный шаг — общая оболочка для activity / knapsack */
+export type GreedyStepAction =
+  | "sort" // упорядочили кандидатов
+  | "consider" // смотрим кандидата
+  | "take" // берём
+  | "skip" // пропускаем
+  | "done";
+
+export interface ActivityItem {
+  id: string;
+  label: string;
+  start: number;
+  finish: number;
+}
+
+export interface KnapsackItem {
+  id: string;
+  label: string;
+  weight: number;
+  value: number;
+}
+
+export interface ActivityGreedyStep {
+  kind: "activity";
+  action: GreedyStepAction;
+  activities: ActivityItem[];
+  /** Порядок после сортировки по finish */
+  orderIds: string[];
+  selectedIds: string[];
+  consideringId?: string;
+  /** Время окончания последней выбранной */
+  lastFinish: number;
+  message?: string;
+  formula?: string;
+}
+
+export interface KnapsackGreedyStep {
+  kind: "knapsack";
+  action: GreedyStepAction;
+  items: KnapsackItem[];
+  /** Порядок по value/weight убыв. */
+  orderIds: string[];
+  capacity: number;
+  remaining: number;
+  totalValue: number;
+  /** Доля взятого предмета 0..1 */
+  takenFraction: Record<string, number>;
+  consideringId?: string;
+  message?: string;
+  formula?: string;
+}
+
+export type GreedyStep = ActivityGreedyStep | KnapsackGreedyStep;
+
 // Метаданные сложности
 export interface Complexity {
   best: string;

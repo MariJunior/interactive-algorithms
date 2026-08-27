@@ -2,6 +2,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
+import { hasGreedyVisualization } from "@/algorithms/greedy";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
@@ -13,6 +14,7 @@ import CodeBlock from "@/components/CodeBlock";
 import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
 import DpPlaybackPanel from "@/components/visualizers/DpPlaybackPanel";
 import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
+import GreedyPlaybackPanel from "@/components/visualizers/GreedyPlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import StringMatchPlaybackPanel from "@/components/visualizers/StringMatchPlaybackPanel";
@@ -23,8 +25,10 @@ import styles from "./Algorithm.module.css";
 
 function ComplexityTable({
   complexity,
+  category,
 }: {
   complexity: { best: string; average: string; worst: string; space: string };
+  category?: string;
 }) {
   const complexityColor: Record<string, string> = {
     "O(1)": "var(--color-o1)",
@@ -63,6 +67,7 @@ function ComplexityTable({
   const showStringNMHint = rows.some(
     (r) => r.value.includes("n · m") || r.value.includes("n + m"),
   );
+  const showGreedyNHint = category === "greedy";
 
   return (
     <div className={styles.complexityTable}>
@@ -113,6 +118,13 @@ function ComplexityTable({
           <span className={styles.complexityHintStrong}>n</span> — длина текста,{" "}
           <span className={styles.complexityHintStrong}>m</span> — длина паттерна.
           O(n·m) — наивный перебор окон; O(n+m) — KMP с предобработкой LPS.
+        </p>
+      )}
+      {showGreedyNHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n</span> — число активностей
+          или предметов. O(n log n) — сортировка по жадному ключу (конец /
+          value÷weight); дальше один линейный проход.
         </p>
       )}
     </div>
@@ -222,7 +234,7 @@ export default function Algorithm() {
     {
       id: "complexity",
       title: "⏱ Big O — сложность",
-      content: <ComplexityTable complexity={complexity} />,
+      content: <ComplexityTable complexity={complexity} category={algorithm.category} />,
     },
     {
       id: "when",
@@ -335,6 +347,8 @@ export default function Algorithm() {
               <DpPlaybackPanel key={slug} slug={slug} />
             ) : slug && hasStringVisualization(slug) ? (
               <StringMatchPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasGreedyVisualization(slug) ? (
+              <GreedyPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

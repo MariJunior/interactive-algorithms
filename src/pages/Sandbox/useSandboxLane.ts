@@ -3,6 +3,7 @@ import type {
   DpStep,
   Graph,
   GraphStep,
+  GreedyStep,
   SearchStep,
   SortStep,
   StringStep,
@@ -19,6 +20,14 @@ import {
   graphStepGenerators,
   hasGraphVisualization,
 } from "@/algorithms/graph";
+import {
+  DEMO_KNAPSACK_CAPACITY,
+  activitySelectionSteps,
+  createDemoActivities,
+  createDemoKnapsackItems,
+  fractionalKnapsackSteps,
+  hasGreedyVisualization,
+} from "@/algorithms/greedy";
 import { hasSearchingVisualization, searchingStepGenerators } from "@/algorithms/searching";
 import { hasSortingVisualization, sortingStepGenerators } from "@/algorithms/sorting";
 import {
@@ -36,7 +45,14 @@ import { useAlgorithmPlayer } from "@/hooks/useAlgorithmPlayer";
 import { useAlgorithmRunner } from "@/hooks/useAlgorithmRunner";
 import { useMemo } from "react";
 
-type AnyStep = SortStep | SearchStep | GraphStep | TreeStep | DpStep | StringStep;
+type AnyStep =
+  | SortStep
+  | SearchStep
+  | GraphStep
+  | TreeStep
+  | DpStep
+  | StringStep
+  | GreedyStep;
 
 export type SandboxLaneKind =
   | "sorting"
@@ -45,6 +61,7 @@ export type SandboxLaneKind =
   | "tree"
   | "dp"
   | "string"
+  | "greedy"
   | "none";
 
 function* emptySteps(_input: number[]): Generator<AnyStep> {
@@ -74,7 +91,9 @@ export function useSandboxLane(
             ? "dp"
             : hasStringVisualization(slug)
               ? "string"
-              : "none";
+              : hasGreedyVisualization(slug)
+                ? "greedy"
+                : "none";
 
   const laneInput = useMemo(() => {
     if (slug === "binary-search") {
@@ -126,6 +145,19 @@ export function useSandboxLane(
     return Array.from(create(text, pattern));
   }, [kind, slug, text, pattern]);
 
+  const greedySteps = useMemo((): GreedyStep[] => {
+    if (kind !== "greedy") return [];
+    if (slug === "activity-selection") {
+      return Array.from(activitySelectionSteps(createDemoActivities()));
+    }
+    if (slug === "fractional-knapsack") {
+      return Array.from(
+        fractionalKnapsackSteps(createDemoKnapsackItems(), DEMO_KNAPSACK_CAPACITY),
+      );
+    }
+    return [];
+  }, [kind, slug]);
+
   const steps =
     kind === "graph"
       ? graphSteps
@@ -135,7 +167,9 @@ export function useSandboxLane(
           ? dpSteps
           : kind === "string"
             ? stringSteps
-            : arraySteps.steps;
+            : kind === "greedy"
+              ? greedySteps
+              : arraySteps.steps;
 
   const stepsId =
     kind === "graph"
@@ -146,7 +180,9 @@ export function useSandboxLane(
           ? `${slug}:dp:${dpN}`
           : kind === "string"
             ? `${slug}:s:${text}:${pattern}`
-            : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
+            : kind === "greedy"
+              ? `${slug}:gr`
+              : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
 
   const player = useAlgorithmPlayer(steps, stepsId);
 

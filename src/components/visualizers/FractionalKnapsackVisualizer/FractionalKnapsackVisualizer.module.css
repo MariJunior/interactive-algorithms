@@ -1,0 +1,133 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.task,
+.rule,
+.formula {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-greedy) 12%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-greedy) 35%, var(--color-border));
+  border-radius: var(--radius-md);
+}
+
+.rule,
+.formula {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+}
+
+.taskLabel {
+  font-weight: 600;
+  color: var(--color-greedy);
+}
+
+.sep {
+  margin: 0 var(--space-2);
+  color: var(--color-text-faint);
+}
+
+.metaStrong {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-greedy);
+}
+
+.bag {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bagTrack {
+  height: 14px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bagFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-greedy), var(--color-o1));
+  transition: width 200ms ease;
+}
+
+.bagLabel {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.item {
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.itemActive {
+  border-color: var(--color-greedy);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-greedy) 40%, transparent);
+}
+
+.itemHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  margin-bottom: 6px;
+}
+
+.itemHead span {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.itemBarTrack {
+  height: 8px;
+  background: var(--color-surface-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.itemBar {
+  height: 100%;
+  background: var(--color-o1);
+  transition: width 200ms ease;
+}
+
+.itemFrac {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-faint);
+}
