@@ -1,52 +1,44 @@
 # Project status
 
-> Updated: 2026-08-27 23:07 (local)
-> Branch: `main` · HEAD: `dd256f8` · ahead of `origin/main` by 3
-> Working tree: **dirty** — Step 8 (BFS/DFS graphs) готов к ревью
+> Updated: 2026-08-27 23:25 (local)
+> Branch: `main` · HEAD: `0b09e5d` · ahead of `origin/main` by 3+
+> Working tree: **dirty** — Step 8b (tree traversals) готов к ревью
 
 ## Current goals
 
-- Ревью / commit **Step 8** (графы: BFS + DFS).
-- Дальше: деревья / DP / greedy / strings → Step 9 (CSS-арт+квиз) → Step 10 (3D).
-- Scope — «роскошный максимум»; Step 8 = одна вертикаль категории (как Step 5).
+- Ревью / commit **Step 8b** (деревья: Preorder / Inorder / Postorder).
+- Дальше: DP / greedy / strings → Step 9 → Step 10.
+- Scope — «роскошный максимум»; одна вертикаль за шаг + понятные подписи задачи.
 
 ## Completed (committed)
 
 | Step | Commit | Что |
 |------|--------|-----|
-| 1–6c | … → `f1a1553` | Сортировки, поиск, sandbox, timer, UX |
-| 7 | `dd256f8` | Shiki, a11y, README, vercel.json |
+| 1–7 | … → `dd256f8` | Сортировки, поиск, sandbox, polish |
+| 8 | `0b09e5d` | BFS/DFS + GraphVisualizer + UX (задача, V/E) |
 
 ## In progress / uncommitted
 
-**Step 8** — графы:
+**Step 8b** — обходы дерева:
 
-- Domain: `GraphStep`, `bfs`/`dfs` + generators + tests
-- UI: `GraphVisualizer` + `GraphPlaybackPanel`
-- Каталог: meta + code; Learn покажет фильтр «Графы»
-- Sandbox: категория graph, общий граф + старт, сравнение BFS↔DFS
-
-Тесты: 80 passed. Build OK.
+- Domain: `TreeStep`, preorder/inorder/postorder + tests
+- UI: `TreeVisualizer` + `TreePlaybackPanel` (задача, правило, легенда)
+- Sandbox: категория tree на общем BST-демо
+- Подсказки Big O: n / h
 
 ## Next steps (ordered)
 
-1. Commit Step 8 после ревью
-2. Step 8b+ или Step 9: деревья / DP / … или CSS-арт+квиз (уточнить приоритет)
-3. Push / Vercel deploy — по желанию
+1. Commit Step 8b после ревью
+2. Step 8c: DP или greedy или strings
+3. Step 9: CSS-арт + квиз; Step 10: 3D
 
 ## Key decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| Step 8 = BFS+DFS, не весь каталог сразу | Staged delivery, как Step 5 |
-| Общий demo-граф в sandbox | Честное сравнение порядка обхода |
-| `explore`→comparisons, `visit`→moves | Метрики плеера без ломки API |
-
-## Known issues
-
-- Push: ahead of origin (Step 7 + Step 8 после commit).
-- Trees / DP / greedy / string — ещё пустые категории.
-- Chunk size warning на main bundle.
+| Три обхода на одном BST | Как BFS↔DFS: сравнимый порядок на одном входе |
+| `descend`→comparisons, `visit`→moves | Единые метрики плеера |
+| Формула обхода в UI | «В том же духе», что задача у графов |
 
 ## References
 

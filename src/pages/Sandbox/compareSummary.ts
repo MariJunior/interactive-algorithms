@@ -59,7 +59,8 @@ export function finalStatsFromActions(
       (step) =>
         step.action === "compare" ||
         step.action === "select" ||
-        step.action === "explore",
+        step.action === "explore" ||
+        step.action === "descend",
     ).length,
     moves: actions.filter(
       (step) =>

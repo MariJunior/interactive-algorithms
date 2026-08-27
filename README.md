@@ -28,13 +28,14 @@
 | Секция «Как работает» в аккордеоне | Готово |
 | Поиск + `SearchVisualizer` | Готово |
 | Графы: BFS / DFS + `GraphVisualizer`, sandbox | Готово |
+| Деревья: Preorder / Inorder / Postorder + `TreeVisualizer` | Готово |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
-| Деревья, DP, жадные, строки, структуры данных | В планах |
+| DP, жадные, строки, структуры данных | В планах |
 | CSS-арт, квиз | В планах |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Примеры:** `/algorithm/bubble-sort`, `/algorithm/bfs`, `/algorithm/dfs`, `/sandbox?a=bfs&b=dfs`.
+**Примеры:** `/algorithm/inorder-traversal`, `/algorithm/bfs`, `/sandbox?a=preorder-traversal&b=inorder-traversal`.
 
 ---
 
@@ -47,7 +48,7 @@
 5. ~~Linear / Binary Search + отдельный визуализатор~~
 6. ~~Песочница сравнения (`/sandbox?a=&b=`)~~
 7. ~~Полировка: Shiki, a11y, адаптив, конфиг Vercel~~
-8. Расширенный каталог: графы (BFS/DFS) → деревья, DP, жадные, строки…
+8. Расширенный каталог: графы (BFS/DFS), деревья (обходы) → DP, жадные, строки…
 9. CSS-арт на карточках + мини-квиз «Угадай сложность»
 10. **3D-режим** для избранных алгоритмов
 

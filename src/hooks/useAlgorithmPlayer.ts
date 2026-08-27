@@ -11,8 +11,7 @@ interface StepWithAction {
 }
 
 const COUNTABLE_ACTIONS = {
-  comparisons: new Set(["compare", "select", "explore"]),
-  // visit — «закрепили» вершину в обходе графа (аналог перемещения фокуса)
+  comparisons: new Set(["compare", "select", "explore", "descend"]),
   moves: new Set(["swap", "insert", "merge", "visit"]),
 };
 

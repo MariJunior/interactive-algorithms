@@ -1,0 +1,163 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.task,
+.formula {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-tree) 12%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-tree) 35%, var(--color-border));
+  border-radius: var(--radius-md);
+}
+
+.formula {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+}
+
+.taskLabel {
+  font-weight: 600;
+  color: var(--color-tree);
+}
+
+.taskSep {
+  margin: 0 var(--space-2);
+  color: var(--color-text-faint);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.metaStrong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-tree);
+}
+
+.metaHint {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  border: 1.5px solid var(--color-border);
+}
+
+.legendCurrent {
+  background: var(--color-tree);
+  border-color: var(--color-accent-hover);
+}
+
+.legendStack {
+  background: color-mix(in srgb, var(--color-tree) 25%, var(--color-surface-2));
+  border-color: var(--color-tree);
+}
+
+.legendVisited {
+  background: color-mix(in srgb, var(--color-o1) 35%, var(--color-surface-2));
+  border-color: var(--color-o1);
+}
+
+.legendDefault {
+  background: var(--color-surface-2);
+  border-color: var(--color-border-hover);
+}
+
+.canvas {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.edge {
+  stroke: var(--color-border-hover);
+  stroke-width: 2;
+}
+
+.edgeActive {
+  stroke: var(--color-tree);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 4px rgba(247, 160, 64, 0.45));
+}
+
+.node {
+  stroke-width: 2;
+}
+
+.default {
+  fill: var(--color-surface-2);
+  stroke: var(--color-border-hover);
+}
+
+.stack {
+  fill: color-mix(in srgb, var(--color-tree) 25%, var(--color-surface-2));
+  stroke: var(--color-tree);
+}
+
+.current {
+  fill: var(--color-tree);
+  stroke: var(--color-accent-hover);
+}
+
+.visited {
+  fill: color-mix(in srgb, var(--color-o1) 35%, var(--color-surface-2));
+  stroke: var(--color-o1);
+}
+
+.nodeLabel {
+  fill: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+g:has(.current) .nodeLabel {
+  fill: var(--color-bg);
+}

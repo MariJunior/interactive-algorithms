@@ -1,10 +1,18 @@
-import type { AlgorithmCategory, GraphStep, SearchStep, SortStep } from "@/algorithms/types";
+import type {
+  AlgorithmCategory,
+  GraphStep,
+  SearchStep,
+  SortStep,
+  TreeStep,
+} from "@/algorithms/types";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
+import { hasTreeVisualization } from "@/algorithms/tree";
 import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
+import TreeVisualizer from "@/components/visualizers/TreeVisualizer";
 import Slider from "@/components/ui/Slider";
 import { ALGORITHMS, CATEGORIES, getAlgorithmBySlug } from "@/data/algorithms";
 import { formatElapsedMs, type PlayerStats } from "@/hooks/useAlgorithmPlayer";
@@ -17,6 +25,7 @@ import styles from "./Sandbox.module.css";
 import {
   DEMO_GRAPH_START,
   createDemoGraph,
+  createDemoTree,
   useSandboxLane,
   type SandboxLaneKind,
 } from "./useSandboxLane";
@@ -24,12 +33,12 @@ import {
 const DEFAULT_A = "bubble-sort";
 const DEFAULT_B = "quick-sort";
 
-/** Алгоритмы с готовой визуализацией — только их можно сравнивать */
 const COMPARABLE = ALGORITHMS.filter(
   (algo) =>
     hasSortingVisualization(algo.slug) ||
     hasSearchingVisualization(algo.slug) ||
-    hasGraphVisualization(algo.slug),
+    hasGraphVisualization(algo.slug) ||
+    hasTreeVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -96,9 +105,9 @@ export default function Sandbox() {
   const [target, setTarget] = useState(() => pickTarget(input));
   const [speed, setSpeed] = useState(400);
   const [editDraft, setEditDraft] = useState(() => input.join(", "));
-  // Общий учебный граф + старт для категории graph
   const [graph] = useState(() => createDemoGraph());
   const [graphStartId, setGraphStartId] = useState(DEMO_GRAPH_START);
+  const [tree] = useState(() => createDemoTree());
 
   const metaA = getAlgorithmBySlug(slugA);
   const metaB = getAlgorithmBySlug(slugB);
@@ -112,9 +121,10 @@ export default function Sandbox() {
   const needsTarget = activeCategory === "searching";
   const needsBinaryHint = slugA === "binary-search" || slugB === "binary-search";
   const isGraphCategory = activeCategory === "graph";
+  const isTreeCategory = activeCategory === "tree";
 
-  const laneA = useSandboxLane(slugA, input, target, graph, graphStartId);
-  const laneB = useSandboxLane(slugB, input, target, graph, graphStartId);
+  const laneA = useSandboxLane(slugA, input, target, graph, graphStartId, tree);
+  const laneB = useSandboxLane(slugB, input, target, graph, graphStartId, tree);
 
   // Запись выровненных slug в URL (конфликт категорий / пустой query)
   useEffect(() => {
@@ -319,7 +329,11 @@ export default function Sandbox() {
           aria-label="Общее управление"
         >
           <h2 className={styles.sharedTitle}>
-            {isGraphCategory ? "Общий граф" : "Общий input"}
+            {isGraphCategory
+              ? "Общий граф"
+              : isTreeCategory
+                ? "Общее дерево"
+                : "Общий input"}
           </h2>
 
           {isGraphCategory ? (
@@ -344,6 +358,11 @@ export default function Sandbox() {
                 обхода.
               </p>
             </div>
+          ) : isTreeCategory ? (
+            <p className={styles.hint}>
+              Preorder / Inorder / Postorder бегут по одному BST-демо (корень 4). Сравнивай,
+              как меняется порядок посещения при одном и том же дереве.
+            </p>
           ) : (
             <>
               <div className={styles.inputRow}>
@@ -458,7 +477,7 @@ interface SandboxLaneProps {
   options: typeof COMPARABLE;
   onSlugChange: (slug: string) => void;
   kind: SandboxLaneKind;
-  step: SortStep | SearchStep | GraphStep | null;
+  step: SortStep | SearchStep | GraphStep | TreeStep | null;
   currentIndex: number;
   totalSteps: number;
   stats: PlayerStats;
@@ -482,8 +501,30 @@ function SandboxLane({
   graphStartId,
 }: SandboxLaneProps) {
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
-  const movesLabel = kind === "graph" ? "Посещений" : "Перемещений";
-  const compareLabel = kind === "graph" ? "Просмотров рёбер" : "Сравнений";
+  const movesLabel =
+    kind === "graph" || kind === "tree" ? "Посещений" : "Перемещений";
+  const compareLabel =
+    kind === "graph"
+      ? "Просмотров рёбер"
+      : kind === "tree"
+        ? "Спусков"
+        : "Сравнений";
+
+  const treeCopy =
+    slug === "preorder-traversal"
+      ? {
+          task: "Обойти все узлы; корень раньше детей",
+          formula: "Preorder = корень → левое → правое",
+        }
+      : slug === "inorder-traversal"
+        ? {
+            task: "Обойти все узлы; для BST — отсортированный порядок",
+            formula: "Inorder = левое → корень → правое",
+          }
+        : {
+            task: "Обойти все узлы; корень после обоих поддеревьев",
+            formula: "Postorder = левое → правое → корень",
+          };
 
   return (
     <article className={styles.lane}>
@@ -520,6 +561,12 @@ function SandboxLane({
               : "Обойти граф слоями от старта и показать порядок первого посещения"
           }
           visitOrderHint="результат обхода — последовательность вершин"
+        />
+      ) : kind === "tree" ? (
+        <TreeVisualizer
+          step={step as TreeStep | null}
+          task={treeCopy.task}
+          formulaHint={treeCopy.formula}
         />
       ) : (
         <SortVisualizer step={step as SortStep | null} />

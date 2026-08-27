@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
+import { hasTreeVisualization } from "@/algorithms/tree";
 import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
@@ -11,6 +12,7 @@ import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
 import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
+import TreePlaybackPanel from "@/components/visualizers/TreePlaybackPanel";
 import styles from "./Algorithm.module.css";
 
 // ─── Таблица сложности ───────────────────────────────────
@@ -32,6 +34,7 @@ function ComplexityTable({
     "O(n + k)": "var(--color-onlogn)",
     "O(V + E)": "var(--color-on)",
     "O(V)": "var(--color-ologn)",
+    "O(h)": "var(--color-ologn)",
   };
 
   const rows = [
@@ -41,8 +44,8 @@ function ComplexityTable({
     { label: "Память", value: complexity.space },
   ];
 
-  // Графовая нотация: V = vertices, E = edges
-  const usesGraphNotation = rows.some(
+  const showTreeHint = rows.some((r) => r.value === "O(h)");
+  const showGraphHint = rows.some(
     (row) => row.value.includes("V") || row.value.includes("E"),
   );
 
@@ -57,19 +60,30 @@ function ComplexityTable({
             title={
               value.includes("V") || value.includes("E")
                 ? "V — число вершин (Vertices), E — число рёбер (Edges)"
-                : undefined
+                : value === "O(h)"
+                  ? "h — высота дерева (height)"
+                  : value === "O(n)" && showTreeHint
+                    ? "n — число узлов дерева"
+                    : undefined
             }
           >
             {value}
           </span>
         </div>
       ))}
-      {usesGraphNotation && (
+      {showGraphHint && (
         <p className={styles.complexityHint}>
           <span className={styles.complexityHintStrong}>V</span> — число вершин
           (vertices), <span className={styles.complexityHintStrong}>E</span> — число
           рёбер (edges). Например, O(V + E) значит: время растёт с числом вершин и
           рёбер вместе.
+        </p>
+      )}
+      {showTreeHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n</span> — число узлов дерева,{" "}
+          <span className={styles.complexityHintStrong}>h</span> — высота (длиннейший
+          путь от корня до листа). O(h) — память под стек рекурсии.
         </p>
       )}
     </div>
@@ -286,6 +300,8 @@ export default function Algorithm() {
               <SearchPlaybackPanel key={slug} slug={slug} />
             ) : slug && hasGraphVisualization(slug) ? (
               <GraphPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasTreeVisualization(slug) ? (
+              <TreePlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

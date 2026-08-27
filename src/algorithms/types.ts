@@ -85,6 +85,39 @@ export interface GraphStep {
   message?: string;
 }
 
+/** Узел бинарного дерева с координатами для SVG */
+export interface TreeNodeLayout {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  leftId?: string;
+  rightId?: string;
+}
+
+export interface BinaryTree {
+  rootId: string;
+  nodes: TreeNodeLayout[];
+}
+
+export type TreeStepAction =
+  | "descend" // спускаемся к ребёнку / смотрим узел
+  | "visit" // записываем узел в порядок обхода
+  | "done";
+
+/** Один шаг обхода бинарного дерева */
+export interface TreeStep {
+  tree: BinaryTree;
+  action: TreeStepAction;
+  current?: string;
+  /** Стек вызовов / путь от корня (для наглядности) */
+  callStack: string[];
+  visitOrder: string[];
+  /** Ребро parent→child, по которому спускаемся */
+  exploringEdge?: [string, string];
+  message?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;

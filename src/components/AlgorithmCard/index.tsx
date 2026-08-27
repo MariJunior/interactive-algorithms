@@ -28,6 +28,7 @@ const complexityColor: Record<string, string> = {
   "O(n + k)": "var(--color-onlogn)",
   "O(V + E)": "var(--color-on)",
   "O(V)": "var(--color-ologn)",
+  "O(h)": "var(--color-ologn)",
 };
 
 function getComplexityColor(value: string): string {
@@ -423,6 +424,11 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
               V — вершины, E — рёбра
             </p>
           )}
+          {complexity.space === "O(h)" && (
+            <p className={styles.complexityNote} title="nodes / height">
+              n — узлы, h — высота дерева
+            </p>
+          )}
 
           {/* Бейджи */}
           <div className={styles.badges}>
@@ -438,10 +444,12 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
 // ─── Вспомогательный компонент ───────────────────────────
 
 function ComplexityItem({ label, value }: { label: string; value: string }) {
-  const graphHint =
+  const hint =
     value.includes("V") || value.includes("E")
       ? "V — число вершин (Vertices), E — число рёбер (Edges)"
-      : undefined;
+      : value === "O(h)"
+        ? "h — высота дерева (height)"
+        : undefined;
 
   return (
     <div className={styles.complexityItem}>
@@ -449,7 +457,7 @@ function ComplexityItem({ label, value }: { label: string; value: string }) {
       <span
         className={styles.complexityValue}
         style={{ color: getComplexityColor(value) }}
-        title={graphHint}
+        title={hint}
       >
         {value}
       </span>

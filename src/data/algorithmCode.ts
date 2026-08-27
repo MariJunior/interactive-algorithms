@@ -736,4 +736,100 @@ function countingSortByDigit(a, exp) {
   return order
 }`,
   },
+
+  "preorder-traversal": {
+    jsBasic: `function preorder(node, order) {
+  if (!node) return order
+  order.push(node.value)
+  preorder(node.left, order)
+  preorder(node.right, order)
+  return order
+}`,
+
+    jsModern: `function preorder(node, order = []) {
+  if (!node) return order
+  order.push(node.value)
+  preorder(node.left, order)
+  preorder(node.right, order)
+  return order
+}`,
+
+    typescript: `interface BinNode {
+  value: number
+  left?: BinNode
+  right?: BinNode
+}
+
+function preorder(node: BinNode | undefined, order: number[] = []): number[] {
+  if (!node) return order
+  order.push(node.value)
+  preorder(node.left, order)
+  preorder(node.right, order)
+  return order
+}`,
+  },
+
+  "inorder-traversal": {
+    jsBasic: `function inorder(node, order) {
+  if (!node) return order
+  inorder(node.left, order)
+  order.push(node.value)
+  inorder(node.right, order)
+  return order
+}`,
+
+    jsModern: `function inorder(node, order = []) {
+  if (!node) return order
+  inorder(node.left, order)
+  order.push(node.value)
+  inorder(node.right, order)
+  return order
+}`,
+
+    typescript: `interface BinNode {
+  value: number
+  left?: BinNode
+  right?: BinNode
+}
+
+function inorder(node: BinNode | undefined, order: number[] = []): number[] {
+  if (!node) return order
+  inorder(node.left, order)
+  order.push(node.value)
+  inorder(node.right, order)
+  return order
+}`,
+  },
+
+  "postorder-traversal": {
+    jsBasic: `function postorder(node, order) {
+  if (!node) return order
+  postorder(node.left, order)
+  postorder(node.right, order)
+  order.push(node.value)
+  return order
+}`,
+
+    jsModern: `function postorder(node, order = []) {
+  if (!node) return order
+  postorder(node.left, order)
+  postorder(node.right, order)
+  order.push(node.value)
+  return order
+}`,
+
+    typescript: `interface BinNode {
+  value: number
+  left?: BinNode
+  right?: BinNode
+}
+
+function postorder(node: BinNode | undefined, order: number[] = []): number[] {
+  if (!node) return order
+  postorder(node.left, order)
+  postorder(node.right, order)
+  order.push(node.value)
+  return order
+}`,
+  },
 };
