@@ -341,6 +341,23 @@
   font-weight: 700;
 }
 
+.complexityHint {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  background: var(--color-surface-2);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-graph);
+}
+
+.complexityHintStrong {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-graph);
+}
+
 /* ─── Когда использовать ──────────────────────────────── */
 .whenGrid {
   display: flex;

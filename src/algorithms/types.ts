@@ -43,6 +43,48 @@ export interface SearchStep<T = number> {
   message?: string;
 }
 
+/** Вершина графа с координатами для 2D-раскладки */
+export interface GraphNode {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+}
+
+export interface GraphEdge {
+  from: string;
+  to: string;
+}
+
+/** Небольшой учебный граф (список смежности строится из edges) */
+export interface Graph {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  /** false = неориентированный (ребро в обе стороны) */
+  directed?: boolean;
+}
+
+export type GraphStepAction =
+  | "explore" // смотрим ребро / кладём в frontier
+  | "visit" // посещаем вершину
+  | "done";
+
+/** Один шаг обхода графа (BFS / DFS) */
+export interface GraphStep {
+  graph: Graph;
+  action: GraphStepAction;
+  /** Вершина в фокусе */
+  current?: string;
+  /** Очередь (BFS) или стек (DFS) */
+  frontier: string[];
+  visited: string[];
+  /** Порядок посещения на текущий момент */
+  visitOrder: string[];
+  /** Ребро, которое сейчас рассматриваем */
+  exploringEdge?: [string, string];
+  message?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;

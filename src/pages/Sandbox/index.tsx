@@ -1,6 +1,8 @@
-import type { AlgorithmCategory, SearchStep, SortStep } from "@/algorithms/types";
+import type { AlgorithmCategory, GraphStep, SearchStep, SortStep } from "@/algorithms/types";
+import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
+import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
 import Slider from "@/components/ui/Slider";
@@ -12,14 +14,22 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { buildCompareSummary, finalStatsFromActions } from "./compareSummary";
 import styles from "./Sandbox.module.css";
-import { useSandboxLane } from "./useSandboxLane";
+import {
+  DEMO_GRAPH_START,
+  createDemoGraph,
+  useSandboxLane,
+  type SandboxLaneKind,
+} from "./useSandboxLane";
 
 const DEFAULT_A = "bubble-sort";
 const DEFAULT_B = "quick-sort";
 
 /** Алгоритмы с готовой визуализацией — только их можно сравнивать */
 const COMPARABLE = ALGORITHMS.filter(
-  (algo) => hasSortingVisualization(algo.slug) || hasSearchingVisualization(algo.slug),
+  (algo) =>
+    hasSortingVisualization(algo.slug) ||
+    hasSearchingVisualization(algo.slug) ||
+    hasGraphVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -86,6 +96,9 @@ export default function Sandbox() {
   const [target, setTarget] = useState(() => pickTarget(input));
   const [speed, setSpeed] = useState(400);
   const [editDraft, setEditDraft] = useState(() => input.join(", "));
+  // Общий учебный граф + старт для категории graph
+  const [graph] = useState(() => createDemoGraph());
+  const [graphStartId, setGraphStartId] = useState(DEMO_GRAPH_START);
 
   const metaA = getAlgorithmBySlug(slugA);
   const metaB = getAlgorithmBySlug(slugB);
@@ -98,9 +111,10 @@ export default function Sandbox() {
 
   const needsTarget = activeCategory === "searching";
   const needsBinaryHint = slugA === "binary-search" || slugB === "binary-search";
+  const isGraphCategory = activeCategory === "graph";
 
-  const laneA = useSandboxLane(slugA, input, target);
-  const laneB = useSandboxLane(slugB, input, target);
+  const laneA = useSandboxLane(slugA, input, target, graph, graphStartId);
+  const laneB = useSandboxLane(slugB, input, target, graph, graphStartId);
 
   // Запись выровненных slug в URL (конфликт категорий / пустой query)
   useEffect(() => {
@@ -237,7 +251,7 @@ export default function Sandbox() {
           <h1 className={styles.title}>Песочница сравнения</h1>
           <p className={styles.subtitle}>
             Сравнивай алгоритмы одной группы на общем входе: шаги, время, сравнения и
-            перемещения.
+            перемещения (для графов — посещения вершин).
           </p>
 
           <div className={styles.categoryTabs} role="tablist" aria-label="Группа алгоритмов">
@@ -279,6 +293,7 @@ export default function Sandbox() {
             stats={laneA.player.stats}
             elapsedMs={laneA.player.elapsedMs}
             message={laneA.player.currentStep?.message}
+            graphStartId={graphStartId}
           />
           <SandboxLane
             sideLabel="Алгоритм B"
@@ -292,6 +307,7 @@ export default function Sandbox() {
             stats={laneB.player.stats}
             elapsedMs={laneB.player.elapsedMs}
             message={laneB.player.currentStep?.message}
+            graphStartId={graphStartId}
           />
         </motion.div>
 
@@ -302,53 +318,86 @@ export default function Sandbox() {
           transition={{ duration: 0.4, delay: 0.1 }}
           aria-label="Общее управление"
         >
-          <h2 className={styles.sharedTitle}>Общий input</h2>
+          <h2 className={styles.sharedTitle}>
+            {isGraphCategory ? "Общий граф" : "Общий input"}
+          </h2>
 
-          <div className={styles.inputRow}>
-            <div className={styles.chips} aria-label="Текущий массив">
-              {input.map((value, index) => (
-                <span key={`${index}-${value}`} className={styles.chip}>
-                  {value}
-                </span>
-              ))}
-            </div>
-            <button type="button" className={styles.btn} onClick={handleRandom} title="Случайный массив">
-              🎲 Random
-            </button>
-          </div>
-
-          <div className={styles.editRow}>
-            <input
-              className={styles.editInput}
-              value={editDraft}
-              onChange={(event) => setEditDraft(event.target.value)}
-              aria-label="Редактировать массив"
-              placeholder="1, 5, 3, 9…"
-            />
-            <button type="button" className={styles.btn} onClick={handleApplyEdit}>
-              ✏ Применить
-            </button>
-          </div>
-
-          {needsTarget && (
+          {isGraphCategory ? (
             <div className={styles.targetRow}>
-              <label className={styles.targetLabel} htmlFor="sandbox-target">
-                Цель поиска
+              <label className={styles.targetLabel} htmlFor="sandbox-graph-start">
+                Стартовая вершина
               </label>
-              <input
-                id="sandbox-target"
-                className={styles.targetInput}
-                type="number"
-                value={target}
-                onChange={(event) => setTarget(Number(event.target.value))}
-              />
+              <select
+                id="sandbox-graph-start"
+                className={styles.select}
+                value={graphStartId}
+                onChange={(event) => setGraphStartId(event.target.value)}
+              >
+                {graph.nodes.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.label}
+                  </option>
+                ))}
+              </select>
+              <p className={styles.hint}>
+                BFS и DFS бегут по одному и тому же учебному графу — меняется только порядок
+                обхода.
+              </p>
             </div>
-          )}
+          ) : (
+            <>
+              <div className={styles.inputRow}>
+                <div className={styles.chips} aria-label="Текущий массив">
+                  {input.map((value, index) => (
+                    <span key={`${index}-${value}`} className={styles.chip}>
+                      {value}
+                    </span>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  onClick={handleRandom}
+                  title="Случайный массив"
+                >
+                  🎲 Random
+                </button>
+              </div>
 
-          {needsBinaryHint && (
-            <p className={styles.hint}>
-              Binary Search получает отсортированную копию того же набора чисел.
-            </p>
+              <div className={styles.editRow}>
+                <input
+                  className={styles.editInput}
+                  value={editDraft}
+                  onChange={(event) => setEditDraft(event.target.value)}
+                  aria-label="Редактировать массив"
+                  placeholder="1, 5, 3, 9…"
+                />
+                <button type="button" className={styles.btn} onClick={handleApplyEdit}>
+                  ✏ Применить
+                </button>
+              </div>
+
+              {needsTarget && (
+                <div className={styles.targetRow}>
+                  <label className={styles.targetLabel} htmlFor="sandbox-target">
+                    Цель поиска
+                  </label>
+                  <input
+                    id="sandbox-target"
+                    className={styles.targetInput}
+                    type="number"
+                    value={target}
+                    onChange={(event) => setTarget(Number(event.target.value))}
+                  />
+                </div>
+              )}
+
+              {needsBinaryHint && (
+                <p className={styles.hint}>
+                  Binary Search получает отсортированную копию того же набора чисел.
+                </p>
+              )}
+            </>
           )}
 
           <div className={styles.controlsRow}>
@@ -408,13 +457,14 @@ interface SandboxLaneProps {
   slug: string;
   options: typeof COMPARABLE;
   onSlugChange: (slug: string) => void;
-  kind: "sorting" | "searching" | "none";
-  step: SortStep | SearchStep | null;
+  kind: SandboxLaneKind;
+  step: SortStep | SearchStep | GraphStep | null;
   currentIndex: number;
   totalSteps: number;
   stats: PlayerStats;
   elapsedMs: number;
   message?: string;
+  graphStartId?: string;
 }
 
 function SandboxLane({
@@ -429,8 +479,11 @@ function SandboxLane({
   stats,
   elapsedMs,
   message,
+  graphStartId,
 }: SandboxLaneProps) {
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
+  const movesLabel = kind === "graph" ? "Посещений" : "Перемещений";
+  const compareLabel = kind === "graph" ? "Просмотров рёбер" : "Сравнений";
 
   return (
     <article className={styles.lane}>
@@ -452,6 +505,22 @@ function SandboxLane({
 
       {kind === "searching" ? (
         <SearchVisualizer step={step as SearchStep | null} />
+      ) : kind === "graph" ? (
+        <GraphVisualizer
+          step={step as GraphStep | null}
+          startId={graphStartId}
+          frontierLabel={
+            slug === "dfs"
+              ? "Стек (ожидают, последний сверху)"
+              : "Очередь (ожидают, первые слева)"
+          }
+          task={
+            slug === "dfs"
+              ? "Обойти граф вглубь от старта и показать порядок первого посещения"
+              : "Обойти граф слоями от старта и показать порядок первого посещения"
+          }
+          visitOrderHint="результат обхода — последовательность вершин"
+        />
       ) : (
         <SortVisualizer step={step as SortStep | null} />
       )}
@@ -469,10 +538,10 @@ function SandboxLane({
           </span>
         </span>
         <span>
-          Сравнений: <span className={styles.laneMetaStrong}>{stats.comparisons}</span>
+          {compareLabel}: <span className={styles.laneMetaStrong}>{stats.comparisons}</span>
         </span>
         <span>
-          Перемещений: <span className={styles.laneMetaStrong}>{stats.moves}</span>
+          {movesLabel}: <span className={styles.laneMetaStrong}>{stats.moves}</span>
         </span>
       </div>
     </article>

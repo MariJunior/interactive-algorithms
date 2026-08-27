@@ -26,15 +26,16 @@ const complexityColor: Record<string, string> = {
   "O(2ⁿ)": "var(--color-o2n)",
   "O(nk)": "var(--color-on)",
   "O(n + k)": "var(--color-onlogn)",
+  "O(V + E)": "var(--color-on)",
+  "O(V)": "var(--color-ologn)",
 };
 
 function getComplexityColor(value: string): string {
   return complexityColor[value] ?? "var(--color-text-muted)";
 }
 
-// ─── Preview placeholder ─────────────────────────────────
+  // ─── Preview placeholder ─────────────────────────────────
 // Статичные SVG-иллюстрации — "почерк" каждой категории.
-// Потом можно заменить на уникальные SVG для каждого алгоритма.
 
 function PreviewPlaceholder({ category }: { category: string }) {
   switch (category) {
@@ -415,6 +416,13 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
             <ComplexityItem label="Худш." value={complexity.worst} />
             <ComplexityItem label="Память" value={complexity.space} />
           </div>
+          {(complexity.average.includes("V") ||
+            complexity.average.includes("E") ||
+            complexity.space.includes("V")) && (
+            <p className={styles.complexityNote} title="Vertices / Edges">
+              V — вершины, E — рёбра
+            </p>
+          )}
 
           {/* Бейджи */}
           <div className={styles.badges}>
@@ -430,10 +438,19 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
 // ─── Вспомогательный компонент ───────────────────────────
 
 function ComplexityItem({ label, value }: { label: string; value: string }) {
+  const graphHint =
+    value.includes("V") || value.includes("E")
+      ? "V — число вершин (Vertices), E — число рёбер (Edges)"
+      : undefined;
+
   return (
     <div className={styles.complexityItem}>
       <span className={styles.complexityLabel}>{label}</span>
-      <span className={styles.complexityValue} style={{ color: getComplexityColor(value) }}>
+      <span
+        className={styles.complexityValue}
+        style={{ color: getComplexityColor(value) }}
+        title={graphHint}
+      >
         {value}
       </span>
     </div>

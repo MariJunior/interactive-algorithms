@@ -11,9 +11,9 @@ interface StepWithAction {
 }
 
 const COUNTABLE_ACTIONS = {
-  comparisons: new Set(["compare", "select"]),
-  // Merge/Counting/Insertion/Radix не эмитят "swap", но двигают элементы через insert/merge
-  moves: new Set(["swap", "insert", "merge"]),
+  comparisons: new Set(["compare", "select", "explore"]),
+  // visit — «закрепили» вершину в обходе графа (аналог перемещения фокуса)
+  moves: new Set(["swap", "insert", "merge", "visit"]),
 };
 
 function computeStats(steps: StepWithAction[], upToIndex: number): PlayerStats {

@@ -1,5 +1,6 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
@@ -7,6 +8,7 @@ import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
 import CodeBlock from "@/components/CodeBlock";
 import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
+import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import styles from "./Algorithm.module.css";
@@ -28,6 +30,8 @@ function ComplexityTable({
     "O(2ⁿ)": "var(--color-o2n)",
     "O(nk)": "var(--color-on)",
     "O(n + k)": "var(--color-onlogn)",
+    "O(V + E)": "var(--color-on)",
+    "O(V)": "var(--color-ologn)",
   };
 
   const rows = [
@@ -37,6 +41,11 @@ function ComplexityTable({
     { label: "Память", value: complexity.space },
   ];
 
+  // Графовая нотация: V = vertices, E = edges
+  const usesGraphNotation = rows.some(
+    (row) => row.value.includes("V") || row.value.includes("E"),
+  );
+
   return (
     <div className={styles.complexityTable}>
       {rows.map(({ label, value }) => (
@@ -45,11 +54,24 @@ function ComplexityTable({
           <span
             className={styles.complexityValue}
             style={{ color: complexityColor[value] ?? "var(--color-text-muted)" }}
+            title={
+              value.includes("V") || value.includes("E")
+                ? "V — число вершин (Vertices), E — число рёбер (Edges)"
+                : undefined
+            }
           >
             {value}
           </span>
         </div>
       ))}
+      {usesGraphNotation && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>V</span> — число вершин
+          (vertices), <span className={styles.complexityHintStrong}>E</span> — число
+          рёбер (edges). Например, O(V + E) значит: время растёт с числом вершин и
+          рёбер вместе.
+        </p>
+      )}
     </div>
   );
 }
@@ -262,6 +284,8 @@ export default function Algorithm() {
               <SortPlaybackPanel key={slug} slug={slug} />
             ) : slug && hasSearchingVisualization(slug) ? (
               <SearchPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasGraphVisualization(slug) ? (
+              <GraphPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

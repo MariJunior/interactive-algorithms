@@ -1,56 +1,52 @@
 # Project status
 
-> Updated: 2026-08-27 21:02 (local)
-> Branch: `main` · HEAD: `f1a1553` · ahead of `origin/main` by 2
-> Working tree: **dirty** — Step 7 (Shiki / a11y / README / vercel) готов к ревью
+> Updated: 2026-08-27 23:07 (local)
+> Branch: `main` · HEAD: `dd256f8` · ahead of `origin/main` by 3
+> Working tree: **dirty** — Step 8 (BFS/DFS graphs) готов к ревью
 
 ## Current goals
 
-- Ревью / commit **Step 7**, затем push по желанию.
-- Дальше Steps 8–10 по staged delivery.
-- Scope — «роскошный максимум».
+- Ревью / commit **Step 8** (графы: BFS + DFS).
+- Дальше: деревья / DP / greedy / strings → Step 9 (CSS-арт+квиз) → Step 10 (3D).
+- Scope — «роскошный максимум»; Step 8 = одна вертикаль категории (как Step 5).
 
 ## Completed (committed)
 
 | Step | Commit | Что |
 |------|--------|-----|
-| 1–4 | … → `6a5b8e9` | 8 сортировок, viz, howItWorks, UX |
-| 5 | `672e32e` | Linear/Binary Search + SearchVisualizer |
-| 6 | `5fc3b70` | Sandbox `/sandbox?a=&b=` |
-| 6b | `6e05a20` | Real-time elapsed timer (ms) |
-| 6c | `f1a1553` | Sandbox: same category, moves, binary hint |
+| 1–6c | … → `f1a1553` | Сортировки, поиск, sandbox, timer, UX |
+| 7 | `dd256f8` | Shiki, a11y, README, vercel.json |
 
 ## In progress / uncommitted
 
-**Step 7** — полировка:
+**Step 8** — графы:
 
-- Shiki fine-grained в `CodeBlock` (`src/lib/shikiHighlighter.ts`)
-- a11y: skip-link, tablist/tabpanel, accordion region, focus-visible, reduced-motion
-- README актуализирован; `vercel.json` SPA rewrites; `index.html` lang=ru
+- Domain: `GraphStep`, `bfs`/`dfs` + generators + tests
+- UI: `GraphVisualizer` + `GraphPlaybackPanel`
+- Каталог: meta + code; Learn покажет фильтр «Графы»
+- Sandbox: категория graph, общий граф + старт, сравнение BFS↔DFS
 
-Тесты: 73 passed. Build OK.
+Тесты: 80 passed. Build OK.
 
 ## Next steps (ordered)
 
-1. Commit Step 7 после ревью / отмашки
-2. Steps 8–10: каталог → CSS-арт/квиз → 3D
-3. Фактический `npx vercel --prod` — вручную (MCP Vercel не авторизован)
+1. Commit Step 8 после ревью
+2. Step 8b+ или Step 9: деревья / DP / … или CSS-арт+квиз (уточнить приоритет)
+3. Push / Vercel deploy — по желанию
 
 ## Key decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| Domain без React | Clean Architecture |
-| Sandbox: same category only | Честное сравнение |
-| `moves` = swap\|insert\|merge | Merge/Counting не эмитят swap |
-| Shiki core + JS engine | Меньше бандл для Vite SPA |
-| 3D в конце | Staged delivery |
+| Step 8 = BFS+DFS, не весь каталог сразу | Staged delivery, как Step 5 |
+| Общий demo-граф в sandbox | Честное сравнение порядка обхода |
+| `explore`→comparisons, `visit`→moves | Метрики плеера без ломки API |
 
 ## Known issues
 
-- Push: `main` ahead of origin by 2 (+ Step 7 после commit).
-- Chunk size warning на main bundle (~616 kB) — допустимо на этом этапе.
-- Trees/graphs/3d — заготовки.
+- Push: ahead of origin (Step 7 + Step 8 после commit).
+- Trees / DP / greedy / string — ещё пустые категории.
+- Chunk size warning на main bundle.
 
 ## References
 

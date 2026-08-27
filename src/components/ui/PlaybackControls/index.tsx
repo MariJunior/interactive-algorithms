@@ -20,6 +20,10 @@ export interface PlaybackControlsProps {
   onReset: () => void;
   onSpeedChange: (ms: number) => void;
   onRandom: () => void;
+  /** Подпись счётчика comparisons (для графов — «Просмотров рёбер») */
+  comparisonsLabel?: string;
+  /** Подпись счётчика moves (для графов — «Посещений») */
+  movesLabel?: string;
 }
 
 /**
@@ -42,6 +46,8 @@ export default function PlaybackControls({
   onReset,
   onSpeedChange,
   onRandom,
+  comparisonsLabel = "Сравнений",
+  movesLabel = "Перемещений",
 }: PlaybackControlsProps) {
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
 
@@ -122,10 +128,10 @@ export default function PlaybackControls({
           </span>
         </span>
         <span>
-          Сравнений: <span className={styles.metaStrong}>{stats.comparisons}</span>
+          {comparisonsLabel}: <span className={styles.metaStrong}>{stats.comparisons}</span>
         </span>
         <span>
-          Перемещений: <span className={styles.metaStrong}>{stats.moves}</span>
+          {movesLabel}: <span className={styles.metaStrong}>{stats.moves}</span>
         </span>
       </div>
     </div>

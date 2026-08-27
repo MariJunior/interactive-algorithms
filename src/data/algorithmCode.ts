@@ -617,4 +617,123 @@ function countingSortByDigit(a, exp) {
   return -1
 }`,
   },
+
+  bfs: {
+    jsBasic: `function bfs(adj, start) {
+  var visited = {}
+  var queue = [start]
+  var order = []
+  visited[start] = true
+
+  while (queue.length > 0) {
+    var current = queue.shift()
+    order.push(current)
+    var neighbors = adj[current] || []
+    for (var i = 0; i < neighbors.length; i++) {
+      var next = neighbors[i]
+      if (!visited[next]) {
+        visited[next] = true
+        queue.push(next)
+      }
+    }
+  }
+  return order
+}`,
+
+    jsModern: `function bfs(adj, start) {
+  const visited = new Set([start])
+  const queue = [start]
+  const order = []
+
+  while (queue.length > 0) {
+    const current = queue.shift()
+    order.push(current)
+    for (const next of adj[current] ?? []) {
+      if (!visited.has(next)) {
+        visited.add(next)
+        queue.push(next)
+      }
+    }
+  }
+  return order
+}`,
+
+    typescript: `function bfs(
+  adj: ReadonlyMap<string, readonly string[]>,
+  start: string
+): string[] {
+  const visited = new Set<string>([start])
+  const queue: string[] = [start]
+  const order: string[] = []
+
+  while (queue.length > 0) {
+    const current = queue.shift()!
+    order.push(current)
+    for (const next of adj.get(current) ?? []) {
+      if (!visited.has(next)) {
+        visited.add(next)
+        queue.push(next)
+      }
+    }
+  }
+  return order
+}`,
+  },
+
+  dfs: {
+    jsBasic: `function dfs(adj, start) {
+  var visited = {}
+  var stack = [start]
+  var order = []
+
+  while (stack.length > 0) {
+    var current = stack.pop()
+    if (visited[current]) continue
+    visited[current] = true
+    order.push(current)
+    var neighbors = (adj[current] || []).slice().reverse()
+    for (var i = 0; i < neighbors.length; i++) {
+      if (!visited[neighbors[i]]) stack.push(neighbors[i])
+    }
+  }
+  return order
+}`,
+
+    jsModern: `function dfs(adj, start) {
+  const visited = new Set()
+  const stack = [start]
+  const order = []
+
+  while (stack.length > 0) {
+    const current = stack.pop()
+    if (visited.has(current)) continue
+    visited.add(current)
+    order.push(current)
+    for (const next of [...(adj[current] ?? [])].reverse()) {
+      if (!visited.has(next)) stack.push(next)
+    }
+  }
+  return order
+}`,
+
+    typescript: `function dfs(
+  adj: ReadonlyMap<string, readonly string[]>,
+  start: string
+): string[] {
+  const visited = new Set<string>()
+  const stack: string[] = [start]
+  const order: string[] = []
+
+  while (stack.length > 0) {
+    const current = stack.pop()!
+    if (visited.has(current)) continue
+    visited.add(current)
+    order.push(current)
+    for (const next of [...(adj.get(current) ?? [])].reverse()) {
+      if (!visited.has(next)) stack.push(next)
+    }
+  }
+  return order
+}`,
+  },
 };

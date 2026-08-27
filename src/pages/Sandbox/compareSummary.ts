@@ -55,10 +55,18 @@ export function finalStatsFromActions(
   actions: Array<{ action?: string }>,
 ): PlayerStats {
   return {
-    comparisons: actions.filter((step) => step.action === "compare" || step.action === "select")
-      .length,
+    comparisons: actions.filter(
+      (step) =>
+        step.action === "compare" ||
+        step.action === "select" ||
+        step.action === "explore",
+    ).length,
     moves: actions.filter(
-      (step) => step.action === "swap" || step.action === "insert" || step.action === "merge",
+      (step) =>
+        step.action === "swap" ||
+        step.action === "insert" ||
+        step.action === "merge" ||
+        step.action === "visit",
     ).length,
   };
 }
