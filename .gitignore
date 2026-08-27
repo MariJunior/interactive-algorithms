@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local handoff (keep on disk, never push)
+PROJECT_STATUS.md
+PROJECT_STATUS.*.md
