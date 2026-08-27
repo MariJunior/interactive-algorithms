@@ -4,7 +4,7 @@ export interface CompareSideStats {
   name: string;
   totalSteps: number;
   comparisons: number;
-  swaps: number;
+  moves: number;
   /** Wall-clock время воспроизведения до финиша, ms */
   elapsedMs: number;
 }
@@ -25,7 +25,7 @@ export function buildCompareSummary(
 }
 
 function formatSide(side: CompareSideStats): string {
-  return `${side.name}: ${side.totalSteps} шагов, ${side.comparisons} сравн., ${side.swaps} перест., ${formatElapsedMs(side.elapsedMs)}`;
+  return `${side.name}: ${side.totalSteps} шагов, ${side.comparisons} сравн., ${side.moves} перем., ${formatElapsedMs(side.elapsedMs)}`;
 }
 
 function verdictByMetric(
@@ -44,7 +44,8 @@ function verdictByMetric(
   const faster = leftValue < rightValue ? left : right;
   const slowerValue = Math.max(leftValue, rightValue);
   const fasterValue = Math.min(leftValue, rightValue);
-  const percent = slowerValue === 0 ? 0 : Math.round(((slowerValue - fasterValue) / slowerValue) * 100);
+  const percent =
+    slowerValue === 0 ? 0 : Math.round(((slowerValue - fasterValue) / slowerValue) * 100);
 
   return `${faster.name} быстрее на ${percent}% по ${label}.`;
 }
@@ -56,6 +57,8 @@ export function finalStatsFromActions(
   return {
     comparisons: actions.filter((step) => step.action === "compare" || step.action === "select")
       .length,
-    swaps: actions.filter((step) => step.action === "swap").length,
+    moves: actions.filter(
+      (step) => step.action === "swap" || step.action === "insert" || step.action === "merge",
+    ).length,
   };
 }

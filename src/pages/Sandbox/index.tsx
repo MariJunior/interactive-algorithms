@@ -1,11 +1,11 @@
-import type { SearchStep, SortStep } from "@/algorithms/types";
+import type { AlgorithmCategory, SearchStep, SortStep } from "@/algorithms/types";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
 import Slider from "@/components/ui/Slider";
-import { ALGORITHMS, getAlgorithmBySlug } from "@/data/algorithms";
-import { formatElapsedMs } from "@/hooks/useAlgorithmPlayer";
+import { ALGORITHMS, CATEGORIES, getAlgorithmBySlug } from "@/data/algorithms";
+import { formatElapsedMs, type PlayerStats } from "@/hooks/useAlgorithmPlayer";
 import { createRandomArray } from "@/utils/createRandomArray";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,16 +17,28 @@ import { useSandboxLane } from "./useSandboxLane";
 const DEFAULT_A = "bubble-sort";
 const DEFAULT_B = "quick-sort";
 
-/** Алгоритмы, для которых уже есть интерактивная визуализация */
+/** Алгоритмы с готовой визуализацией — только их можно сравнивать */
 const COMPARABLE = ALGORITHMS.filter(
   (algo) => hasSortingVisualization(algo.slug) || hasSearchingVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
 
+/** Категории, в которых сейчас есть ≥2 сравниваемых алгоритма */
+const COMPARABLE_CATEGORIES = CATEGORIES.filter(
+  (category) => COMPARABLE.filter((algo) => algo.category === category.id).length >= 1,
+);
+
 function resolveSlug(raw: string | null, fallback: string): string {
   if (raw && COMPARABLE_SLUGS.has(raw)) return raw;
   return fallback;
+}
+
+/** Первый алгоритм той же категории, отличный от exclude (если есть) */
+function peerInCategory(category: AlgorithmCategory, excludeSlug: string): string {
+  const peers = COMPARABLE.filter((algo) => algo.category === category);
+  const other = peers.find((algo) => algo.slug !== excludeSlug);
+  return (other ?? peers[0])?.slug ?? excludeSlug;
 }
 
 function pickTarget(array: number[]): number {
@@ -51,28 +63,52 @@ function parseArrayDraft(draft: string): number[] | null {
 }
 
 /**
- * Песочница сравнения: два алгоритма на общем input, sync playback, URL ?a=&b=.
- * Presentation/orchestration only — логика шагов в domain-генераторах.
+ * Песочница: сравнение только внутри одной категории (sorting / searching / …).
+ * URL ?a=&b= — шаринг ссылки; при конфликте категорий B подстраивается под A.
  */
 export default function Sandbox() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const slugA = resolveSlug(searchParams.get("a"), DEFAULT_A);
-  const slugB = resolveSlug(searchParams.get("b"), DEFAULT_B);
+  const rawA = resolveSlug(searchParams.get("a"), DEFAULT_A);
+  const rawB = resolveSlug(searchParams.get("b"), DEFAULT_B);
+
+  const metaARaw = getAlgorithmBySlug(rawA);
+  const metaBRaw = getAlgorithmBySlug(rawB);
+
+  // Если в URL смешаны категории — принудительно выравниваем B под A
+  const slugA = rawA;
+  const slugB =
+    metaARaw && metaBRaw && metaARaw.category !== metaBRaw.category
+      ? peerInCategory(metaARaw.category, slugA)
+      : rawB;
 
   const [input, setInput] = useState(() => createRandomArray(12, 1, 40));
   const [target, setTarget] = useState(() => pickTarget(input));
   const [speed, setSpeed] = useState(400);
   const [editDraft, setEditDraft] = useState(() => input.join(", "));
 
-  const needsTarget =
-    hasSearchingVisualization(slugA) || hasSearchingVisualization(slugB);
+  const metaA = getAlgorithmBySlug(slugA);
+  const metaB = getAlgorithmBySlug(slugB);
+  const activeCategory: AlgorithmCategory = metaA?.category ?? "sorting";
+
+  const optionsInCategory = useMemo(
+    () => COMPARABLE.filter((algo) => algo.category === activeCategory),
+    [activeCategory],
+  );
+
+  const needsTarget = activeCategory === "searching";
+  const needsBinaryHint = slugA === "binary-search" || slugB === "binary-search";
 
   const laneA = useSandboxLane(slugA, input, target);
   const laneB = useSandboxLane(slugB, input, target);
 
-  const metaA = getAlgorithmBySlug(slugA);
-  const metaB = getAlgorithmBySlug(slugB);
+  // Запись выровненных slug в URL (конфликт категорий / пустой query)
+  useEffect(() => {
+    const aParam = searchParams.get("a");
+    const bParam = searchParams.get("b");
+    if (aParam === slugA && bParam === slugB) return;
+    setSearchParams({ a: slugA, b: slugB }, { replace: true });
+  }, [slugA, slugB, searchParams, setSearchParams]);
 
   // Общая скорость → оба плеера
   useEffect(() => {
@@ -82,14 +118,23 @@ export default function Sandbox() {
 
   const setSlug = useCallback(
     (side: "a" | "b", nextSlug: string) => {
+      const nextMeta = getAlgorithmBySlug(nextSlug);
+      if (!nextMeta) return;
+
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
           next.set(side, nextSlug);
-          // Гарантируем наличие второй стороны в URL для шаринга
-          if (!next.get(side === "a" ? "b" : "a")) {
-            next.set(side === "a" ? "b" : "a", side === "a" ? slugB : slugA);
+
+          const otherKey = side === "a" ? "b" : "a";
+          const otherSlug = next.get(otherKey) ?? (side === "a" ? slugB : slugA);
+          const otherMeta = getAlgorithmBySlug(otherSlug);
+
+          // Смена категории на одной стороне → подбираем peer той же группы для второй
+          if (!otherMeta || otherMeta.category !== nextMeta.category) {
+            next.set(otherKey, peerInCategory(nextMeta.category, nextSlug));
           }
+
           return next;
         },
         { replace: true },
@@ -98,16 +143,16 @@ export default function Sandbox() {
     [setSearchParams, slugA, slugB],
   );
 
-  // При первом заходе без query — записываем дефолты в URL
-  useEffect(() => {
-    if (searchParams.get("a") && searchParams.get("b")) return;
-    setSearchParams(
-      { a: slugA, b: slugB },
-      { replace: true },
-    );
-    // Только на маунте / когда params пустые
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  /** Переключение группы целиком (оба селекта остаются согласованы) */
+  const setCategory = useCallback(
+    (category: AlgorithmCategory) => {
+      const first = COMPARABLE.find((algo) => algo.category === category);
+      if (!first) return;
+      const second = peerInCategory(category, first.slug);
+      setSearchParams({ a: first.slug, b: second }, { replace: true });
+    },
+    [setSearchParams],
+  );
 
   const handleRandom = useCallback(() => {
     const next = createRandomArray(12, 1, 40);
@@ -157,14 +202,14 @@ export default function Sandbox() {
         name: metaA.name,
         totalSteps: laneA.player.totalSteps,
         comparisons: statsA.comparisons,
-        swaps: statsA.swaps,
+        moves: statsA.moves,
         elapsedMs: laneA.player.elapsedMs,
       },
       {
         name: metaB.name,
         totalSteps: laneB.player.totalSteps,
         comparisons: statsB.comparisons,
-        swaps: statsB.swaps,
+        moves: statsB.moves,
         elapsedMs: laneB.player.elapsedMs,
       },
     );
@@ -191,9 +236,29 @@ export default function Sandbox() {
         >
           <h1 className={styles.title}>Песочница сравнения</h1>
           <p className={styles.subtitle}>
-            Один и тот же вход — два алгоритма. Запусти оба и сравни шаги, время, сравнения и
-            перестановки вживую.
+            Сравнивай алгоритмы одной группы на общем входе: шаги, время, сравнения и
+            перемещения.
           </p>
+
+          <div className={styles.categoryTabs} role="tablist" aria-label="Группа алгоритмов">
+            {COMPARABLE_CATEGORIES.map((category) => {
+              const enabled = COMPARABLE.some((algo) => algo.category === category.id);
+              if (!enabled) return null;
+              const isActive = category.id === activeCategory;
+              return (
+                <button
+                  key={category.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={`${styles.categoryTab} ${isActive ? styles.categoryTabActive : ""}`}
+                  onClick={() => setCategory(category.id)}
+                >
+                  {category.label}
+                </button>
+              );
+            })}
+          </div>
         </motion.header>
 
         <motion.div
@@ -205,6 +270,7 @@ export default function Sandbox() {
           <SandboxLane
             sideLabel="Алгоритм A"
             slug={slugA}
+            options={optionsInCategory}
             onSlugChange={(next) => setSlug("a", next)}
             kind={laneA.kind}
             step={laneA.player.currentStep}
@@ -217,6 +283,7 @@ export default function Sandbox() {
           <SandboxLane
             sideLabel="Алгоритм B"
             slug={slugB}
+            options={optionsInCategory}
             onSlugChange={(next) => setSlug("b", next)}
             kind={laneB.kind}
             step={laneB.player.currentStep}
@@ -278,9 +345,11 @@ export default function Sandbox() {
             </div>
           )}
 
-          <p className={styles.hint}>
-            Binary Search получает отсортированную копию того же набора чисел.
-          </p>
+          {needsBinaryHint && (
+            <p className={styles.hint}>
+              Binary Search получает отсортированную копию того же набора чисел.
+            </p>
+          )}
 
           <div className={styles.controlsRow}>
             <button
@@ -337,12 +406,13 @@ export default function Sandbox() {
 interface SandboxLaneProps {
   sideLabel: string;
   slug: string;
+  options: typeof COMPARABLE;
   onSlugChange: (slug: string) => void;
   kind: "sorting" | "searching" | "none";
   step: SortStep | SearchStep | null;
   currentIndex: number;
   totalSteps: number;
-  stats: { comparisons: number; swaps: number };
+  stats: PlayerStats;
   elapsedMs: number;
   message?: string;
 }
@@ -350,6 +420,7 @@ interface SandboxLaneProps {
 function SandboxLane({
   sideLabel,
   slug,
+  options,
   onSlugChange,
   kind,
   step,
@@ -371,7 +442,7 @@ function SandboxLane({
           onChange={(event) => onSlugChange(event.target.value)}
           aria-label={sideLabel}
         >
-          {COMPARABLE.map((algo) => (
+          {options.map((algo) => (
             <option key={algo.slug} value={algo.slug}>
               {algo.name} — {algo.nameRu}
             </option>
@@ -401,7 +472,7 @@ function SandboxLane({
           Сравнений: <span className={styles.laneMetaStrong}>{stats.comparisons}</span>
         </span>
         <span>
-          Перестановок: <span className={styles.laneMetaStrong}>{stats.swaps}</span>
+          Перемещений: <span className={styles.laneMetaStrong}>{stats.moves}</span>
         </span>
       </div>
     </article>

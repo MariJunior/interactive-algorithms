@@ -4,8 +4,8 @@ import { buildCompareSummary, finalStatsFromActions } from "./compareSummary";
 describe("buildCompareSummary", () => {
   it("считает процент ускорения по шагам и времени", () => {
     const text = buildCompareSummary(
-      { name: "Quick Sort", totalSteps: 40, comparisons: 20, swaps: 10, elapsedMs: 2000 },
-      { name: "Bubble Sort", totalSteps: 80, comparisons: 60, swaps: 40, elapsedMs: 4000 },
+      { name: "Quick Sort", totalSteps: 40, comparisons: 20, moves: 10, elapsedMs: 2000 },
+      { name: "Bubble Sort", totalSteps: 80, comparisons: 60, moves: 40, elapsedMs: 4000 },
     );
 
     expect(text).toContain("Quick Sort быстрее на 50% по шагам");
@@ -16,8 +16,8 @@ describe("buildCompareSummary", () => {
 
   it("сообщает о ничье при равных метриках", () => {
     const text = buildCompareSummary(
-      { name: "A", totalSteps: 10, comparisons: 5, swaps: 1, elapsedMs: 500 },
-      { name: "B", totalSteps: 10, comparisons: 4, swaps: 2, elapsedMs: 500 },
+      { name: "A", totalSteps: 10, comparisons: 5, moves: 1, elapsedMs: 500 },
+      { name: "B", totalSteps: 10, comparisons: 4, moves: 2, elapsedMs: 500 },
     );
 
     expect(text).toContain("Ничья по шагам");
@@ -26,14 +26,16 @@ describe("buildCompareSummary", () => {
 });
 
 describe("finalStatsFromActions", () => {
-  it("считает compare/select и swap", () => {
+  it("считает сравнения и перемещения (swap/insert/merge)", () => {
     expect(
       finalStatsFromActions([
         { action: "compare" },
         { action: "select" },
         { action: "swap" },
+        { action: "insert" },
+        { action: "merge" },
         { action: "done" },
       ]),
-    ).toEqual({ comparisons: 2, swaps: 1 });
+    ).toEqual({ comparisons: 2, moves: 3 });
   });
 });

@@ -125,7 +125,7 @@ export default function PlaybackControls({
           Сравнений: <span className={styles.metaStrong}>{stats.comparisons}</span>
         </span>
         <span>
-          Перестановок: <span className={styles.metaStrong}>{stats.swaps}</span>
+          Перемещений: <span className={styles.metaStrong}>{stats.moves}</span>
         </span>
       </div>
     </div>

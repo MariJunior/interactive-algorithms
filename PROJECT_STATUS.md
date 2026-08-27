@@ -1,37 +1,54 @@
 # Project status
 
-> Updated: 2026-08-27 19:52 (local)
-> Branch: `main` · Last commit: `6a5b8e9` · Steps 5–6 **в working tree, не закоммичены**
+> Updated: 2026-08-27 20:22 (local)
+> Branch: `main` · HEAD: `6e05a20` · ahead of `origin/main` by 1 (timer commit)
 
 ## Current goals
 
-- Ревью → commit Steps 5–6 (Search + Sandbox).
-- Дальше: Step 7 (Shiki, a11y, адаптив, README, Vercel) → каталог → CSS-арт/квиз → 3D.
-- Режим: один шаг → ревью/commit → отмашка → следующий. Scope — «роскошный максимум».
+- Закрыть мелкие UX-фиксы песочницы (в working tree) → commit.
+- Дальше **Step 7:** Shiki, a11y, финальный адаптив, README, деплой Vercel.
+- Режим: staged delivery. Scope — «роскошный максимум».
 
-## Completed this phase
+## Completed (committed)
 
-- Steps 1–4 на `main` (8 сортировок + UX).
-- **Step 5 (принят):** Linear/Binary + `SearchVisualizer` / `SearchPlaybackPanel`.
-- **Step 6 (к ревью):** `/sandbox?a=&b=` side-by-side, общий input, sync playback, итог сравнения.
-- Тесты: **72 passed** / 13 files.
+| Step | Commit | Что |
+|------|--------|-----|
+| 1–4 | … → `6a5b8e9` | 8 сортировок, viz, howItWorks, UX каталога |
+| 5 | `672e32e` | Linear/Binary Search + SearchVisualizer |
+| 6 | `5fc3b70` | Sandbox `/sandbox?a=&b=` |
+| 6b | `6e05a20` | Real-time elapsed timer (ms) + итог по времени |
 
-## Key technical decisions
+Тесты на момент таймера: 73 passed.
+
+## In progress / uncommitted
+
+Sandbox UX fixes (эта сессия):
+
+- Hint про Binary Search — только если binary выбран
+- Метрика **Перемещений** (`swap|insert|merge`) вместо ложных «Перестановок: 0» у Merge/Counting
+- Сравнение **только внутри одной категории** + табы группы
+
+## Next steps (ordered)
+
+1. Commit sandbox UX fixes (после ревью).
+2. **Step 7:** Shiki, a11y, адаптив, README, Vercel.
+3. **Steps 8–10:** полный каталог → CSS-арт + квиз → 3D.
+
+## Key decisions
 
 | Decision | Rationale |
 |----------|-----------|
 | Domain без React | Clean Architecture |
-| `*PlaybackPanel` composition root | generator → runner → player → viz |
-| Отдельный `SearchStep` | Не смешивать с `SortStep` |
-| Sandbox: 2× player + общий speed/input | Как wireframe ТЗ |
-| Binary в sandbox — sorted-копия | Предусловие без ломки linear |
+| Отдельный `SearchStep` | Не смешивать с SortStep |
+| Sandbox: same category only | Иначе apples-to-oranges (input/target/метрики) |
+| `moves` = swap\|insert\|merge | Merge/Counting не эмитят swap |
 | 3D в конце | Staged delivery |
 
-## Next steps (ordered)
+## Known issues
 
-1. Ревью + commit Steps 5–6.
-2. **Step 7:** Shiki, a11y, адаптив, README, Vercel.
-3. **Steps 8–10:** полный каталог → CSS-арт + квиз → 3D.
+- Timer commit ещё не на `origin` (ahead by 1) — push по желанию.
+- Shiki в CodeBlock не подключён (Step 7).
+- Trees/graphs/3d — заготовки.
 
 ## References
 

@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface PlayerStats {
   comparisons: number;
-  swaps: number;
+  /** swap | insert | merge — перемещения данных, не только классические свапы */
+  moves: number;
 }
 
 interface StepWithAction {
@@ -11,7 +12,8 @@ interface StepWithAction {
 
 const COUNTABLE_ACTIONS = {
   comparisons: new Set(["compare", "select"]),
-  swaps: new Set(["swap"]),
+  // Merge/Counting/Insertion/Radix не эмитят "swap", но двигают элементы через insert/merge
+  moves: new Set(["swap", "insert", "merge"]),
 };
 
 function computeStats(steps: StepWithAction[], upToIndex: number): PlayerStats {
@@ -20,7 +22,7 @@ function computeStats(steps: StepWithAction[], upToIndex: number): PlayerStats {
   return {
     comparisons: slice.filter((step) => COUNTABLE_ACTIONS.comparisons.has(step.action ?? ""))
       .length,
-    swaps: slice.filter((step) => COUNTABLE_ACTIONS.swaps.has(step.action ?? "")).length,
+    moves: slice.filter((step) => COUNTABLE_ACTIONS.moves.has(step.action ?? "")).length,
   };
 }
 
