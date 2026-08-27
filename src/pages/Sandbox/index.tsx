@@ -4,17 +4,20 @@ import type {
   GraphStep,
   SearchStep,
   SortStep,
+  StringStep,
   TreeStep,
 } from "@/algorithms/types";
 import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
+import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
 import DpTableVisualizer from "@/components/visualizers/DpTableVisualizer";
 import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
+import StringMatchVisualizer from "@/components/visualizers/StringMatchVisualizer";
 import TreeVisualizer from "@/components/visualizers/TreeVisualizer";
 import Slider from "@/components/ui/Slider";
 import { ALGORITHMS, CATEGORIES, getAlgorithmBySlug } from "@/data/algorithms";
@@ -28,6 +31,8 @@ import styles from "./Sandbox.module.css";
 import {
   DEMO_DP_N,
   DEMO_GRAPH_START,
+  DEMO_PATTERN,
+  DEMO_TEXT,
   createDemoGraph,
   createDemoTree,
   useSandboxLane,
@@ -43,7 +48,8 @@ const COMPARABLE = ALGORITHMS.filter(
     hasSearchingVisualization(algo.slug) ||
     hasGraphVisualization(algo.slug) ||
     hasTreeVisualization(algo.slug) ||
-    hasDpVisualization(algo.slug),
+    hasDpVisualization(algo.slug) ||
+    hasStringVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -114,6 +120,8 @@ export default function Sandbox() {
   const [graphStartId, setGraphStartId] = useState(DEMO_GRAPH_START);
   const [tree] = useState(() => createDemoTree());
   const [dpN, setDpN] = useState(DEMO_DP_N);
+  const [text, setText] = useState(DEMO_TEXT);
+  const [pattern, setPattern] = useState(DEMO_PATTERN);
 
   const metaA = getAlgorithmBySlug(slugA);
   const metaB = getAlgorithmBySlug(slugB);
@@ -129,9 +137,30 @@ export default function Sandbox() {
   const isGraphCategory = activeCategory === "graph";
   const isTreeCategory = activeCategory === "tree";
   const isDpCategory = activeCategory === "dynamic-programming";
+  const isStringCategory = activeCategory === "string";
 
-  const laneA = useSandboxLane(slugA, input, target, graph, graphStartId, tree, dpN);
-  const laneB = useSandboxLane(slugB, input, target, graph, graphStartId, tree, dpN);
+  const laneA = useSandboxLane(
+    slugA,
+    input,
+    target,
+    graph,
+    graphStartId,
+    tree,
+    dpN,
+    text,
+    pattern,
+  );
+  const laneB = useSandboxLane(
+    slugB,
+    input,
+    target,
+    graph,
+    graphStartId,
+    tree,
+    dpN,
+    text,
+    pattern,
+  );
 
   // Запись выровненных slug в URL (конфликт категорий / пустой query)
   useEffect(() => {
@@ -342,7 +371,9 @@ export default function Sandbox() {
                 ? "Общее дерево"
                 : isDpCategory
                   ? "Общий размер n"
-                  : "Общий input"}
+                  : isStringCategory
+                    ? "Общий текст и паттерн"
+                    : "Общий input"}
           </h2>
 
           {isGraphCategory ? (
@@ -393,6 +424,26 @@ export default function Sandbox() {
               <p className={styles.hint}>
                 Fibonacci и Climbing Stairs на одном n: одна рекуррентность, разная
                 интерпретация ответа.
+              </p>
+            </div>
+          ) : isStringCategory ? (
+            <div className={styles.editRow} style={{ flexDirection: "column", alignItems: "stretch" }}>
+              <input
+                className={styles.editInput}
+                value={text}
+                onChange={(event) => setText(event.target.value.toUpperCase())}
+                aria-label="Текст"
+                placeholder="Текст"
+              />
+              <input
+                className={styles.editInput}
+                value={pattern}
+                onChange={(event) => setPattern(event.target.value.toUpperCase())}
+                aria-label="Паттерн"
+                placeholder="Паттерн"
+              />
+              <p className={styles.hint}>
+                Naive и KMP ищут один и тот же паттерн — сравни число сравнений и сдвигов.
               </p>
             </div>
           ) : (
@@ -509,7 +560,7 @@ interface SandboxLaneProps {
   options: typeof COMPARABLE;
   onSlugChange: (slug: string) => void;
   kind: SandboxLaneKind;
-  step: SortStep | SearchStep | GraphStep | TreeStep | DpStep | null;
+  step: SortStep | SearchStep | GraphStep | TreeStep | DpStep | StringStep | null;
   currentIndex: number;
   totalSteps: number;
   stats: PlayerStats;
@@ -534,11 +585,13 @@ function SandboxLane({
 }: SandboxLaneProps) {
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
   const movesLabel =
-    kind === "graph" || kind === "tree" || kind === "dp"
-      ? kind === "dp"
+    kind === "graph" || kind === "tree"
+      ? "Посещений"
+      : kind === "dp"
         ? "Заполнений"
-        : "Посещений"
-      : "Перемещений";
+        : kind === "string"
+          ? "Сдвигов / находок"
+          : "Перемещений";
   const compareLabel =
     kind === "graph"
       ? "Просмотров рёбер"
@@ -546,7 +599,9 @@ function SandboxLane({
         ? "Спусков"
         : kind === "dp"
           ? "Базовых шагов"
-          : "Сравнений";
+          : kind === "string"
+            ? "Сравнений символов"
+            : "Сравнений";
 
   const treeCopy =
     slug === "preorder-traversal"
@@ -575,6 +630,17 @@ function SandboxLane({
           task: "Найти F(n), заполняя таблицу снизу вверх",
           recurrence: "F(i) = F(i−1) + F(i−2)",
           indexLabel: "i",
+        };
+
+  const stringCopy =
+    slug === "kmp-search"
+      ? {
+          task: "Найти все вхождения паттерна в тексте",
+          strategy: "KMP: сдвиг по LPS при несовпадении",
+        }
+      : {
+          task: "Найти все вхождения паттерна в тексте",
+          strategy: "Наивно: после попытки сдвигаем окно на 1",
         };
 
   return (
@@ -625,6 +691,12 @@ function SandboxLane({
           task={dpCopy.task}
           recurrenceHint={dpCopy.recurrence}
           indexLabel={dpCopy.indexLabel}
+        />
+      ) : kind === "string" ? (
+        <StringMatchVisualizer
+          step={step as StringStep | null}
+          task={stringCopy.task}
+          strategyHint={stringCopy.strategy}
         />
       ) : (
         <SortVisualizer step={step as SortStep | null} />

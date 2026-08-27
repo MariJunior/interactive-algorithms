@@ -894,4 +894,157 @@ function postorder(node: BinNode | undefined, order: number[] = []): number[] {
   return dp[n]!
 }`,
   },
+
+  "naive-string-search": {
+    jsBasic: `function naiveSearch(text, pattern) {
+  var found = []
+  for (var i = 0; i <= text.length - pattern.length; i++) {
+    var j = 0
+    while (j < pattern.length && text[i + j] === pattern[j]) j++
+    if (j === pattern.length) found.push(i)
+  }
+  return found
+}`,
+
+    jsModern: `function naiveSearch(text, pattern) {
+  const found = []
+  for (let i = 0; i <= text.length - pattern.length; i++) {
+    let j = 0
+    while (j < pattern.length && text[i + j] === pattern[j]) j++
+    if (j === pattern.length) found.push(i)
+  }
+  return found
+}`,
+
+    typescript: `function naiveSearch(text: string, pattern: string): number[] {
+  const found: number[] = []
+  for (let i = 0; i <= text.length - pattern.length; i++) {
+    let j = 0
+    while (j < pattern.length && text[i + j] === pattern[j]) j++
+    if (j === pattern.length) found.push(i)
+  }
+  return found
+}`,
+  },
+
+  "kmp-search": {
+    jsBasic: `function buildLps(pattern) {
+  var lps = []
+  for (var k = 0; k < pattern.length; k++) lps[k] = 0
+  var len = 0
+  var i = 1
+  while (i < pattern.length) {
+    if (pattern[i] === pattern[len]) {
+      len++
+      lps[i] = len
+      i++
+    } else if (len > 0) {
+      len = lps[len - 1]
+    } else {
+      lps[i] = 0
+      i++
+    }
+  }
+  return lps
+}
+
+function kmpSearch(text, pattern) {
+  var found = []
+  var lps = buildLps(pattern)
+  var i = 0
+  var j = 0
+  while (i < text.length) {
+    if (text[i] === pattern[j]) {
+      i++
+      j++
+      if (j === pattern.length) {
+        found.push(i - j)
+        j = lps[j - 1]
+      }
+    } else if (j > 0) {
+      j = lps[j - 1]
+    } else {
+      i++
+    }
+  }
+  return found
+}`,
+
+    jsModern: `function buildLps(pattern) {
+  const lps = Array(pattern.length).fill(0)
+  let len = 0
+  let i = 1
+  while (i < pattern.length) {
+    if (pattern[i] === pattern[len]) {
+      lps[i++] = ++len
+    } else if (len > 0) {
+      len = lps[len - 1]
+    } else {
+      lps[i++] = 0
+    }
+  }
+  return lps
+}
+
+function kmpSearch(text, pattern) {
+  const found = []
+  const lps = buildLps(pattern)
+  let i = 0
+  let j = 0
+  while (i < text.length) {
+    if (text[i] === pattern[j]) {
+      i++
+      j++
+      if (j === pattern.length) {
+        found.push(i - j)
+        j = lps[j - 1]
+      }
+    } else if (j > 0) {
+      j = lps[j - 1]
+    } else {
+      i++
+    }
+  }
+  return found
+}`,
+
+    typescript: `function buildLps(pattern: string): number[] {
+  const lps = Array.from({ length: pattern.length }, () => 0)
+  let len = 0
+  let i = 1
+  while (i < pattern.length) {
+    if (pattern[i] === pattern[len]) {
+      lps[i++] = ++len
+    } else if (len > 0) {
+      len = lps[len - 1]!
+    } else {
+      lps[i++] = 0
+    }
+  }
+  return lps
+}
+
+function kmpSearch(text: string, pattern: string): number[] {
+  const found: number[] = []
+  if (!pattern) return found
+  const lps = buildLps(pattern)
+  let i = 0
+  let j = 0
+  while (i < text.length) {
+    if (text[i] === pattern[j]) {
+      i++
+      j++
+      if (j === pattern.length) {
+        found.push(i - j)
+        j = lps[j - 1]!
+      }
+    } else if (j > 0) {
+      j = lps[j - 1]!
+    } else {
+      i++
+    }
+  }
+  return found
+}`,
+  },
 };

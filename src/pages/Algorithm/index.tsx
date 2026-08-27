@@ -4,6 +4,7 @@ import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
+import { hasStringVisualization } from "@/algorithms/string";
 import { hasTreeVisualization } from "@/algorithms/tree";
 import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
@@ -14,6 +15,7 @@ import DpPlaybackPanel from "@/components/visualizers/DpPlaybackPanel";
 import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
+import StringMatchPlaybackPanel from "@/components/visualizers/StringMatchPlaybackPanel";
 import TreePlaybackPanel from "@/components/visualizers/TreePlaybackPanel";
 import styles from "./Algorithm.module.css";
 
@@ -37,6 +39,8 @@ function ComplexityTable({
     "O(V + E)": "var(--color-on)",
     "O(V)": "var(--color-ologn)",
     "O(h)": "var(--color-ologn)",
+    "O(n · m)": "var(--color-on2)",
+    "O(n + m)": "var(--color-on)",
   };
 
   const rows = [
@@ -56,6 +60,9 @@ function ComplexityTable({
     !showGraphHint &&
     rows.every((r) => r.value === "O(n)") &&
     rows.length > 0;
+  const showStringNMHint = rows.some(
+    (r) => r.value.includes("n · m") || r.value.includes("n + m"),
+  );
 
   return (
     <div className={styles.complexityTable}>
@@ -99,6 +106,13 @@ function ComplexityTable({
           <span className={styles.complexityHintStrong}>n</span> — размер задачи (индекс
           Фибоначчи или число ступеней). O(n) значит: один проход по таблице из n+1
           ячеек.
+        </p>
+      )}
+      {showStringNMHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n</span> — длина текста,{" "}
+          <span className={styles.complexityHintStrong}>m</span> — длина паттерна.
+          O(n·m) — наивный перебор окон; O(n+m) — KMP с предобработкой LPS.
         </p>
       )}
     </div>
@@ -319,6 +333,8 @@ export default function Algorithm() {
               <TreePlaybackPanel key={slug} slug={slug} />
             ) : slug && hasDpVisualization(slug) ? (
               <DpPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasStringVisualization(slug) ? (
+              <StringMatchPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

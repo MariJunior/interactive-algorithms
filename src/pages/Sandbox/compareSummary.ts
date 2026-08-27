@@ -69,7 +69,9 @@ export function finalStatsFromActions(
         step.action === "insert" ||
         step.action === "merge" ||
         step.action === "visit" ||
-        step.action === "compute",
+        step.action === "compute" ||
+        step.action === "match" ||
+        step.action === "shift",
     ).length,
   };
 }

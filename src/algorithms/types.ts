@@ -140,6 +140,32 @@ export interface DpStep {
   message?: string;
 }
 
+/** Шаг поиска подстроки */
+export type StringStepAction =
+  | "compare" // сравниваем символы
+  | "match" // нашли вхождение
+  | "shift" // сдвигаем окно / паттерн
+  | "done";
+
+export interface StringStep {
+  text: string;
+  pattern: string;
+  action: StringStepAction;
+  /** Сдвиг паттерна относительно текста (индекс начала окна) */
+  windowStart: number;
+  /** Индекс в тексте, который сравниваем */
+  textIndex?: number;
+  /** Индекс в паттерне, который сравниваем */
+  patternIndex?: number;
+  /** Совпавшие позиции в текущем окне (индексы текста) */
+  matchedInWindow?: number[];
+  /** Старты найденных вхождений */
+  foundStarts: number[];
+  /** LPS для KMP (если есть) */
+  lps?: number[];
+  message?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;

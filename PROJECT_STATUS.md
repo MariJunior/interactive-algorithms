@@ -1,35 +1,33 @@
 # Project status
 
-> Updated: 2026-08-27 23:50 (local)
-> Branch: `main` · HEAD: `68449a2`
-> Working tree: **dirty** — Step 8c (DP) готов к ревью
+> Updated: 2026-08-28 00:15 (local)
+> Branch: `main` · HEAD: `c0f1ab9`
+> Working tree: **dirty** — Step 8d (strings Naive/KMP) готов к ревью
 
 ## Current goals
 
-- Ревью / commit **Step 8c** (Fibonacci + Climbing Stairs).
-- Дальше: greedy / strings → Step 9 → Step 10.
+- Ревью / commit **Step 8d**.
+- Дальше: greedy → Step 9 (CSS-арт+квиз) → Step 10 (3D).
 
 ## Completed (committed)
 
 | Step | Commit | Что |
 |------|--------|-----|
 | 8 | `0b09e5d` | BFS/DFS |
-| 8b | `68449a2` | Tree traversals |
+| 8b | `68449a2` / `c0f1ab9` | Trees + DP (в истории) |
 
 ## In progress / uncommitted
 
-**Step 8c** — DP:
+**Step 8d** — строки:
 
-- Domain: `DpStep`, fibonacci + climbingStairs + tests
-- UI: `DpTableVisualizer` (задача, рекуррентность, формула шага, легенда)
-- Sandbox: общий n для сравнения
-- Big O hint: n = размер задачи
+- Domain: `StringStep`, naive + KMP + LPS + tests
+- UI: задача / стратегия / легенда / LPS-пояснение
+- Sandbox: общий text+pattern
 
 ## Next steps
 
-1. Commit Step 8c
-2. Step 8d: greedy или strings
-3. Step 9–10
+1. Commit Step 8d
+2. Step 8e greedy (опционально) или Step 9
 
 ## References
 

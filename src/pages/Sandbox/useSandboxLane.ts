@@ -5,6 +5,7 @@ import type {
   GraphStep,
   SearchStep,
   SortStep,
+  StringStep,
   TreeStep,
 } from "@/algorithms/types";
 import {
@@ -21,6 +22,12 @@ import {
 import { hasSearchingVisualization, searchingStepGenerators } from "@/algorithms/searching";
 import { hasSortingVisualization, sortingStepGenerators } from "@/algorithms/sorting";
 import {
+  DEMO_PATTERN,
+  DEMO_TEXT,
+  hasStringVisualization,
+  stringStepGenerators,
+} from "@/algorithms/string";
+import {
   createDemoTree,
   hasTreeVisualization,
   treeStepGenerators,
@@ -29,7 +36,7 @@ import { useAlgorithmPlayer } from "@/hooks/useAlgorithmPlayer";
 import { useAlgorithmRunner } from "@/hooks/useAlgorithmRunner";
 import { useMemo } from "react";
 
-type AnyStep = SortStep | SearchStep | GraphStep | TreeStep | DpStep;
+type AnyStep = SortStep | SearchStep | GraphStep | TreeStep | DpStep | StringStep;
 
 export type SandboxLaneKind =
   | "sorting"
@@ -37,6 +44,7 @@ export type SandboxLaneKind =
   | "graph"
   | "tree"
   | "dp"
+  | "string"
   | "none";
 
 function* emptySteps(_input: number[]): Generator<AnyStep> {
@@ -51,6 +59,8 @@ export function useSandboxLane(
   graphStartId: string,
   tree: BinaryTree,
   dpN: number,
+  text: string,
+  pattern: string,
 ) {
   const kind: SandboxLaneKind = hasSortingVisualization(slug)
     ? "sorting"
@@ -62,7 +72,9 @@ export function useSandboxLane(
           ? "tree"
           : hasDpVisualization(slug)
             ? "dp"
-            : "none";
+            : hasStringVisualization(slug)
+              ? "string"
+              : "none";
 
   const laneInput = useMemo(() => {
     if (slug === "binary-search") {
@@ -107,6 +119,13 @@ export function useSandboxLane(
     return Array.from(create(dpN));
   }, [kind, slug, dpN]);
 
+  const stringSteps = useMemo(() => {
+    if (kind !== "string") return [] as StringStep[];
+    const create = stringStepGenerators[slug];
+    if (!create) return [] as StringStep[];
+    return Array.from(create(text, pattern));
+  }, [kind, slug, text, pattern]);
+
   const steps =
     kind === "graph"
       ? graphSteps
@@ -114,7 +133,9 @@ export function useSandboxLane(
         ? treeSteps
         : kind === "dp"
           ? dpSteps
-          : arraySteps.steps;
+          : kind === "string"
+            ? stringSteps
+            : arraySteps.steps;
 
   const stepsId =
     kind === "graph"
@@ -123,11 +144,20 @@ export function useSandboxLane(
         ? `${slug}:t:${tree.rootId}:${tree.nodes.length}`
         : kind === "dp"
           ? `${slug}:dp:${dpN}`
-          : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
+          : kind === "string"
+            ? `${slug}:s:${text}:${pattern}`
+            : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
 
   const player = useAlgorithmPlayer(steps, stepsId);
 
   return { kind, steps, player, laneInput };
 }
 
-export { DEMO_DP_N, DEMO_GRAPH_START, createDemoGraph, createDemoTree };
+export {
+  DEMO_DP_N,
+  DEMO_GRAPH_START,
+  DEMO_PATTERN,
+  DEMO_TEXT,
+  createDemoGraph,
+  createDemoTree,
+};

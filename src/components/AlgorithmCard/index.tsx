@@ -29,6 +29,8 @@ const complexityColor: Record<string, string> = {
   "O(V + E)": "var(--color-on)",
   "O(V)": "var(--color-ologn)",
   "O(h)": "var(--color-ologn)",
+  "O(n · m)": "var(--color-on2)",
+  "O(n + m)": "var(--color-on)",
 };
 
 function getComplexityColor(value: string): string {
@@ -427,6 +429,12 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
           {complexity.space === "O(h)" && (
             <p className={styles.complexityNote} title="nodes / height">
               n — узлы, h — высота дерева
+            </p>
+          )}
+          {(complexity.average.includes("n · m") ||
+            complexity.average.includes("n + m")) && (
+            <p className={styles.complexityNote} title="text / pattern lengths">
+              n — текст, m — паттерн
             </p>
           )}
 
