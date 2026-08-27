@@ -60,14 +60,16 @@ export function finalStatsFromActions(
         step.action === "compare" ||
         step.action === "select" ||
         step.action === "explore" ||
-        step.action === "descend",
+        step.action === "descend" ||
+        step.action === "init",
     ).length,
     moves: actions.filter(
       (step) =>
         step.action === "swap" ||
         step.action === "insert" ||
         step.action === "merge" ||
-        step.action === "visit",
+        step.action === "visit" ||
+        step.action === "compute",
     ).length,
   };
 }

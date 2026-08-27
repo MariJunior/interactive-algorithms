@@ -1,11 +1,17 @@
 import type {
   BinaryTree,
+  DpStep,
   Graph,
   GraphStep,
   SearchStep,
   SortStep,
   TreeStep,
 } from "@/algorithms/types";
+import {
+  DEMO_DP_N,
+  dpStepGenerators,
+  hasDpVisualization,
+} from "@/algorithms/dp";
 import {
   DEMO_GRAPH_START,
   createDemoGraph,
@@ -23,23 +29,20 @@ import { useAlgorithmPlayer } from "@/hooks/useAlgorithmPlayer";
 import { useAlgorithmRunner } from "@/hooks/useAlgorithmRunner";
 import { useMemo } from "react";
 
-type AnyStep = SortStep | SearchStep | GraphStep | TreeStep;
+type AnyStep = SortStep | SearchStep | GraphStep | TreeStep | DpStep;
 
 export type SandboxLaneKind =
   | "sorting"
   | "searching"
   | "graph"
   | "tree"
+  | "dp"
   | "none";
 
 function* emptySteps(_input: number[]): Generator<AnyStep> {
   yield { array: [], action: "done", message: "Алгоритм недоступен" } as SortStep;
 }
 
-/**
- * Одна дорожка песочницы.
- * sorting/searching — number[]; graph — Graph+start; tree — BinaryTree.
- */
 export function useSandboxLane(
   slug: string,
   input: number[],
@@ -47,6 +50,7 @@ export function useSandboxLane(
   graph: Graph,
   graphStartId: string,
   tree: BinaryTree,
+  dpN: number,
 ) {
   const kind: SandboxLaneKind = hasSortingVisualization(slug)
     ? "sorting"
@@ -56,7 +60,9 @@ export function useSandboxLane(
         ? "graph"
         : hasTreeVisualization(slug)
           ? "tree"
-          : "none";
+          : hasDpVisualization(slug)
+            ? "dp"
+            : "none";
 
   const laneInput = useMemo(() => {
     if (slug === "binary-search") {
@@ -94,19 +100,34 @@ export function useSandboxLane(
     return Array.from(create(tree));
   }, [kind, slug, tree]);
 
+  const dpSteps = useMemo(() => {
+    if (kind !== "dp") return [] as DpStep[];
+    const create = dpStepGenerators[slug];
+    if (!create) return [] as DpStep[];
+    return Array.from(create(dpN));
+  }, [kind, slug, dpN]);
+
   const steps =
-    kind === "graph" ? graphSteps : kind === "tree" ? treeSteps : arraySteps.steps;
+    kind === "graph"
+      ? graphSteps
+      : kind === "tree"
+        ? treeSteps
+        : kind === "dp"
+          ? dpSteps
+          : arraySteps.steps;
 
   const stepsId =
     kind === "graph"
       ? `${slug}:g:${graphStartId}:${graph.edges.length}`
       : kind === "tree"
         ? `${slug}:t:${tree.rootId}:${tree.nodes.length}`
-        : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
+        : kind === "dp"
+          ? `${slug}:dp:${dpN}`
+          : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
 
   const player = useAlgorithmPlayer(steps, stepsId);
 
   return { kind, steps, player, laneInput };
 }
 
-export { DEMO_GRAPH_START, createDemoGraph, createDemoTree };
+export { DEMO_DP_N, DEMO_GRAPH_START, createDemoGraph, createDemoTree };

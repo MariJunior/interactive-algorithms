@@ -1,14 +1,17 @@
 import type {
   AlgorithmCategory,
+  DpStep,
   GraphStep,
   SearchStep,
   SortStep,
   TreeStep,
 } from "@/algorithms/types";
+import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasTreeVisualization } from "@/algorithms/tree";
+import DpTableVisualizer from "@/components/visualizers/DpTableVisualizer";
 import GraphVisualizer from "@/components/visualizers/GraphVisualizer";
 import SearchVisualizer from "@/components/visualizers/SearchVisualizer";
 import SortVisualizer from "@/components/visualizers/SortVisualizer";
@@ -23,6 +26,7 @@ import { useSearchParams } from "react-router-dom";
 import { buildCompareSummary, finalStatsFromActions } from "./compareSummary";
 import styles from "./Sandbox.module.css";
 import {
+  DEMO_DP_N,
   DEMO_GRAPH_START,
   createDemoGraph,
   createDemoTree,
@@ -38,7 +42,8 @@ const COMPARABLE = ALGORITHMS.filter(
     hasSortingVisualization(algo.slug) ||
     hasSearchingVisualization(algo.slug) ||
     hasGraphVisualization(algo.slug) ||
-    hasTreeVisualization(algo.slug),
+    hasTreeVisualization(algo.slug) ||
+    hasDpVisualization(algo.slug),
 );
 
 const COMPARABLE_SLUGS = new Set(COMPARABLE.map((algo) => algo.slug));
@@ -108,6 +113,7 @@ export default function Sandbox() {
   const [graph] = useState(() => createDemoGraph());
   const [graphStartId, setGraphStartId] = useState(DEMO_GRAPH_START);
   const [tree] = useState(() => createDemoTree());
+  const [dpN, setDpN] = useState(DEMO_DP_N);
 
   const metaA = getAlgorithmBySlug(slugA);
   const metaB = getAlgorithmBySlug(slugB);
@@ -122,9 +128,10 @@ export default function Sandbox() {
   const needsBinaryHint = slugA === "binary-search" || slugB === "binary-search";
   const isGraphCategory = activeCategory === "graph";
   const isTreeCategory = activeCategory === "tree";
+  const isDpCategory = activeCategory === "dynamic-programming";
 
-  const laneA = useSandboxLane(slugA, input, target, graph, graphStartId, tree);
-  const laneB = useSandboxLane(slugB, input, target, graph, graphStartId, tree);
+  const laneA = useSandboxLane(slugA, input, target, graph, graphStartId, tree, dpN);
+  const laneB = useSandboxLane(slugB, input, target, graph, graphStartId, tree, dpN);
 
   // Запись выровненных slug в URL (конфликт категорий / пустой query)
   useEffect(() => {
@@ -333,7 +340,9 @@ export default function Sandbox() {
               ? "Общий граф"
               : isTreeCategory
                 ? "Общее дерево"
-                : "Общий input"}
+                : isDpCategory
+                  ? "Общий размер n"
+                  : "Общий input"}
           </h2>
 
           {isGraphCategory ? (
@@ -363,6 +372,29 @@ export default function Sandbox() {
               Preorder / Inorder / Postorder бегут по одному BST-демо (корень 4). Сравнивай,
               как меняется порядок посещения при одном и том же дереве.
             </p>
+          ) : isDpCategory ? (
+            <div className={styles.targetRow}>
+              <label className={styles.targetLabel} htmlFor="sandbox-dp-n">
+                n
+              </label>
+              <input
+                id="sandbox-dp-n"
+                className={styles.targetInput}
+                type="number"
+                min={1}
+                max={15}
+                value={dpN}
+                onChange={(event) => {
+                  const next = Number(event.target.value);
+                  if (!Number.isFinite(next)) return;
+                  setDpN(Math.min(15, Math.max(1, Math.trunc(next))));
+                }}
+              />
+              <p className={styles.hint}>
+                Fibonacci и Climbing Stairs на одном n: одна рекуррентность, разная
+                интерпретация ответа.
+              </p>
+            </div>
           ) : (
             <>
               <div className={styles.inputRow}>
@@ -477,7 +509,7 @@ interface SandboxLaneProps {
   options: typeof COMPARABLE;
   onSlugChange: (slug: string) => void;
   kind: SandboxLaneKind;
-  step: SortStep | SearchStep | GraphStep | TreeStep | null;
+  step: SortStep | SearchStep | GraphStep | TreeStep | DpStep | null;
   currentIndex: number;
   totalSteps: number;
   stats: PlayerStats;
@@ -502,13 +534,19 @@ function SandboxLane({
 }: SandboxLaneProps) {
   const stepLabel = totalSteps === 0 ? "0 / 0" : `${currentIndex + 1} / ${totalSteps}`;
   const movesLabel =
-    kind === "graph" || kind === "tree" ? "Посещений" : "Перемещений";
+    kind === "graph" || kind === "tree" || kind === "dp"
+      ? kind === "dp"
+        ? "Заполнений"
+        : "Посещений"
+      : "Перемещений";
   const compareLabel =
     kind === "graph"
       ? "Просмотров рёбер"
       : kind === "tree"
         ? "Спусков"
-        : "Сравнений";
+        : kind === "dp"
+          ? "Базовых шагов"
+          : "Сравнений";
 
   const treeCopy =
     slug === "preorder-traversal"
@@ -525,6 +563,19 @@ function SandboxLane({
             task: "Обойти все узлы; корень после обоих поддеревьев",
             formula: "Postorder = левое → правое → корень",
           };
+
+  const dpCopy =
+    slug === "climbing-stairs"
+      ? {
+          task: "Сколько способов подняться на n ступеней (шаг +1 или +2)",
+          recurrence: "ways(i) = ways(i−1) + ways(i−2)",
+          indexLabel: "ст.",
+        }
+      : {
+          task: "Найти F(n), заполняя таблицу снизу вверх",
+          recurrence: "F(i) = F(i−1) + F(i−2)",
+          indexLabel: "i",
+        };
 
   return (
     <article className={styles.lane}>
@@ -567,6 +618,13 @@ function SandboxLane({
           step={step as TreeStep | null}
           task={treeCopy.task}
           formulaHint={treeCopy.formula}
+        />
+      ) : kind === "dp" ? (
+        <DpTableVisualizer
+          step={step as DpStep | null}
+          task={dpCopy.task}
+          recurrenceHint={dpCopy.recurrence}
+          indexLabel={dpCopy.indexLabel}
         />
       ) : (
         <SortVisualizer step={step as SortStep | null} />

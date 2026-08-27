@@ -1,5 +1,6 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
@@ -9,6 +10,7 @@ import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
 import CodeBlock from "@/components/CodeBlock";
 import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
+import DpPlaybackPanel from "@/components/visualizers/DpPlaybackPanel";
 import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
@@ -48,6 +50,12 @@ function ComplexityTable({
   const showGraphHint = rows.some(
     (row) => row.value.includes("V") || row.value.includes("E"),
   );
+  // DP / лестница: все метрики O(n) — поясняем, что такое n
+  const showDpNHint =
+    !showTreeHint &&
+    !showGraphHint &&
+    rows.every((r) => r.value === "O(n)") &&
+    rows.length > 0;
 
   return (
     <div className={styles.complexityTable}>
@@ -84,6 +92,13 @@ function ComplexityTable({
           <span className={styles.complexityHintStrong}>n</span> — число узлов дерева,{" "}
           <span className={styles.complexityHintStrong}>h</span> — высота (длиннейший
           путь от корня до листа). O(h) — память под стек рекурсии.
+        </p>
+      )}
+      {showDpNHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>n</span> — размер задачи (индекс
+          Фибоначчи или число ступеней). O(n) значит: один проход по таблице из n+1
+          ячеек.
         </p>
       )}
     </div>
@@ -302,6 +317,8 @@ export default function Algorithm() {
               <GraphPlaybackPanel key={slug} slug={slug} />
             ) : slug && hasTreeVisualization(slug) ? (
               <TreePlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasDpVisualization(slug) ? (
+              <DpPlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

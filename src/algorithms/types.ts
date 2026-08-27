@@ -118,6 +118,28 @@ export interface TreeStep {
   message?: string;
 }
 
+/** Шаг заполнения DP-таблицы (1D) */
+export type DpStepAction =
+  | "init" // задаём базу
+  | "compute" // считаем очередную ячейку
+  | "done";
+
+export interface DpStep {
+  /** Ячейки dp[0..n]; null — ещё не заполнена */
+  table: Array<number | null>;
+  action: DpStepAction;
+  n: number;
+  /** Индекс, который заполняем */
+  focusIndex?: number;
+  /** Индексы, из которых читаем (подсветка зависимостей) */
+  reading?: number[];
+  /** Человекочитаемая формула текущего шага */
+  formula?: string;
+  /** Итоговый ответ (когда done) */
+  result?: number;
+  message?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;

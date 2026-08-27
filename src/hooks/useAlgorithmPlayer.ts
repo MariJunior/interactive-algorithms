@@ -11,8 +11,8 @@ interface StepWithAction {
 }
 
 const COUNTABLE_ACTIONS = {
-  comparisons: new Set(["compare", "select", "explore", "descend"]),
-  moves: new Set(["swap", "insert", "merge", "visit"]),
+  comparisons: new Set(["compare", "select", "explore", "descend", "init"]),
+  moves: new Set(["swap", "insert", "merge", "visit", "compute"]),
 };
 
 function computeStats(steps: StepWithAction[], upToIndex: number): PlayerStats {

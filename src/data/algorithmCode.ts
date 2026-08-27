@@ -832,4 +832,66 @@ function postorder(node: BinNode | undefined, order: number[] = []): number[] {
   return order
 }`,
   },
+
+  fibonacci: {
+    jsBasic: `function fibonacci(n) {
+  if (n <= 1) return n
+  var dp = []
+  dp[0] = 0
+  dp[1] = 1
+  for (var i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2]
+  }
+  return dp[n]
+}`,
+
+    jsModern: `function fibonacci(n) {
+  if (n <= 1) return n
+  const dp = [0, 1]
+  for (let i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2]
+  }
+  return dp[n]
+}`,
+
+    typescript: `function fibonacci(n: number): number {
+  if (n <= 1) return n
+  const dp: number[] = [0, 1]
+  for (let i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1]! + dp[i - 2]!
+  }
+  return dp[n]!
+}`,
+  },
+
+  "climbing-stairs": {
+    jsBasic: `function climbingStairs(n) {
+  if (n <= 2) return n
+  var dp = []
+  dp[1] = 1
+  dp[2] = 2
+  for (var i = 3; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2]
+  }
+  return dp[n]
+}`,
+
+    jsModern: `function climbingStairs(n) {
+  if (n <= 2) return n
+  const dp = [0, 1, 2]
+  for (let i = 3; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2]
+  }
+  return dp[n]
+}`,
+
+    typescript: `function climbingStairs(n: number): number {
+  if (n <= 2) return n
+  const dp: number[] = [0, 1, 2]
+  for (let i = 3; i <= n; i++) {
+    dp[i] = dp[i - 1]! + dp[i - 2]!
+  }
+  return dp[n]!
+}`,
+  },
 };
