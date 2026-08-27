@@ -1,6 +1,6 @@
 ---
 name: AlgoVisual status summary
-overview: "Step 4 готов к ревью: все 8 сортировок end-to-end. Дальше — Linear/Binary Search."
+overview: "Steps 1–6 в коде. Step 5–6 в working tree (ревью/commit). Дальше — Shiki/полировка/Vercel."
 todos:
   - id: wire-visualizer
     content: "Step 1/10: SortVisualizer + PlaybackControls + интеграция на /algorithm/:slug"
@@ -11,14 +11,17 @@ todos:
   - id: merge-sort-cycle
     content: "Step 3/10: Merge Sort — теория + 3 варианта кода + TS + генератор + тесты"
     status: completed
-  - id: rest-sorts-search
-    content: "Step 4: Quick/Heap/Radix/Counting — полный цикл"
+  - id: rest-sorts
+    content: "Step 4: Quick/Heap/Radix/Counting + UX-полировка каталога"
     status: completed
   - id: search-algorithms
     content: "Step 5: Linear/Binary Search + SearchVisualizer"
+    status: completed
+  - id: sandbox
+    content: "Step 6: Sandbox /sandbox?a=&b= — код готов, ждёт ревью/commit"
     status: pending
-  - id: sandbox-polish-deploy
-    content: "Step 6–7: Sandbox, Shiki, README, деплой на Vercel"
+  - id: polish-deploy
+    content: "Step 7: Shiki, a11y, финальный адаптив, README, деплой Vercel"
     status: pending
   - id: full-catalog
     content: "Step 8: полный каталог — структуры данных, деревья, графы, DP, жадные, строки"
@@ -34,23 +37,25 @@ isProject: false
 
 # Состояние AlgoVisual vs ТЗ и roadmap
 
+> Актуализировано: 2026-08-27 · после Step 6 (Sandbox) в коде.
+
 **Режим работы:** staged delivery — один шаг → ревью/commit → отмашка → следующий.
 
-**Важно:** приложенный [algovisual_roadmap](c:\Users\mari_banana.cursor\plans\algovisual_roadmap_6a8cc470.plan.md) **устарел** относительно кода. Источник требований: [Перезапуск изучения алгоритмов.md](c:\Users\mari_banana\Documents\GitHub\Перезапуск изучения алгоритмов.md).
+**Важно:** [algovisual_roadmap_6a8cc470](c:\Users\mari_banana\.cursor\plans\algovisual_roadmap_6a8cc470.plan.md) **устарел**. Источник требований: [Перезапуск изучения алгоритмов.md](c:\Users\mari_banana\Documents\GitHub\Перезапуск изучения алгоритмов.md). Handoff сессии: `PROJECT_STATUS.md` в корне репо.
 
 ```mermaid
 flowchart LR
-  subgraph done [Готово]
+  subgraph done [Готово в коде]
     Shell["Оболочка UI"]
     Meta["Реестр 10 алгоритмов"]
-    Core["3 сортировки + хуки"]
-    Viz["SortVisualizer + player UI"]
+    Sorts["8 сортировок + SortPlayback"]
+    Search["Linear/Binary + SearchPlayback"]
+    Sandbox["Sandbox side-by-side"]
   end
   subgraph next [Следующий шаг]
-    How["howItWorks аккордеон"]
+    Polish["Shiki / a11y / Vercel"]
   end
-  Core --> Viz
-  Viz --> How
+  Shell --> Meta --> Sorts --> Search --> Sandbox --> Polish
 ```
 
 ---
@@ -71,24 +76,33 @@ flowchart LR
 
 - Роуты, токены, Layout, Home, Learn, реестр 10 алгоритмов, типы
 
-**Этап 1 — сортировки**
+**Этапы 1–4 — сортировки: закрыты** (закоммичено на `main` @ `6a5b8e9`)
 
-Сделано (ядро + UI плеера — Step 1):
+- Все 8 сортировок end-to-end: теория, `howItWorks`, 3 варианта кода, TS, генераторы, тесты
+- `SortVisualizer` + `SortPlaybackPanel` + `PlaybackControls` / `Slider`
+- UX: `nameRu`, бейджи/tooltips, prev/next, мобильный layout, Home hero bars + scroll cue
 
-- Теория + 3 варианта кода: Bubble, Selection, Insertion
-- Чистые функции + генераторы шагов + тесты
-- Хуки `useAlgorithmRunner` / `useAlgorithmPlayer` + тесты
-- `SortVisualizer` (bar chart, Framer Motion) — только рендер `SortStep`
-- `PlaybackControls` + `Slider` (play/pause/step/speed/random/stats)
-- `SortPlaybackPanel` — composition root на `/algorithm/:slug` для 3 сортировок
-- Для остальных slug — placeholder «ещё в разработке»
+**Этап 5 — поиск: код готов** (принят, в working tree)
 
-Ещё не сделано:
+- `SearchStep`, linear/binary + генераторы + тесты, `SearchVisualizer` / `SearchPlaybackPanel`
 
-- Merge / Quick / Heap / Radix / Counting — код и реализации
-- Подсветка строки кода, Shiki, Sandbox, полный каталог, CSS-арт, квиз, 3D, деплой
+**Этап 6 — песочница: код готов, ждёт ревью** (working tree dirty)
 
-README актуализирован под текущий статус (в т.ч. howItWorks).
+- `/sandbox?a=&b=` — два селекта, side-by-side viz, общий input (random + edit)
+- Sync playback: ▶ оба / пауза / сброс / общая скорость
+- Цель поиска, если выбран searching; binary получает sorted-копию
+- Итог сравнения по шагам после завершения обоих
+- Тесты: **72/72** passed (`npm test`)
+
+---
+
+## Ещё не сделано
+
+- Commit Steps 5–6 (можно одним или двумя коммитами)
+- Shiki в CodeBlock, a11y, финальный адаптив, деплой Vercel
+- Полный каталог (структуры, деревья, графы, DP, жадные, строки)
+- CSS-арт на карточках + квиз «Угадай сложность»
+- 3D (R3F)
 
 ---
 
@@ -97,12 +111,47 @@ README актуализирован под текущий статус (в т.ч
 1. ~~Закрыть дыру визуализации (MVP)~~
 2. ~~Контент: `howItWorks` + аккордеон~~
 3. ~~Merge Sort~~
-4. ~~Quick / Heap / Radix / Counting~~ **DONE — на ревью**
-5. Linear + Binary + `SearchVisualizer` ← следующий
-6. Песочница
-7. Полировка: Shiki, адаптив, a11y, README, Vercel
+4. ~~Quick / Heap / Radix / Counting + UX~~
+5. ~~Linear + Binary + `SearchVisualizer`~~
+6. ~~Песочница~~ — **код готов → ревью/commit**
+7. Полировка: Shiki, адаптив, a11y, README, Vercel ← **следующий после отмашки**
 8. Полный каталог (структуры, деревья, графы, DP, жадные, строки)
 9. CSS-арт + квиз «Угадай сложность»
 10. **3D (R3F) в конце**
 
 Целевой scope — **роскошный максимум**.
+
+---
+
+## Ключевые решения (не переоткрывать без причины)
+
+| Решение | Зачем |
+|---------|--------|
+| Domain в `src/algorithms/` без React | Clean Architecture |
+| `*PlaybackPanel` как composition root | generator → runner → player → viz |
+| Отдельный `SearchStep` (не расширять `SortStep`) | Разная семантика шагов |
+| Sandbox: два независимых player + общий speed/input | Как в ТЗ wireframe |
+| Binary в sandbox — sorted-копия shared input | Честное предусловие без ломки linear |
+| Placeholder, если нет генератора | Будущие категории |
+| 3D только в конце roadmap | Не отвлекаться до полного 2D-каталога |
+
+---
+
+## Чек-лист внедрения (остаток)
+
+### Steps 5–6 — закрытие (сейчас)
+- [ ] Ревью Search + Sandbox
+- [ ] Commit(s) — см. handoff
+- [ ] Ручной просмотр `/algorithm/linear-search`, `/binary-search`, `/sandbox?a=bubble-sort&b=quick-sort`
+- [ ] Обновить `PROJECT_STATUS.md` после commit
+
+### Step 7 — полировка и деплой
+- [ ] Shiki в CodeBlock
+- [ ] a11y + финальный адаптив
+- [ ] README под Search + Sandbox
+- [ ] Деплой Vercel
+
+### Steps 8–10
+- [ ] Полный каталог
+- [ ] CSS-арт + квиз
+- [ ] 3D (R3F)
