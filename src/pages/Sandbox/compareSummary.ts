@@ -63,7 +63,11 @@ export function finalStatsFromActions(
         step.action === "descend" ||
         step.action === "init" ||
         step.action === "consider" ||
-        step.action === "sort",
+        step.action === "sort" ||
+        step.action === "hash" ||
+        step.action === "lookup" ||
+        step.action === "found" ||
+        step.action === "miss",
     ).length,
     moves: actions.filter(
       (step) =>
@@ -74,7 +78,9 @@ export function finalStatsFromActions(
         step.action === "compute" ||
         step.action === "match" ||
         step.action === "shift" ||
-        step.action === "take",
+        step.action === "take" ||
+        step.action === "place" ||
+        step.action === "collide",
     ).length,
   };
 }

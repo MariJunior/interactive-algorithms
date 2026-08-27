@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { hasDpVisualization } from "@/algorithms/dp";
 import { hasGraphVisualization } from "@/algorithms/graph";
 import { hasGreedyVisualization } from "@/algorithms/greedy";
+import { hasHashTableVisualization } from "@/algorithms/hashtable";
 import { hasSearchingVisualization } from "@/algorithms/searching";
 import { hasSortingVisualization } from "@/algorithms/sorting";
 import { hasStringVisualization } from "@/algorithms/string";
@@ -15,6 +16,7 @@ import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
 import DpPlaybackPanel from "@/components/visualizers/DpPlaybackPanel";
 import GraphPlaybackPanel from "@/components/visualizers/GraphPlaybackPanel";
 import GreedyPlaybackPanel from "@/components/visualizers/GreedyPlaybackPanel";
+import HashTablePlaybackPanel from "@/components/visualizers/HashTablePlaybackPanel";
 import SearchPlaybackPanel from "@/components/visualizers/SearchPlaybackPanel";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import StringMatchPlaybackPanel from "@/components/visualizers/StringMatchPlaybackPanel";
@@ -68,6 +70,7 @@ function ComplexityTable({
     (r) => r.value.includes("n · m") || r.value.includes("n + m"),
   );
   const showGreedyNHint = category === "greedy";
+  const showHashHint = category === "data-structures";
 
   return (
     <div className={styles.complexityTable}>
@@ -122,9 +125,17 @@ function ComplexityTable({
       )}
       {showGreedyNHint && (
         <p className={styles.complexityHint}>
-          <span className={styles.complexityHintStrong}>n</span> — число активностей
-          или предметов. O(n log n) — сортировка по жадному ключу (конец /
+          <span className={styles.complexityHintStrong}>n</span> — число заявок
+          (интервалов) или предметов. O(n log n) — сортировка по жадному ключу (конец /
           value÷weight); дальше один линейный проход.
+        </p>
+      )}
+      {showHashHint && (
+        <p className={styles.complexityHint}>
+          <span className={styles.complexityHintStrong}>O(1)</span> в среднем — один
+          расчёт индекса и короткая цепочка.{" "}
+          <span className={styles.complexityHintStrong}>O(n)</span> в худшем — все ключи
+          попали в один бакет (длинная цепочка).
         </p>
       )}
     </div>
@@ -349,6 +360,8 @@ export default function Algorithm() {
               <StringMatchPlaybackPanel key={slug} slug={slug} />
             ) : slug && hasGreedyVisualization(slug) ? (
               <GreedyPlaybackPanel key={slug} slug={slug} />
+            ) : slug && hasHashTableVisualization(slug) ? (
+              <HashTablePlaybackPanel key={slug} slug={slug} />
             ) : (
               <div className={styles.visualizerPlaceholder}>
                 <span className={styles.visualizerPlaceholderIcon}>🎬</span>

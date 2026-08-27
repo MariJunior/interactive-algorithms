@@ -8,11 +8,11 @@ interface ActivitySelectionVisualizerProps {
 }
 
 /**
- * Timeline жадного выбора активностей.
+ * Timeline задачи составления расписания (жадный выбор интервалов).
  */
 export default function ActivitySelectionVisualizer({
   step,
-  task = "Выбрать максимум непересекающихся активностей",
+  task = "Задача составления расписания: максимум непересекающихся интервалов",
   ruleHint = "Сортируем по окончанию ↑; берём, если start ≥ lastFinish",
 }: ActivitySelectionVisualizerProps) {
   if (!step) {

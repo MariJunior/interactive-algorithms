@@ -55,7 +55,7 @@ export function* fractionalKnapsackSteps(
     totalValue: 0,
     takenFraction: {},
     formula: "Сортируем по ценности на кг (value/weight) ↓",
-    message: `Задача: набрать максимум ценности в рюкзак вместимости ${capacity}`,
+    message: `Задача о рюкзаке: максимум ценности при вместимости ${capacity}`,
   };
 
   const takenFraction: Record<string, number> = {};

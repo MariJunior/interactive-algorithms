@@ -31,14 +31,15 @@
 | Деревья: Preorder / Inorder / Postorder + `TreeVisualizer` | Готово |
 | DP: Fibonacci / Climbing Stairs + `DpTableVisualizer` | Готово |
 | Строки: Naive / KMP + `StringMatchVisualizer` | Готово |
-| Жадные: Activity Selection / Fractional Knapsack | Готово |
+| Жадные: расписание / рюкзак | Готово (в working tree с 8e) |
+| Хеш-таблица (chaining) | Готово (Step 8f) |
+| Дейкстра, покрытие множества, TSP, k-NN | В плане (`CATALOG_EXPANSION.md`) |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
-| Структуры данных | В планах |
-| CSS-арт, квиз | В планах |
+| CSS-арт, квиз | В планах (после расширения каталога) |
 | 3D (React Three Fiber) | Финальный этап |
 
-**Примеры:** `/algorithm/activity-selection`, `/sandbox?a=activity-selection&b=fractional-knapsack`.
+**Примеры:** `/algorithm/hash-table`, `/sandbox?a=hash-table`.
 
 ---
 
@@ -51,7 +52,7 @@
 5. ~~Linear / Binary Search + отдельный визуализатор~~
 6. ~~Песочница сравнения (`/sandbox?a=&b=`)~~
 7. ~~Полировка: Shiki, a11y, адаптив, конфиг Vercel~~
-8. ~~Расширенный каталог: графы, деревья, DP, строки, жадные~~
+8. Расширенный каталог: графы…жадные → хеш-таблица, Дейкстра, покрытие множества, TSP, k-NN (`CATALOG_EXPANSION.md`)
 9. CSS-арт на карточках + мини-квиз «Угадай сложность»
 10. **3D-режим** для избранных алгоритмов
 

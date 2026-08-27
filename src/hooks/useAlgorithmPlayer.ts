@@ -19,6 +19,10 @@ const COUNTABLE_ACTIONS = {
     "init",
     "consider",
     "sort",
+    "hash",
+    "lookup",
+    "found",
+    "miss",
   ]),
   moves: new Set([
     "swap",
@@ -29,6 +33,8 @@ const COUNTABLE_ACTIONS = {
     "match",
     "shift",
     "take",
+    "place",
+    "collide",
   ]),
 };
 

@@ -4,6 +4,7 @@ import type {
   Graph,
   GraphStep,
   GreedyStep,
+  HashTableStep,
   SearchStep,
   SortStep,
   StringStep,
@@ -28,6 +29,11 @@ import {
   fractionalKnapsackSteps,
   hasGreedyVisualization,
 } from "@/algorithms/greedy";
+import {
+  DEMO_HASH_CAPACITY,
+  collectHashTableSteps,
+  hasHashTableVisualization,
+} from "@/algorithms/hashtable";
 import { hasSearchingVisualization, searchingStepGenerators } from "@/algorithms/searching";
 import { hasSortingVisualization, sortingStepGenerators } from "@/algorithms/sorting";
 import {
@@ -52,7 +58,8 @@ type AnyStep =
   | TreeStep
   | DpStep
   | StringStep
-  | GreedyStep;
+  | GreedyStep
+  | HashTableStep;
 
 export type SandboxLaneKind =
   | "sorting"
@@ -62,6 +69,7 @@ export type SandboxLaneKind =
   | "dp"
   | "string"
   | "greedy"
+  | "hashtable"
   | "none";
 
 function* emptySteps(_input: number[]): Generator<AnyStep> {
@@ -93,7 +101,9 @@ export function useSandboxLane(
               ? "string"
               : hasGreedyVisualization(slug)
                 ? "greedy"
-                : "none";
+                : hasHashTableVisualization(slug)
+                  ? "hashtable"
+                  : "none";
 
   const laneInput = useMemo(() => {
     if (slug === "binary-search") {
@@ -158,6 +168,11 @@ export function useSandboxLane(
     return [];
   }, [kind, slug]);
 
+  const hashSteps = useMemo((): HashTableStep[] => {
+    if (kind !== "hashtable") return [];
+    return collectHashTableSteps(slug, DEMO_HASH_CAPACITY) ?? [];
+  }, [kind, slug]);
+
   const steps =
     kind === "graph"
       ? graphSteps
@@ -169,7 +184,9 @@ export function useSandboxLane(
             ? stringSteps
             : kind === "greedy"
               ? greedySteps
-              : arraySteps.steps;
+              : kind === "hashtable"
+                ? hashSteps
+                : arraySteps.steps;
 
   const stepsId =
     kind === "graph"
@@ -182,7 +199,9 @@ export function useSandboxLane(
             ? `${slug}:s:${text}:${pattern}`
             : kind === "greedy"
               ? `${slug}:gr`
-              : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
+              : kind === "hashtable"
+                ? `${slug}:ht`
+                : `${slug}:${laneInput.join(",")}:${kind === "searching" ? target : "-"}`;
 
   const player = useAlgorithmPlayer(steps, stepsId);
 

@@ -9,7 +9,7 @@ interface FractionalKnapsackVisualizerProps {
 
 export default function FractionalKnapsackVisualizer({
   step,
-  task = "Набрать максимум ценности в рюкзак (можно дробные доли)",
+  task = "Задача о рюкзаке (дробный): максимум ценности при лимите веса",
   ruleHint = "Сортируем по value/weight ↓; берём целиком или долю",
 }: FractionalKnapsackVisualizerProps) {
   if (!step) {

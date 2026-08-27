@@ -34,7 +34,7 @@ export function* activitySelectionSteps(
     selectedIds: [],
     lastFinish: -Infinity,
     formula: "Сортируем по времени окончания ↑",
-    message: "Задача: выбрать максимум непересекающихся активностей",
+    message: "Задача составления расписания: максимум непересекающихся интервалов",
   };
 
   const selectedIds: string[] = [];

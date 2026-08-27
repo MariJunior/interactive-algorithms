@@ -220,6 +220,39 @@ export interface KnapsackGreedyStep {
 
 export type GreedyStep = ActivityGreedyStep | KnapsackGreedyStep;
 
+/** Хеш-таблица (chaining): учебные шаги вставки и поиска */
+export type HashStepAction =
+  | "hash" // посчитали индекс
+  | "place" // положили в бакет (цепочка пустая или append)
+  | "collide" // коллизия — добавили в цепочку
+  | "lookup" // ищем в бакете
+  | "found"
+  | "miss"
+  | "done";
+
+export interface HashEntry {
+  key: string;
+  value: string;
+}
+
+export interface HashTableStep {
+  kind: "hashtable";
+  action: HashStepAction;
+  capacity: number;
+  /** Снимок бакетов (цепочки) */
+  buckets: HashEntry[][];
+  /** Индекс бакета в фокусе */
+  focusIndex?: number;
+  focusKey?: string;
+  focusValue?: string;
+  /** Сырая сумма кодов / результат % capacity */
+  hashSum?: number;
+  hashIndex?: number;
+  op?: "insert" | "lookup";
+  message?: string;
+  formula?: string;
+}
+
 // Метаданные сложности
 export interface Complexity {
   best: string;
@@ -236,7 +269,8 @@ export type AlgorithmCategory =
   | "graph"
   | "dynamic-programming"
   | "greedy"
-  | "string";
+  | "string"
+  | "data-structures";
 
 // Метаданные алгоритма (для карточек и страниц)
 export interface AlgorithmMeta {

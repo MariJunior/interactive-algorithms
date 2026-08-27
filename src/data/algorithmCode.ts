@@ -1164,4 +1164,100 @@ function fractionalKnapsack(
   return totalValue
 }`,
   },
+
+  "hash-table": {
+    jsBasic: `function hashKey(key, capacity) {
+  var sum = 0
+  for (var i = 0; i < key.length; i++) {
+    sum += key.charCodeAt(i)
+  }
+  return sum % capacity
+}
+
+function createTable(capacity) {
+  var buckets = []
+  for (var i = 0; i < capacity; i++) buckets.push([])
+  return buckets
+}
+
+function put(buckets, key, value) {
+  var index = hashKey(key, buckets.length)
+  var chain = buckets[index]
+  for (var i = 0; i < chain.length; i++) {
+    if (chain[i].key === key) {
+      chain[i].value = value
+      return
+    }
+  }
+  chain.push({ key: key, value: value })
+}
+
+function get(buckets, key) {
+  var index = hashKey(key, buckets.length)
+  var chain = buckets[index]
+  for (var i = 0; i < chain.length; i++) {
+    if (chain[i].key === key) return chain[i].value
+  }
+  return undefined
+}`,
+
+    jsModern: `function hashKey(key, capacity) {
+  let sum = 0
+  for (const ch of key) sum += ch.charCodeAt(0)
+  return sum % capacity
+}
+
+function createTable(capacity) {
+  return Array.from({ length: capacity }, () => [])
+}
+
+function put(buckets, key, value) {
+  const index = hashKey(key, buckets.length)
+  const chain = buckets[index]
+  const existing = chain.find((entry) => entry.key === key)
+  if (existing) {
+    existing.value = value
+    return
+  }
+  chain.push({ key, value })
+}
+
+function get(buckets, key) {
+  const index = hashKey(key, buckets.length)
+  return buckets[index].find((entry) => entry.key === key)?.value
+}`,
+
+    typescript: `interface HashEntry {
+  key: string
+  value: string
+}
+
+type Buckets = HashEntry[][]
+
+function hashKey(key: string, capacity: number): number {
+  let sum = 0
+  for (const ch of key) sum += ch.charCodeAt(0)
+  return sum % capacity
+}
+
+function createTable(capacity: number): Buckets {
+  return Array.from({ length: capacity }, () => [])
+}
+
+function put(buckets: Buckets, key: string, value: string): void {
+  const index = hashKey(key, buckets.length)
+  const chain = buckets[index]
+  const existing = chain.find((entry) => entry.key === key)
+  if (existing) {
+    existing.value = value
+    return
+  }
+  chain.push({ key, value })
+}
+
+function get(buckets: Buckets, key: string): string | undefined {
+  const index = hashKey(key, buckets.length)
+  return buckets[index].find((entry) => entry.key === key)?.value
+}`,
+  },
 };

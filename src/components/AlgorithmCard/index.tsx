@@ -14,6 +14,7 @@ const categoryConfig: Record<string, { label: string; colorVar: string }> = {
   "dynamic-programming": { label: "DP", colorVar: "--color-dp" },
   greedy: { label: "Жадные", colorVar: "--color-greedy" },
   string: { label: "Строки", colorVar: "--color-string" },
+  "data-structures": { label: "Структуры", colorVar: "--color-ds" },
 };
 
 const complexityColor: Record<string, string> = {
@@ -355,6 +356,39 @@ function PreviewPlaceholder({ category }: { category: string }) {
               </text>
             </g>
           ))}
+        </svg>
+      );
+
+    case "data-structures":
+      // Бакеты хеш-таблицы с короткой цепочкой
+      return (
+        <svg viewBox="0 0 80 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {[0, 1, 2, 3].map((index) => (
+            <rect
+              key={`b-${index}`}
+              x={6}
+              y={index * 11 + 4}
+              width={14}
+              height={9}
+              rx={2}
+              fill="currentColor"
+              opacity={index === 1 ? 0.85 : 0.25}
+            />
+          ))}
+          <rect x={28} y={15} width={20} height={9} rx={2} fill="currentColor" opacity={0.7} />
+          <rect x={54} y={15} width={20} height={9} rx={2} fill="currentColor" opacity={0.45} />
+          <path
+            d="M22 19.5 H28"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            opacity={0.7}
+          />
+          <path
+            d="M48 19.5 H54"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            opacity={0.5}
+          />
         </svg>
       );
 
