@@ -1,7 +1,15 @@
 /* ─── Карточка ────────────────────────────────────────── */
+.cardMotion {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+
 .card {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -77,6 +85,28 @@
   font-family: var(--font-mono);
 }
 
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nameRu {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: var(--space-1);
+  padding: 2px var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  line-height: 1.35;
+  font-family: var(--font-sans);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: var(--radius-sm);
+}
+
 .category {
   font-size: var(--text-xs);
   font-weight: 500;
@@ -137,15 +167,4 @@
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
-}
-
-.badge {
-  font-size: var(--text-xs);
-  font-family: var(--font-mono);
-  font-weight: 500;
-  color: var(--badge-color, var(--color-text-muted));
-  background: color-mix(in srgb, var(--badge-color, var(--color-text-muted)) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--badge-color, var(--color-text-muted)) 25%, transparent);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-sm);
 }

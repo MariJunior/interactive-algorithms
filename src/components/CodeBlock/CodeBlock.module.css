@@ -3,6 +3,9 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* ─── Шапка ───────────────────────────────────────────── */
@@ -13,12 +16,15 @@
   padding: 0 var(--space-4);
   background: var(--color-surface-2);
   border-bottom: 1px solid var(--color-border);
-  gap: var(--space-4);
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .tabs {
   display: flex;
   gap: 0;
+  min-width: 0;
+  overflow-x: auto;
 }
 
 .tab {
@@ -31,9 +37,22 @@
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition:
     color var(--transition-fast),
     border-color var(--transition-fast);
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 0 var(--space-2);
+  }
+
+  .tab {
+    padding: var(--space-3) var(--space-2);
+    font-size: var(--text-xs);
+  }
 }
 
 .tab:hover {

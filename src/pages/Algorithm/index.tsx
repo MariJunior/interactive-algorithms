@@ -1,10 +1,11 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { hasSortingVisualization } from "@/algorithms/sorting";
-import { getAlgorithmBySlug } from "@/data/algorithms";
+import { getAdjacentAlgorithms, getAlgorithmBySlug } from "@/data/algorithms";
 import { algorithmCode } from "@/data/algorithmCode";
 import Accordion from "@/components/Accordion";
 import CodeBlock from "@/components/CodeBlock";
+import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
 import SortPlaybackPanel from "@/components/visualizers/SortPlaybackPanel";
 import styles from "./Algorithm.module.css";
 
@@ -93,30 +94,8 @@ function AlgorithmBadges({ stable, inPlace }: { stable?: boolean; inPlace?: bool
 
   return (
     <div className={styles.badges}>
-      {stable !== undefined && (
-        <span
-          className={styles.badge}
-          style={
-            {
-              "--badge-color": stable ? "var(--color-o1)" : "var(--color-on2)",
-            } as React.CSSProperties
-          }
-        >
-          {stable ? "stable" : "unstable"}
-        </span>
-      )}
-      {inPlace !== undefined && (
-        <span
-          className={styles.badge}
-          style={
-            {
-              "--badge-color": inPlace ? "var(--color-ologn)" : "var(--color-text-muted)",
-            } as React.CSSProperties
-          }
-        >
-          {inPlace ? "in-place" : "out-of-place"}
-        </span>
-      )}
+      {stable !== undefined && <StableBadge stable={stable} />}
+      {inPlace !== undefined && <InPlaceBadge inPlace={inPlace} />}
     </div>
   );
 }
@@ -145,11 +124,13 @@ export default function Algorithm() {
 
   const algorithm = slug ? getAlgorithmBySlug(slug) : undefined;
   const code = slug ? algorithmCode[slug] : undefined;
+  const { prev, next } = slug ? getAdjacentAlgorithms(slug) : { prev: null, next: null };
 
   // Если алгоритм не найден — редирект на /learn
   if (!algorithm) return <Navigate to="/learn" replace />;
 
-  const { name, complexity, shortDescription, howItWorks, when, stable, inPlace } = algorithm;
+  const { name, nameRu, complexity, shortDescription, howItWorks, when, stable, inPlace } =
+    algorithm;
 
   // Собираем вкладки кода — только те что есть
   const codeTabs = code
@@ -190,18 +171,52 @@ export default function Algorithm() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        {/* ── Хлебные крошки ── */}
+        {/* ── Хлебные крошки + соседние алгоритмы ── */}
         <motion.div
-          className={styles.breadcrumbs}
+          className={styles.topNav}
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Link to="/learn" className={styles.breadcrumbLink}>
-            ← Учебник
-          </Link>
-          <span className={styles.breadcrumbSep}>/</span>
-          <span className={styles.breadcrumbCurrent}>{name}</span>
+          <div className={styles.breadcrumbs}>
+            <Link to="/learn" className={styles.breadcrumbLink}>
+              ← Учебник
+            </Link>
+            <span className={styles.breadcrumbSep}>/</span>
+            <span className={styles.breadcrumbCurrent}>{name}</span>
+          </div>
+
+          <nav className={styles.adjacentNav} aria-label="Соседние алгоритмы">
+            {prev ? (
+              <Link
+                to={`/algorithm/${prev.slug}`}
+                className={styles.adjacentLink}
+                title={prev.name}
+              >
+                <span className={styles.adjacentArrow} aria-hidden="true">
+                  ←
+                </span>
+                <span className={styles.adjacentLabel}>{prev.nameRu}</span>
+              </Link>
+            ) : (
+              <span className={styles.adjacentDisabled} aria-hidden="true" />
+            )}
+
+            {next ? (
+              <Link
+                to={`/algorithm/${next.slug}`}
+                className={`${styles.adjacentLink} ${styles.adjacentLinkNext}`}
+                title={next.name}
+              >
+                <span className={styles.adjacentLabel}>{next.nameRu}</span>
+                <span className={styles.adjacentArrow} aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            ) : (
+              <span className={styles.adjacentDisabled} aria-hidden="true" />
+            )}
+          </nav>
         </motion.div>
 
         {/* ── Шапка страницы ── */}
@@ -213,6 +228,7 @@ export default function Algorithm() {
         >
           <div className={styles.headerLeft}>
             <h1 className={styles.title}>{name}</h1>
+            <p className={styles.titleRu}>{nameRu}</p>
             <p className={styles.description}>{shortDescription}</p>
             <AlgorithmBadges stable={stable} inPlace={inPlace} />
           </div>
@@ -239,7 +255,7 @@ export default function Algorithm() {
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           {/* Левая колонка — визуализация (только для алгоритмов с генератором шагов) */}
-          <div className={styles.visualizerCol}>
+          <div className={`${styles.visualizerCol} ${styles.stickyPanel}`}>
             {slug && hasSortingVisualization(slug) ? (
               <SortPlaybackPanel slug={slug} />
             ) : (
@@ -252,7 +268,7 @@ export default function Algorithm() {
           </div>
 
           {/* Правая колонка — описание */}
-          <div className={styles.infoCol}>
+          <div className={`${styles.infoCol} ${styles.stickyPanel}`}>
             <Accordion items={accordionItems} defaultOpen={defaultOpen} />
           </div>
         </motion.div>

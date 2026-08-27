@@ -5,6 +5,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "bubble-sort",
     name: "Bubble Sort",
+    nameRu: "Пузырьковая сортировка",
     category: "sorting",
     complexity: {
       best: "O(n)",
@@ -35,6 +36,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "selection-sort",
     name: "Selection Sort",
+    nameRu: "Сортировка выбором",
     category: "sorting",
     complexity: {
       best: "O(n²)",
@@ -65,6 +67,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "insertion-sort",
     name: "Insertion Sort",
+    nameRu: "Сортировка вставками",
     category: "sorting",
     complexity: {
       best: "O(n)",
@@ -96,6 +99,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "merge-sort",
     name: "Merge Sort",
+    nameRu: "Сортировка слиянием",
     category: "sorting",
     complexity: {
       best: "O(n log n)",
@@ -129,6 +133,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "quick-sort",
     name: "Quick Sort",
+    nameRu: "Быстрая сортировка",
     category: "sorting",
     complexity: {
       best: "O(n log n)",
@@ -163,6 +168,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "heap-sort",
     name: "Heap Sort",
+    nameRu: "Пирамидальная сортировка",
     category: "sorting",
     complexity: {
       best: "O(n log n)",
@@ -196,6 +202,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "radix-sort",
     name: "Radix Sort",
+    nameRu: "Поразрядная сортировка",
     category: "sorting",
     complexity: {
       best: "O(nk)",
@@ -230,6 +237,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "counting-sort",
     name: "Counting Sort",
+    nameRu: "Сортировка подсчётом",
     category: "sorting",
     complexity: {
       best: "O(n + k)",
@@ -266,6 +274,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "linear-search",
     name: "Linear Search",
+    nameRu: "Линейный поиск",
     category: "searching",
     complexity: {
       best: "O(1)",
@@ -290,6 +299,7 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   {
     slug: "binary-search",
     name: "Binary Search",
+    nameRu: "Бинарный поиск",
     category: "searching",
     complexity: {
       best: "O(1)",
@@ -319,6 +329,20 @@ export const getAlgorithmBySlug = (slug: string): AlgorithmMeta | undefined =>
 
 export const getAlgorithmsByCategory = (category: string): AlgorithmMeta[] =>
   ALGORITHMS.filter((algorithm) => algorithm.category === category);
+
+/** Соседи в порядке каталога — для ← → на странице алгоритма */
+export function getAdjacentAlgorithms(slug: string): {
+  prev: AlgorithmMeta | null;
+  next: AlgorithmMeta | null;
+} {
+  const index = ALGORITHMS.findIndex((algorithm) => algorithm.slug === slug);
+  if (index === -1) return { prev: null, next: null };
+
+  return {
+    prev: index > 0 ? ALGORITHMS[index - 1] : null,
+    next: index < ALGORITHMS.length - 1 ? ALGORITHMS[index + 1] : null,
+  };
+}
 
 export const CATEGORIES = [
   { id: "sorting", label: "Сортировки" },

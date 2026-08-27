@@ -102,6 +102,8 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -110,7 +112,16 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   min-height: 100vh;
+  max-width: 100%;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 code,

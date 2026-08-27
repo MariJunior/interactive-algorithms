@@ -4,6 +4,9 @@
   flex-direction: column;
   gap: var(--space-16);
   padding-bottom: var(--space-20);
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 /* ─── Hero ────────────────────────────────────────────── */
@@ -12,6 +15,7 @@
   max-width: var(--page-max-width);
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .heroTitle {
@@ -43,6 +47,9 @@
   max-width: var(--page-max-width);
   margin: 0 auto;
   padding: 0 var(--page-padding);
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .sectionTitle {
@@ -64,8 +71,10 @@
 /* ─── Big O Grid ──────────────────────────────────────── */
 .bigOGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  /* min(100%, …) — на узких экранах колонка тянется на всю ширину, без «дыры» слева */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: var(--space-4);
+  width: 100%;
 }
 
 .bigOCard {
@@ -183,9 +192,15 @@
 /* ─── Сетка карточек ──────────────────────────────────── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: var(--space-6);
   align-items: start;
+  width: 100%;
+}
+
+.grid > * {
+  min-width: 0;
+  width: 100%;
 }
 
 /* ─── Пустое состояние ────────────────────────────────── */

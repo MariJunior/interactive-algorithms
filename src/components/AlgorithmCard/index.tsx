@@ -1,4 +1,5 @@
 import type { AlgorithmMeta } from "@/algorithms/types";
+import { InPlaceBadge, StableBadge } from "@/components/ui/InfoBadge";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styles from "./AlgorithmCard.module.css";
@@ -362,30 +363,18 @@ function PreviewPlaceholder({ category }: { category: string }) {
   }
 }
 
-// ─── Бейдж стабильности ──────────────────────────────────
-
-function StabilityBadge({ stable }: { stable: boolean }) {
-  return (
-    <span
-      className={styles.badge}
-      style={
-        { "--badge-color": stable ? "var(--color-o1)" : "var(--color-on2)" } as React.CSSProperties
-      }
-      title={stable ? "Стабильная сортировка" : "Нестабильная сортировка"}
-    >
-      {stable ? "stable" : "unstable"}
-    </span>
-  );
-}
-
 // ─── Сама карточка ───────────────────────────────────────
 
 export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta }) {
-  const { slug, name, category, complexity, shortDescription, stable, inPlace } = algorithm;
+  const { slug, name, nameRu, category, complexity, shortDescription, stable, inPlace } = algorithm;
   const catConfig = categoryConfig[category];
 
   return (
-    <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+    <motion.div
+      className={styles.cardMotion}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+    >
       <Link to={`/algorithm/${slug}`} className={styles.card}>
         {/* Превью */}
         <div
@@ -403,10 +392,15 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
         <div className={styles.body}>
           {/* Шапка: название + категория */}
           <div className={styles.cardHeader}>
-            <h3 className={styles.name}>{name}</h3>
+            <div className={styles.titleBlock}>
+              <h3 className={styles.name}>{name}</h3>
+              <p className={styles.nameRu}>{nameRu}</p>
+            </div>
             <span
               className={styles.category}
-              style={{ "--cat-color": `var(${catConfig.colorVar})` } as React.CSSProperties}
+              style={
+                { "--cat-color": `var(${catConfig.colorVar})` } as React.CSSProperties
+              }
             >
               {catConfig.label}
             </span>
@@ -417,27 +411,15 @@ export default function AlgorithmCard({ algorithm }: { algorithm: AlgorithmMeta 
 
           {/* Big O строка */}
           <div className={styles.complexity}>
-            <ComplexityItem label="Avg" value={complexity.average} />
-            <ComplexityItem label="Worst" value={complexity.worst} />
-            <ComplexityItem label="Space" value={complexity.space} />
+            <ComplexityItem label="Средн." value={complexity.average} />
+            <ComplexityItem label="Худш." value={complexity.worst} />
+            <ComplexityItem label="Память" value={complexity.space} />
           </div>
 
           {/* Бейджи */}
           <div className={styles.badges}>
-            {stable !== undefined && <StabilityBadge stable={stable} />}
-            {inPlace !== undefined && (
-              <span
-                className={styles.badge}
-                style={
-                  {
-                    "--badge-color": inPlace ? "var(--color-ologn)" : "var(--color-text-muted)",
-                  } as React.CSSProperties
-                }
-                title={inPlace ? "Сортировка на месте — O(1) доп. память" : "Требует доп. память"}
-              >
-                {inPlace ? "in-place" : "out-of-place"}
-              </span>
-            )}
+            {stable !== undefined && <StableBadge stable={stable} />}
+            {inPlace !== undefined && <InPlaceBadge inPlace={inPlace} />}
           </div>
         </div>
       </Link>

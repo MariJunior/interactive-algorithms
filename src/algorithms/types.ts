@@ -40,7 +40,8 @@ export type AlgorithmCategory =
 // Метаданные алгоритма (для карточек и страниц)
 export interface AlgorithmMeta {
   slug: string;
-  name: string;
+  name: string; // английское название (Bubble Sort)
+  nameRu: string; // русское название (Пузырьковая сортировка)
   category: AlgorithmCategory;
   complexity: Complexity;
   shortDescription: string; // для карточки на /learn
