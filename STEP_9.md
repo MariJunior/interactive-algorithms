@@ -86,7 +86,7 @@ src/
 
 - [x] **9.1** Спека `STEP_9.md` — scope + тема Pure CSS
 - [x] **9.2** `AlgorithmPreview`: реестр по slug, fallback; **pure-CSS арт для sorting** (8 шт., витрина темы)
-- [ ] **9.3** Pure-CSS арт для **searching + tree + graph**
+- [x] **9.3** Pure-CSS арт для **searching + tree + graph**
 - [ ] **9.4** Pure-CSS арт для **dp + greedy + string + data-structures + np-complete + ml**
 - [ ] **9.5** Domain квиза (`src/quiz`) + тесты
 - [ ] **9.6** UI `ComplexityQuiz` + секция на `/learn`; README; `npm test` / `npm run build`
