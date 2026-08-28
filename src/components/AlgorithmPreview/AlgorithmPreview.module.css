@@ -873,6 +873,958 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   Step 9.4 — dp / greedy / string / data-structures / np / ml
+   ═══════════════════════════════════════════════════════════ */
+
+/* —— Fibonacci: столбики dp[i] вырастают по порядку —— */
+.dpCell {
+  position: absolute;
+  bottom: 6px;
+  left: calc(var(--pad, 6px) + var(--i) * var(--slot, 12px));
+  width: 9px;
+  height: var(--h, 12px);
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.25;
+  box-sizing: border-box;
+}
+
+.fibCell {
+  animation: fibGrow 3.6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.32s);
+}
+
+@keyframes fibGrow {
+  0%,
+  8% {
+    opacity: 0.2;
+    transform: scaleY(0.35);
+    transform-origin: bottom;
+  }
+  18%,
+  70% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  85%,
+  100% {
+    opacity: 0.35;
+    transform: scaleY(1);
+  }
+}
+
+/* —— Climbing stairs: ступени загораются снизу вверх —— */
+.stairsStage {
+  padding: 0;
+}
+
+.stair {
+  position: absolute;
+  left: calc(8px + var(--i) * 13px);
+  bottom: calc(6px + var(--i) * 6px);
+  width: 22px;
+  height: 7px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.22;
+  animation: stairLight 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.4s);
+}
+
+@keyframes stairLight {
+  0%,
+  10% {
+    opacity: 0.2;
+  }
+  22%,
+  55% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* —— String search: текст + скользящее окно паттерна —— */
+.strStage {
+  padding: 0;
+}
+
+.strCell {
+  position: absolute;
+  top: 18px;
+  left: calc(6px + var(--i) * 9px);
+  width: 7px;
+  height: 10px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.28;
+}
+
+.strWin {
+  position: absolute;
+  top: 8px;
+  width: 7px;
+  height: 6px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.95;
+  /* базовый X слота текста + смещение окна --w */
+  left: calc(6px + var(--w) * 9px);
+}
+
+/* Naive: окно ползёт 0→1→2→3→4 (совпадение), затем сброс */
+.naiveWin0,
+.naiveWin1,
+.naiveWin2 {
+  animation: naiveSlide 4s ease-in-out infinite;
+}
+
+@keyframes naiveSlide {
+  0%,
+  8% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+  18% {
+    transform: translateX(9px);
+  }
+  28% {
+    transform: translateX(18px);
+  }
+  38% {
+    transform: translateX(27px);
+  }
+  48%,
+  68% {
+    transform: translateX(36px); /* совпадение на i=4 */
+    opacity: 1;
+  }
+  82%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.55;
+  }
+}
+
+.naiveText {
+  animation: naiveHit 4s ease-in-out infinite;
+}
+
+/* Ячейки 4,5,6 — зона совпадения */
+.stage[data-art="naive-string-search"] .naiveText:nth-child(5),
+.stage[data-art="naive-string-search"] .naiveText:nth-child(6),
+.stage[data-art="naive-string-search"] .naiveText:nth-child(7) {
+  animation-name: naiveMatchCells;
+}
+
+@keyframes naiveHit {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+}
+
+@keyframes naiveMatchCells {
+  0%,
+  42% {
+    opacity: 0.28;
+  }
+  50%,
+  70% {
+    opacity: 1;
+  }
+  82%,
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* KMP: прыжок 0 → сразу ~3 → совпадение (без мелких шагов) */
+.kmpWin0,
+.kmpWin1,
+.kmpWin2 {
+  animation: kmpSlide 3.6s ease-in-out infinite;
+}
+
+@keyframes kmpSlide {
+  0%,
+  12% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+  28%,
+  40% {
+    transform: translateX(27px); /* умный сдвиг LPS */
+    opacity: 0.85;
+  }
+  52%,
+  72% {
+    transform: translateX(36px);
+    opacity: 1;
+  }
+  88%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.55;
+  }
+}
+
+.kmpText {
+  animation: kmpHit 3.6s ease-in-out infinite;
+}
+
+.stage[data-art="kmp-search"] .kmpText:nth-child(5),
+.stage[data-art="kmp-search"] .kmpText:nth-child(6),
+.stage[data-art="kmp-search"] .kmpText:nth-child(7) {
+  animation-name: kmpMatchCells;
+}
+
+@keyframes kmpHit {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+}
+
+@keyframes kmpMatchCells {
+  0%,
+  48% {
+    opacity: 0.28;
+  }
+  56%,
+  74% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* —— Activity selection: интервалы, pick вспыхивает по очереди —— */
+.actStage {
+  padding: 0;
+}
+
+.actBar {
+  position: absolute;
+  height: 7px;
+  border-radius: 2px;
+  background: currentColor;
+  top: calc(10px + var(--i) * 7px);
+}
+
+.actSkip {
+  opacity: 0.18;
+}
+
+.actPick {
+  opacity: 0.3;
+  animation: actSelect 3.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.22s);
+}
+
+@keyframes actSelect {
+  0%,
+  15% {
+    opacity: 0.3;
+  }
+  28%,
+  65% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0.45;
+  }
+}
+
+/* —— Fractional knapsack: вещи «вливаются» в бак —— */
+.knapStage {
+  padding: 0;
+}
+
+.knapItem {
+  position: absolute;
+  left: 6px;
+  width: 10px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.knapI0 {
+  top: 8px;
+  height: 14px;
+  animation: knapTake 4s ease-in-out infinite;
+}
+.knapI1 {
+  top: 26px;
+  height: 10px;
+  animation: knapTake 4s ease-in-out infinite;
+  animation-delay: 0.45s;
+}
+.knapI2 {
+  top: 38px;
+  height: 6px;
+  /* дробный последний — «уходит» лишь наполовину */
+  animation: knapTakePartial 4s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+
+.knapBag {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  width: 22px;
+  height: 36px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  opacity: 0.35;
+  box-sizing: border-box;
+}
+
+.knapFill {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 18px;
+  height: 0;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.85;
+  animation: knapFillUp 4s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+@keyframes knapTake {
+  0%,
+  12% {
+    opacity: 0.85;
+    transform: translateX(0);
+  }
+  28%,
+  55% {
+    opacity: 0.15;
+    transform: translateX(28px);
+  }
+  70%,
+  100% {
+    opacity: 0.85;
+    transform: translateX(0);
+  }
+}
+
+@keyframes knapTakePartial {
+  0%,
+  20% {
+    opacity: 0.85;
+    transform: translateX(0) scaleX(1);
+  }
+  35%,
+  55% {
+    opacity: 0.35;
+    transform: translateX(28px) scaleX(0.55);
+  }
+  70%,
+  100% {
+    opacity: 0.85;
+    transform: translateX(0) scaleX(1);
+  }
+}
+
+@keyframes knapFillUp {
+  0%,
+  12% {
+    height: 0;
+  }
+  28% {
+    height: 14px;
+  }
+  42% {
+    height: 24px;
+  }
+  55%,
+  70% {
+    height: 30px; /* ~полный + дробь */
+  }
+  85%,
+  100% {
+    height: 0;
+  }
+}
+
+/* —— Set cover: множества подсвечиваются, точки покрываются —— */
+.coverStage {
+  padding: 0;
+}
+
+.coverSvg {
+  width: 80px;
+  height: 48px;
+  overflow: visible;
+}
+
+.coverSet {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.08;
+}
+
+.coverSetA {
+  animation: coverPulseA 4s ease-in-out infinite;
+}
+
+.coverSetB {
+  animation: coverPulseB 4s ease-in-out infinite;
+}
+
+.coverDot {
+  fill: currentColor;
+  opacity: 0.25;
+  animation: coverDotOn 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.08s);
+}
+
+@keyframes coverPulseA {
+  0%,
+  12% {
+    opacity: 0.08;
+  }
+  22%,
+  48% {
+    opacity: 0.28;
+  }
+  60%,
+  100% {
+    opacity: 0.1;
+  }
+}
+
+@keyframes coverPulseB {
+  0%,
+  40% {
+    opacity: 0.08;
+  }
+  52%,
+  78% {
+    opacity: 0.28;
+  }
+  90%,
+  100% {
+    opacity: 0.1;
+  }
+}
+
+@keyframes coverDotOn {
+  0%,
+  18% {
+    opacity: 0.25;
+  }
+  30%,
+  85% {
+    opacity: 1;
+  }
+  95%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+/* —— Hash table: ключ → бакет, цепочка коллизии —— */
+.hashStage {
+  padding: 0;
+}
+
+.hashBucket {
+  position: absolute;
+  top: 6px;
+  left: calc(8px + var(--i) * 13px);
+  width: 10px;
+  height: 12px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  opacity: 0.35;
+  box-sizing: border-box;
+}
+
+.hashKey {
+  position: absolute;
+  top: 2px;
+  left: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.9;
+  animation: hashDrop 3.6s ease-in-out infinite;
+}
+
+.hashChain {
+  position: absolute;
+  left: calc(8px + 2 * 13px + 1px); /* бакет index=2 */
+  width: 8px;
+  height: 7px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0;
+}
+
+.hashC0 {
+  top: 22px;
+  animation: hashChainShow 3.6s ease-in-out infinite;
+  animation-delay: 0.55s;
+}
+
+.hashC1 {
+  top: 32px;
+  animation: hashChainShow 3.6s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+
+@keyframes hashDrop {
+  0%,
+  10% {
+    top: 2px;
+    left: 10px;
+    opacity: 0.9;
+  }
+  35%,
+  55% {
+    top: 8px;
+    left: calc(8px + 2 * 13px + 1px);
+    opacity: 1;
+  }
+  70%,
+  100% {
+    top: 2px;
+    left: 10px;
+    opacity: 0.5;
+  }
+}
+
+@keyframes hashChainShow {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  35%,
+  65% {
+    opacity: 0.95;
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* —— TSP: туры / путь nearest neighbor —— */
+.tspStage {
+  padding: 0;
+}
+
+.tspSvg {
+  width: 80px;
+  height: 48px;
+  overflow: visible;
+}
+
+.tspCity,
+.tspNnCity {
+  fill: currentColor;
+  opacity: 0.55;
+}
+
+/* Brute: туры не мерцают вместе — окна opacity взаимоисключающие */
+.tspBruteTour {
+  stroke: currentColor;
+  stroke-width: 1.35;
+  fill: none;
+  opacity: 0;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* 0–22% длинный, 22–44% средний, 44–82% короткий (best), 82–100% пауза */
+.tspBruteT0 {
+  animation: tspBruteShow0 5s ease-in-out infinite;
+}
+.tspBruteT1 {
+  animation: tspBruteShow1 5s ease-in-out infinite;
+}
+.tspBruteT2 {
+  stroke-width: 1.75;
+  animation: tspBruteShow2 5s ease-in-out infinite;
+}
+
+@keyframes tspBruteShow0 {
+  0%,
+  4% {
+    opacity: 0;
+  }
+  8%,
+  20% {
+    opacity: 0.95;
+  }
+  24%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tspBruteShow1 {
+  0%,
+  24% {
+    opacity: 0;
+  }
+  28%,
+  42% {
+    opacity: 0.95;
+  }
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tspBruteShow2 {
+  0%,
+  46% {
+    opacity: 0;
+  }
+  50%,
+  80% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.tspTryPanel {
+  opacity: 0.95;
+}
+
+.tspTrySlot {
+  fill: currentColor;
+  opacity: 0.2;
+}
+
+.tspTry0 {
+  animation: tspTryFlash0 5s ease-in-out infinite;
+}
+.tspTry1 {
+  animation: tspTryFlash1 5s ease-in-out infinite;
+}
+.tspTry2 {
+  animation: tspTryFlash2 5s ease-in-out infinite;
+}
+
+@keyframes tspTryFlash0 {
+  0%,
+  4% {
+    opacity: 0.2;
+  }
+  8%,
+  20% {
+    opacity: 1;
+  }
+  24%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes tspTryFlash1 {
+  0%,
+  24% {
+    opacity: 0.2;
+  }
+  28%,
+  42% {
+    opacity: 1;
+  }
+  46%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes tspTryFlash2 {
+  0%,
+  46% {
+    opacity: 0.2;
+  }
+  50%,
+  80% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+/* Полоски длины: длинная / средняя / короткая (= лучше) */
+.tspCost {
+  fill: currentColor;
+  opacity: 0.18;
+}
+
+.tspCost0 {
+  animation: tspCostFlash0 5s ease-in-out infinite;
+}
+.tspCost1 {
+  animation: tspCostFlash1 5s ease-in-out infinite;
+}
+.tspCost2 {
+  animation: tspCostFlash2 5s ease-in-out infinite;
+}
+
+@keyframes tspCostFlash0 {
+  0%,
+  4% {
+    opacity: 0.18;
+  }
+  8%,
+  20% {
+    opacity: 0.85;
+  }
+  24%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes tspCostFlash1 {
+  0%,
+  24% {
+    opacity: 0.18;
+  }
+  28%,
+  42% {
+    opacity: 0.85;
+  }
+  46%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes tspCostFlash2 {
+  0%,
+  46% {
+    opacity: 0.18;
+  }
+  50%,
+  80% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+.tspTryMore {
+  fill: currentColor;
+  opacity: 0.25;
+  animation: tspMorePulse 5s ease-in-out infinite;
+}
+
+@keyframes tspMorePulse {
+  0%,
+  70% {
+    opacity: 0.2;
+  }
+  78%,
+  88% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.tspBestMark {
+  stroke: currentColor;
+  opacity: 0;
+  animation: tspBestPop 5s ease-in-out infinite;
+}
+
+@keyframes tspBestPop {
+  0%,
+  50% {
+    opacity: 0;
+  }
+  55%,
+  80% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.tspEdge {
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.15;
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+}
+
+.tspE0 {
+  animation: tspDraw 4s ease-in-out infinite;
+}
+.tspE1 {
+  animation: tspDraw 4s ease-in-out infinite;
+  animation-delay: 0.45s;
+}
+.tspE2 {
+  animation: tspDraw 4s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+.tspE3 {
+  animation: tspDraw 4s ease-in-out infinite;
+  animation-delay: 1.35s;
+}
+.tspE4 {
+  animation: tspDraw 4s ease-in-out infinite;
+  animation-delay: 1.8s;
+}
+
+.tspNnCity {
+  animation: tspCityOn 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.4s);
+}
+
+@keyframes tspDraw {
+  0%,
+  8% {
+    stroke-dashoffset: 40;
+    opacity: 0.2;
+  }
+  20%,
+  70% {
+    stroke-dashoffset: 0;
+    opacity: 0.95;
+  }
+  85%,
+  100% {
+    stroke-dashoffset: 40;
+    opacity: 0.15;
+  }
+}
+
+@keyframes tspCityOn {
+  0%,
+  10% {
+    opacity: 0.3;
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* —— k-NN: радиус, соседи, query —— */
+.knnStage {
+  padding: 0;
+}
+
+.knnSvg {
+  width: 80px;
+  height: 48px;
+  overflow: visible;
+}
+
+.knnRadius {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.2;
+  animation: knnRing 3.8s ease-in-out infinite;
+}
+
+.knnPt {
+  opacity: 0.28;
+}
+
+.knnA {
+  fill: currentColor;
+}
+
+.knnB {
+  fill: currentColor;
+  opacity: 0.22;
+}
+
+/* Ближайшие соседи — точки 4,5,6 в массиве (индексы с 0) */
+.stage[data-art="knn"] .knnPt:nth-child(6),
+.stage[data-art="knn"] .knnPt:nth-child(7),
+.stage[data-art="knn"] .knnPt:nth-child(8) {
+  animation: knnNeighbor 3.8s ease-in-out infinite;
+}
+
+.knnQuery {
+  fill: currentColor;
+  opacity: 1;
+  animation: knnQueryPulse 3.8s ease-in-out infinite;
+}
+
+@keyframes knnRing {
+  0%,
+  15% {
+    opacity: 0.15;
+    r: 10px;
+  }
+  40%,
+  70% {
+    opacity: 0.45;
+  }
+  90%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes knnNeighbor {
+  0%,
+  25% {
+    opacity: 0.28;
+  }
+  40%,
+  75% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes knnQueryPulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bar,
   .swapA,
@@ -906,7 +1858,37 @@
   .dfsEdge,
   .dijkNode,
   .dijkShort,
-  .dijkLong {
+  .dijkLong,
+  .fibCell,
+  .stair,
+  .naiveWin0,
+  .naiveWin1,
+  .naiveWin2,
+  .naiveText,
+  .kmpWin0,
+  .kmpWin1,
+  .kmpWin2,
+  .kmpText,
+  .actPick,
+  .knapI0,
+  .knapI1,
+  .knapI2,
+  .knapFill,
+  .coverSetA,
+  .coverSetB,
+  .coverDot,
+  .hashKey,
+  .hashChain,
+  .tspBruteTour,
+  .tspTrySlot,
+  .tspCost,
+  .tspTryMore,
+  .tspBestMark,
+  .tspEdge,
+  .tspNnCity,
+  .knnRadius,
+  .knnPt,
+  .knnQuery {
     animation: none !important;
     transform: none !important;
     filter: none !important;
@@ -920,7 +1902,43 @@
   .linTarget,
   .binTarget,
   .dijkSrc,
-  .dijkTgt {
+  .dijkTgt,
+  .fibCell,
+  .stair,
+  .actPick,
+  .coverDot,
+  .tspNnCity,
+  .knnQuery {
+    opacity: 1 !important;
+  }
+
+  .knapFill {
+    height: 28px !important;
+  }
+
+  .hashKey {
+    top: 8px !important;
+    left: calc(8px + 2 * 13px + 1px) !important;
+  }
+
+  .hashChain {
+    opacity: 0.9 !important;
+  }
+
+  .tspBruteT2,
+  .tspCost2,
+  .tspTry2,
+  .tspBestMark,
+  .tspE0,
+  .tspE1,
+  .tspE2,
+  .tspE3,
+  .tspE4 {
+    opacity: 0.85 !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .tspBestMark {
     opacity: 1 !important;
   }
 
