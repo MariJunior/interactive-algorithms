@@ -1,4 +1,5 @@
 import AlgorithmCard from "@/components/AlgorithmCard";
+import ComplexityQuiz from "@/components/ComplexityQuiz";
 import { ALGORITHMS, CATEGORIES } from "@/data/algorithms";
 import { AnimatePresence, motion, type BezierDefinition, type Variants } from "framer-motion";
 import { useState } from "react";
@@ -140,6 +141,20 @@ export default function Learn() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Квиз Big O ── */}
+      <section className={styles.section} aria-labelledby="complexity-quiz-title">
+        <div className={styles.sectionInner}>
+          <h2 id="complexity-quiz-title" className={styles.sectionTitle}>
+            Мини-квиз: угадай сложность
+          </h2>
+          <p className={styles.sectionSubtitle}>
+            По названию и короткой подсказке выбери <strong>среднюю</strong> Big O.
+            После ответа можно сразу открыть страницу алгоритма.
+          </p>
+          <ComplexityQuiz />
         </div>
       </section>
 

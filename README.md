@@ -35,10 +35,9 @@
 | Хеш-таблица (chaining) | Готово |
 | TSP: перебор + nearest-neighbor (NP) | Готово |
 | k-NN (классификация) | Готово |
-| CSS-арт, квиз | В планах (Step 9) |
+| CSS-арт на карточках + квиз «Угадай сложность» | Готово (Step 9) |
 | Песочница `/sandbox?a=&b=` (same category, moves, timer) | Готово |
 | Подсветка кода (Shiki), a11y-база, `vercel.json` | Готово |
-| CSS-арт, квиз | В планах (после расширения каталога) |
 | 3D (React Three Fiber) | Финальный этап |
 
 **Примеры:** `/algorithm/knn`, `/sandbox?a=knn`.
@@ -55,7 +54,7 @@
 6. ~~Песочница сравнения (`/sandbox?a=&b=`)~~
 7. ~~Полировка: Shiki, a11y, адаптив, конфиг Vercel~~
 8. ~~Расширенный каталог: графы…жадные, хеш-таблица, Дейкстра, покрытие множества, TSP, k-NN~~
-9. CSS-арт на карточках + мини-квиз «Угадай сложность»
+9. ~~CSS-арт на карточках + мини-квиз «Угадай сложность»~~
 10. **3D-режим** для избранных алгоритмов
 
 ---
@@ -83,13 +82,14 @@ Clean Architecture в упрощённом виде для фронта:
 ```
 src/
 ├── algorithms/          # Domain: чистый TS, генераторы шагов, без React
-│   ├── sorting/
-│   └── searching/
+├── quiz/                # Domain: квиз Big O (buildQuestion / checkAnswer)
 ├── hooks/               # Application: runner + player
 ├── data/                # Метаданные и код для отображения
 ├── lib/                 # Инфра (Shiki highlighter singleton)
 ├── components/
-│   ├── visualizers/     # Presentation: SortStep / SearchStep
+│   ├── AlgorithmPreview/ # Pure-CSS арт на карточках
+│   ├── ComplexityQuiz/   # UI квиза «угадай сложность»
+│   ├── visualizers/     # Presentation: SortStep / SearchStep / …
 │   └── ui/              # Глупые UI-контролы
 └── pages/               # Composition / маршруты
 ```
@@ -155,7 +155,7 @@ Framework detection у Vercel для Vite обычно сам выставляе
 | Путь | Назначение |
 |------|------------|
 | `/` | Лендинг |
-| `/learn` | Big O + каталог алгоритмов с фильтрами |
+| `/learn` | Big O + квиз сложности + каталог алгоритмов с фильтрами |
 | `/algorithm/:slug` | Теория, визуализация, код |
 | `/sandbox` | Сравнение двух алгоритмов одной категории |
 
