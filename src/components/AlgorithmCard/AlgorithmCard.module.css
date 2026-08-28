@@ -53,11 +53,15 @@
   pointer-events: none;
 }
 
+/* SVG-fallback и pure-CSS сцена — одинаковый кадр 80×48 */
+.preview > * {
+  position: relative;
+  z-index: 1;
+}
+
 .preview svg {
   width: 80px;
   height: 48px;
-  position: relative;
-  z-index: 1;
 }
 
 /* ─── Тело ────────────────────────────────────────────── */

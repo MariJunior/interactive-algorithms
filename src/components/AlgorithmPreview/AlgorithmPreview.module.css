@@ -1,0 +1,573 @@
+/* Кадр 80×48. Столбики — absolute, ширина жёстко фиксирована. */
+.root {
+  position: relative;
+  z-index: 1;
+  width: 80px;
+  height: 48px;
+  overflow: hidden;
+  color: inherit;
+}
+
+.root svg {
+  display: block;
+  width: 80px;
+  height: 48px;
+}
+
+.stage {
+  position: relative;
+  width: 80px;
+  height: 48px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Базовый столбик: никогда не меняет width */
+.bar {
+  position: absolute;
+  bottom: 3px;
+  left: calc(var(--pad, 5px) + var(--i) * var(--slot, 10px));
+  width: var(--bar-w, 7px);
+  min-width: var(--bar-w, 7px);
+  max-width: var(--bar-w, 7px);
+  height: var(--h, 20px);
+  max-height: 34px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.4;
+  box-sizing: border-box;
+  transform-origin: bottom center;
+  will-change: transform, opacity;
+}
+
+/* ═══════════════ Bubble: полный swap ±1 ═══════════════ */
+.stage[data-art="bubble-sort"] .bar {
+  opacity: 0.35;
+}
+
+.swapA,
+.swapB,
+.swapA2,
+.swapB2 {
+  animation: 3.2s ease-in-out infinite;
+}
+
+.swapA {
+  animation-name: goToTarget;
+}
+.swapB {
+  animation-name: goToTarget;
+}
+.swapA2 {
+  animation-name: goToTarget;
+  animation-delay: 1.05s;
+}
+.swapB2 {
+  animation-name: goToTarget;
+  animation-delay: 1.05s;
+}
+
+.settled {
+  opacity: 0.95 !important;
+  animation: settlePulse 3.2s ease-in-out infinite;
+}
+
+/* Универсальный полный ход к --dx (без смены width) */
+@keyframes goToTarget {
+  0%,
+  18% {
+    transform: translateX(0);
+    opacity: 0.45;
+  }
+  28% {
+    opacity: 1;
+  }
+  48%,
+  62% {
+    transform: translateX(var(--dx));
+    opacity: 1;
+  }
+  78%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.4;
+  }
+}
+
+@keyframes settlePulse {
+  0%,
+  55% {
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ═══════════════ Selection: скан → полный swap 0↔4 ═══════════════ */
+.stage[data-art="selection-sort"] .bar {
+  opacity: 0.28;
+}
+
+.selScan {
+  animation: scanFlash 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.22s);
+}
+
+@keyframes scanFlash {
+  0%,
+  8%,
+  100% {
+    opacity: 0.28;
+  }
+  4% {
+    opacity: 1;
+  }
+}
+
+.selMin {
+  animation: selMinSwap 4s ease-in-out infinite;
+}
+
+.selHead {
+  animation: selHeadSwap 4s ease-in-out infinite;
+}
+
+@keyframes selMinSwap {
+  0%,
+  48% {
+    transform: translateX(0);
+    opacity: 0.3;
+  }
+  55%,
+  62% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  72%,
+  84% {
+    transform: translateX(var(--dx)); /* полный ход к слоту 0 */
+    opacity: 1;
+  }
+  94%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.35;
+  }
+}
+
+@keyframes selHeadSwap {
+  0%,
+  62% {
+    transform: translateX(0);
+    opacity: 0.35;
+  }
+  72%,
+  84% {
+    transform: translateX(var(--dx)); /* полный ход к слоту 4 */
+    opacity: 0.9;
+  }
+  94%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.95;
+  }
+}
+
+/* ═══════════════ Insertion: ключ + сдвиг соседей ═══════════════ */
+.stage[data-art="insertion-sort"] .bar {
+  opacity: 0.3;
+}
+
+.insSorted {
+  opacity: 0.85 !important;
+}
+
+.insShift {
+  animation: shiftRight 3.4s ease-in-out infinite;
+}
+
+.insKey {
+  animation: insertKey 3.4s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes shiftRight {
+  0%,
+  28% {
+    transform: translateX(0);
+  }
+  42%,
+  72% {
+    transform: translateX(var(--dx)); /* +1 слот */
+  }
+  88%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes insertKey {
+  0%,
+  18% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
+  28% {
+    transform: translate(0, -7px);
+    opacity: 1;
+  }
+  42%,
+  58% {
+    /* в слот 1, всё ещё приподнят */
+    transform: translate(var(--dx), -7px);
+    opacity: 1;
+  }
+  68%,
+  78% {
+    transform: translate(var(--dx), 0);
+    opacity: 1;
+  }
+  90%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
+}
+
+/* ═══════════════ Merge: половины → отсортированный ряд ═══════════════ */
+.stage[data-art="merge-sort"] .bar {
+  opacity: 0.55;
+}
+
+/* Левая/правая половины чуть разведены на старте (без «столбика»-разделителя) */
+.mergeLeft {
+  animation: mergeFromLeft 3.6s ease-in-out infinite;
+}
+
+.mergeRight {
+  animation: mergeFromRight 3.6s ease-in-out infinite;
+}
+
+@keyframes mergeFromLeft {
+  0%,
+  28% {
+    transform: translateX(-3px);
+    opacity: 0.55;
+  }
+  48%,
+  72% {
+    transform: translateX(var(--dx));
+    opacity: 1;
+  }
+  90%,
+  100% {
+    transform: translateX(-3px);
+    opacity: 0.55;
+  }
+}
+
+@keyframes mergeFromRight {
+  0%,
+  28% {
+    transform: translateX(3px);
+    opacity: 0.55;
+  }
+  48%,
+  72% {
+    transform: translateX(var(--dx));
+    opacity: 1;
+  }
+  90%,
+  100% {
+    transform: translateX(3px);
+    opacity: 0.55;
+  }
+}
+
+/* ═══════════════ Quick: partition к целевым слотам ═══════════════ */
+.stage[data-art="quick-sort"] .bar {
+  opacity: 0.3;
+}
+
+.qPivot {
+  opacity: 1 !important;
+  z-index: 2;
+  animation: pivotHold 3.6s ease-in-out infinite;
+}
+
+.qMove {
+  animation: partitionMove 3.6s ease-in-out infinite;
+}
+
+@keyframes pivotHold {
+  0%,
+  100% {
+    filter: none;
+  }
+  40%,
+  70% {
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes partitionMove {
+  0%,
+  22% {
+    transform: translateX(0);
+    opacity: 0.35;
+  }
+  45%,
+  70% {
+    transform: translateX(var(--dx));
+    opacity: 0.95;
+  }
+  88%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.35;
+  }
+}
+
+/* ═══════════════ Heap: SVG, одна система координат ═══════════════ */
+.heapStage {
+  padding: 0;
+}
+
+.heapSvg {
+  width: 80px;
+  height: 48px;
+  overflow: visible;
+}
+
+.heapLine {
+  stroke: currentColor;
+  stroke-width: 1.25;
+  opacity: 0.35;
+  fill: none;
+}
+
+.heapDot {
+  fill: currentColor;
+  opacity: 0.4;
+}
+
+.heapRoot {
+  opacity: 0.95;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heapSiftRoot 3.2s ease-in-out infinite;
+}
+
+.heapChildL {
+  opacity: 0.55;
+}
+
+.heapChildR {
+  opacity: 0.9;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heapSiftChild 3.2s ease-in-out infinite;
+}
+
+/* sift: root (40,10) ↔ childR (56,22) → Δ (16, 12) в user units */
+@keyframes heapSiftRoot {
+  0%,
+  30% {
+    transform: translate(0, 0);
+  }
+  45%,
+  58% {
+    transform: translate(16px, 12px);
+  }
+  75%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes heapSiftChild {
+  0%,
+  30% {
+    transform: translate(0, 0);
+  }
+  45%,
+  58% {
+    transform: translate(-16px, -12px);
+  }
+  75%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* ═══════════════ Radix: bottom-aligned, медленный цикл ═══════════════ */
+.radixStage {
+  padding: 0;
+}
+
+.radixBuckets {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 2px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  height: 6px;
+}
+
+.radixBucket {
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.22;
+}
+
+.radixChip {
+  position: absolute;
+  /* выравнивание по нижнему краю «рабочей» зоны над бакетами */
+  bottom: 12px;
+  left: calc(var(--pad, 8px) + var(--i) * var(--slot, 16px));
+  width: 10px;
+  min-width: 10px;
+  max-width: 10px;
+  height: var(--h, 16px);
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.8;
+  animation: radixCycle 4.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 80ms);
+}
+
+@keyframes radixCycle {
+  /* длинные плато — без мерцания */
+  0%,
+  20% {
+    bottom: 12px;
+    left: calc(var(--pad, 8px) + var(--i) * var(--slot, 16px));
+    opacity: 0.8;
+  }
+  35%,
+  50% {
+    /* в бакет (сидим на дне бакета) */
+    bottom: 2px;
+    left: calc(var(--pad, 8px) + var(--digit) * var(--slot, 16px));
+    opacity: 1;
+  }
+  65%,
+  85% {
+    /* сборка в ряд по digit, всё ещё bottom-aligned */
+    bottom: 12px;
+    left: calc(var(--pad, 8px) + var(--digit) * var(--slot, 16px));
+    opacity: 0.9;
+  }
+  100% {
+    bottom: 12px;
+    left: calc(var(--pad, 8px) + var(--i) * var(--slot, 16px));
+    opacity: 0.8;
+  }
+}
+
+/* ═══════════════ Counting: подсчёт групп → раскладка по порядку ═══════════════ */
+.stage[data-art="counting-sort"] .bar {
+  opacity: 0.4;
+}
+
+.countItem {
+  /* flash (opacity) + place (transform) — delay только у flash */
+  animation:
+    countFlash 4.4s ease-in-out infinite,
+    countPlace 4.4s ease-in-out infinite;
+}
+
+.countLo {
+  animation-delay: 0ms, 0ms;
+}
+.countMid {
+  animation-delay: 150ms, 0ms;
+}
+.countHi {
+  animation-delay: 300ms, 0ms;
+}
+
+/* Фаза count: одинаковые значения вспыхивают вместе */
+@keyframes countFlash {
+  0%,
+  10% {
+    opacity: 0.35;
+  }
+  16%,
+  22% {
+    opacity: 1;
+  }
+  28%,
+  38% {
+    opacity: 0.45;
+  }
+  /* дальше opacity ведёт place — держим читаемость */
+  52%,
+  78% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* Фаза place: все слоты едут синхронно в отсортированный порядок */
+@keyframes countPlace {
+  0%,
+  40% {
+    transform: translateX(0);
+  }
+  55%,
+  78% {
+    transform: translateX(var(--dx));
+  }
+  92%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .swapA,
+  .swapB,
+  .swapA2,
+  .swapB2,
+  .settled,
+  .selScan,
+  .selMin,
+  .selHead,
+  .insShift,
+  .insKey,
+  .mergeLeft,
+  .mergeRight,
+  .qPivot,
+  .qMove,
+  .heapRoot,
+  .heapChildR,
+  .radixChip,
+  .countItem {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .settled,
+  .insSorted,
+  .qPivot,
+  .heapRoot,
+  .countItem {
+    opacity: 1 !important;
+  }
+
+  .radixChip {
+    bottom: 12px !important;
+    left: calc(var(--pad, 8px) + var(--digit) * var(--slot, 16px)) !important;
+    opacity: 0.85 !important;
+  }
+}
