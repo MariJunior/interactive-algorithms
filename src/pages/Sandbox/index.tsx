@@ -833,6 +833,7 @@ function SandboxLane({
               : "результат обхода — последовательность вершин"
           }
           showDistances={slug === "dijkstra"}
+          showWeights={slug === "dijkstra"}
         />
       ) : kind === "tree" ? (
         <TreeVisualizer

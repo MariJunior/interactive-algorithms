@@ -24,6 +24,15 @@ describe("dijkstra", () => {
     expect(last?.action).toBe("done");
     expect(last?.distances).toEqual(expected.distances);
     expect(last?.visitOrder).toEqual(expected.order);
+    // Итог в message — чтобы в UI было видно не только порядок фиксации
+    expect(last?.message).toContain("Кратчайшие расстояния");
+    expect(last?.message).toContain("A=0");
+    expect(last?.message).toContain("B=2");
+  });
+
+  it("невзвешенный демо-граф не содержит weight на рёбрах", () => {
+    const graph = createDemoGraph({ weighted: false });
+    expect(graph.edges.every((e) => e.weight === undefined)).toBe(true);
   });
 
   it("есть шаги relax при улучшении оценки", () => {

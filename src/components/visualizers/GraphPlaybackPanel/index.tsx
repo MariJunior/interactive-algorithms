@@ -42,7 +42,10 @@ function collectSteps(
  * Domain (генератор) → player → GraphVisualizer.
  */
 export default function GraphPlaybackPanel({ slug }: GraphPlaybackPanelProps) {
-  const [graph] = useState(() => createDemoGraph());
+  // Веса рёбер только для Dijkstra; BFS/DFS — та же топология без weight
+  const [graph] = useState(() =>
+    createDemoGraph({ weighted: slug === "dijkstra" }),
+  );
   const [startId, setStartId] = useState(DEMO_GRAPH_START);
 
   const steps = useMemo(
@@ -101,6 +104,7 @@ export default function GraphPlaybackPanel({ slug }: GraphPlaybackPanelProps) {
         task={task}
         visitOrderHint={visitOrderHint}
         showDistances={isDijkstra}
+        showWeights={isDijkstra}
       />
 
       <PlaybackControls

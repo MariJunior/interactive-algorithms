@@ -181,6 +181,7 @@ export function* dijkstraSteps(
   }
 
   const finalDist = snapshotDistances(nodeIds, dist);
+  // Человекочитаемый итог: A=0, B=2, … — и в formula, и в message (PlaybackControls)
   const summary = nodeIds
     .filter((id) => finalDist[id] !== null)
     .map((id) => `${id}=${finalDist[id]}`)
@@ -194,6 +195,6 @@ export function* dijkstraSteps(
     visitOrder: [...visitOrder],
     distances: finalDist,
     formula: summary,
-    message: `Готово: кратчайшие расстояния от ${startId}`,
+    message: `Готово. Кратчайшие расстояния от ${startId}: ${summary}`,
   };
 }

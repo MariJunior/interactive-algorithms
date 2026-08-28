@@ -17,6 +17,8 @@ interface GraphVisualizerProps {
   visitOrderHint?: string;
   /** Показывать таблицу dist[] (Dijkstra) */
   showDistances?: boolean;
+  /** Подписи весов на рёбрах — только для взвешенных алгоритмов (Dijkstra) */
+  showWeights?: boolean;
 }
 
 function resolveNodeState(id: string, step: GraphStep): NodeState {
@@ -42,6 +44,7 @@ export default function GraphVisualizer({
   task = "Обойти все достижимые вершины от старта",
   visitOrderHint = "в каком порядке вершины были посещены",
   showDistances = false,
+  showWeights = false,
 }: GraphVisualizerProps) {
   if (!step || step.graph.nodes.length === 0) {
     return <div className={styles.empty}>Нет данных для визуализации</div>;
@@ -50,8 +53,15 @@ export default function GraphVisualizer({
   const { graph } = step;
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
   const startLabel = startId ?? step.visitOrder[0] ?? graph.nodes[0]?.id ?? "?";
-  const hasWeights = graph.edges.some((edge) => edge.weight !== undefined);
   const distances = step.distances;
+  const isDone = step.action === "done";
+  // Итоговая строка dist[] — отдельно от порядка фиксации (visitOrder ≠ расстояния)
+  const distanceSummary =
+    showDistances && distances
+      ? graph.nodes
+          .map((node) => `${node.label}=${formatDist(distances[node.id])}`)
+          .join(", ")
+      : null;
 
   return (
     <div className={styles.root}>
@@ -63,7 +73,15 @@ export default function GraphVisualizer({
 
       {step.formula && (
         <p className={styles.formula}>
-          <span className={styles.taskLabel}>Сейчас:</span> {step.formula}
+          <span className={styles.taskLabel}>{isDone ? "Итог:" : "Сейчас:"}</span>{" "}
+          {step.formula}
+        </p>
+      )}
+
+      {isDone && distanceSummary && (
+        <p className={styles.result} aria-live="polite">
+          <span className={styles.taskLabel}>Кратчайшие расстояния:</span>{" "}
+          <span className={styles.metaStrong}>{distanceSummary}</span>
         </p>
       )}
 
@@ -126,14 +144,14 @@ export default function GraphVisualizer({
                 y2={to.y}
                 className={active ? styles.edgeActive : styles.edge}
               />
-              {hasWeights && (
+              {showWeights && edge.weight !== undefined && (
                 <text
                   x={midX}
                   y={midY - 4}
                   className={styles.edgeWeight}
                   textAnchor="middle"
                 >
-                  {edge.weight ?? 1}
+                  {edge.weight}
                 </text>
               )}
             </g>
@@ -169,18 +187,25 @@ export default function GraphVisualizer({
       </svg>
 
       {showDistances && distances && (
-        <div className={styles.distTable} aria-label="Таблица расстояний">
-          {graph.nodes.map((node) => (
-            <span
-              key={node.id}
-              className={`${styles.distCell} ${
-                step.current === node.id ? styles.distCellActive : ""
-              } ${step.visited.includes(node.id) ? styles.distCellSettled : ""}`}
-            >
-              <span className={styles.distKey}>{node.label}</span>
-              <span className={styles.distVal}>{formatDist(distances[node.id])}</span>
-            </span>
-          ))}
+        <div className={styles.distBlock}>
+          <p className={styles.distCaption}>
+            {isDone ? "Итоговый dist[]" : "Текущий dist[]"}
+          </p>
+          <div className={styles.distTable} aria-label="Таблица расстояний">
+            {graph.nodes.map((node) => (
+              <span
+                key={node.id}
+                className={`${styles.distCell} ${
+                  step.current === node.id ? styles.distCellActive : ""
+                } ${step.visited.includes(node.id) ? styles.distCellSettled : ""}`}
+              >
+                <span className={styles.distKey}>{node.label}</span>
+                <span className={styles.distVal}>
+                  {formatDist(distances[node.id])}
+                </span>
+              </span>
+            ))}
+          </div>
         </div>
       )}
     </div>

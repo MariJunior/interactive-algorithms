@@ -1,27 +1,46 @@
 import type { Graph, GraphEdge } from "@/algorithms/types";
 
-/** Учебный неориентированный граф — фиксированная раскладка для визуализатора */
-export function createDemoGraph(): Graph {
+/** Топология учебного графа (без весов) — общая для BFS/DFS/Dijkstra */
+const DEMO_NODES: Graph["nodes"] = [
+  { id: "A", label: "A", x: 200, y: 36 },
+  { id: "B", label: "B", x: 100, y: 110 },
+  { id: "C", label: "C", x: 300, y: 110 },
+  { id: "D", label: "D", x: 40, y: 200 },
+  { id: "E", label: "E", x: 160, y: 200 },
+  { id: "F", label: "F", x: 240, y: 200 },
+  { id: "G", label: "G", x: 360, y: 200 },
+];
+
+/** Пары рёбер + веса — веса нужны только Дейкстре */
+const DEMO_EDGE_SPECS: Array<{ from: string; to: string; weight: number }> = [
+  { from: "A", to: "B", weight: 2 },
+  { from: "A", to: "C", weight: 4 },
+  { from: "B", to: "D", weight: 3 },
+  { from: "B", to: "E", weight: 1 },
+  { from: "C", to: "F", weight: 2 },
+  { from: "C", to: "G", weight: 5 },
+  { from: "E", to: "F", weight: 3 },
+];
+
+export interface CreateDemoGraphOptions {
+  /** Если true — рёбра с weight (Dijkstra); иначе невзвешенный обход (BFS/DFS) */
+  weighted?: boolean;
+}
+
+/**
+ * Учебный неориентированный граф — фиксированная раскладка для визуализатора.
+ * По умолчанию взвешенный (обратная совместимость тестов Dijkstra).
+ */
+export function createDemoGraph(
+  options: CreateDemoGraphOptions = {},
+): Graph {
+  const weighted = options.weighted ?? true;
   return {
     directed: false,
-    nodes: [
-      { id: "A", label: "A", x: 200, y: 36 },
-      { id: "B", label: "B", x: 100, y: 110 },
-      { id: "C", label: "C", x: 300, y: 110 },
-      { id: "D", label: "D", x: 40, y: 200 },
-      { id: "E", label: "E", x: 160, y: 200 },
-      { id: "F", label: "F", x: 240, y: 200 },
-      { id: "G", label: "G", x: 360, y: 200 },
-    ],
-    edges: [
-      { from: "A", to: "B", weight: 2 },
-      { from: "A", to: "C", weight: 4 },
-      { from: "B", to: "D", weight: 3 },
-      { from: "B", to: "E", weight: 1 },
-      { from: "C", to: "F", weight: 2 },
-      { from: "C", to: "G", weight: 5 },
-      { from: "E", to: "F", weight: 3 },
-    ],
+    nodes: DEMO_NODES.map((n) => ({ ...n })),
+    edges: DEMO_EDGE_SPECS.map(({ from, to, weight }) =>
+      weighted ? { from, to, weight } : { from, to },
+    ),
   };
 }
 
