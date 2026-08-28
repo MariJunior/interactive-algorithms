@@ -3,6 +3,7 @@ import Algorithm from "@/pages/Algorithm";
 import Home from "@/pages/Home";
 import Learn from "@/pages/Learn";
 import Sandbox from "@/pages/Sandbox";
+import { Analytics } from "@vercel/analytics/react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/sandbox" element={<Sandbox />} />
         </Route>
       </Routes>
+      <Analytics />
     </>
   );
 }
